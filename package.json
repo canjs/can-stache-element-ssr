@@ -1,0 +1,25 @@
+{
+  "name": "can-stache-element-ssr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "can": "^6.6.2",
+    "can-zone-jsdom": "^2.1.0",
+    "done-ssr": "^3.3.1",
+    "steal": "^2.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canjs/can-stache-element-ssr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/canjs/can-stache-element-ssr/issues"
+  },
+  "homepage": "https://github.com/canjs/can-stache-element-ssr#readme"
+}

@@ -1,0 +1,16 @@
+build.js - dom-zone
+/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/can-zone/lib/zone.js:191
+		throw error;
+		^
+
+ReferenceError: NodeFilter is not defined
+    at getNodesWithTreeWalker (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/done-ssr/node_modules/can-dom-mutate/-util.js:127:3)
+    at getAllNodes (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/done-ssr/node_modules/can-dom-mutate/-util.js:141:10)
+    at Object.dispatchNodeRemoval (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/done-ssr/node_modules/can-dom-mutate/can-dom-mutate.js:384:18)
+    at Object.dispatchNodeRemoval (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/done-ssr/node_modules/can-dom-mutate/node/node.js:19:14)
+    at Document.replaceChild (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/done-ssr/node_modules/can-dom-mutate/node/node.js:28:13)
+    at Timeout.<anonymous> (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/done-ssr/zones/canjs/cleanup.js:25:28)
+    at Task.run (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/can-zone/lib/zone.js:39:17)
+    at Zone.runTask (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/can-zone/lib/zone.js:184:14)
+    at Timeout._onTimeout (/Users/markthompson/Documents/github/bitovi/canjs-playground/can-stache-element-ssr/node_modules/can-zone/lib/zone.js:261:15)
+    at listOnTimeout (internal/timers.js:554:17)
