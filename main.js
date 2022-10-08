@@ -1,6 +1,4 @@
 // main.js
-console.log('main.js is imported~');
-
 const StacheElement = require("can-stache-element");
 // import { StacheElement } from "can";
 const view = require("./app.stache");
@@ -36,7 +34,7 @@ customElements.define("my-counter", MyCounter);
 
 class MyApp extends StacheElement {
   static view = `
-  Hello {{ this.name }}!
+  <h1>Hello {{ this.name }}!</h1>
   <my-stache-element></my-stache-element>
   `;
 
@@ -65,33 +63,27 @@ class MyApp extends StacheElement {
 
 customElements.define("my-app", MyApp);
 
-// dom.js
-// v12.22.11 for node
+
 // kevin, justin
 
-// chrome://inspect/
-// --inspect-brk
-
-
-// Temp fix for -util.js is found at root for `node_modules/done-ssr/node_modules/can-dom-mutate/-util.js`
-// export default function(request) {
+// export default function(request) {// <-- doesn't work ):
 module.exports = function(request) {
-  console.log('main.js default export');
+  console.log('main.js default export - START');
 
-  addMyCustomElement();
+  addSimpleCustomElement();
 
-  // CanJS
   document.body.appendChild(document.createElement('my-app'));
 
   // document.body.innerHTML = `
   // <my-app></my-app>
   // `;
+  console.log('main.js default export - END');
 }
 
 /**
  * Adds simple custom element that updates its innerHTML
  */
-function addMyCustomElement() {
+function addSimpleCustomElement() {
   class CustomElement extends HTMLElement {
     constructor() {
       // Always call super first in constructor
