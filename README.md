@@ -8,6 +8,11 @@ node: v12.22.11
 
 npm: v6.14.16
 
+#### Installing dependencies:
+Run `npm i`
+
+Replace `node_modules/done-ssr/zones/canjs/route.js` with `route.js`
+
 ### Build
 
 build: `npm run build`
