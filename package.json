@@ -8,9 +8,8 @@
   },
   "dependencies": {
     "can": "^6.6.2",
-    "can-zone-jsdom": "^2.1.0",
+    "can-zone-jsdom": "git+ssh://git@github.com/canjs/can-zone-jsdom#jsdom-19-update",
     "done-ssr": "^3.3.1",
-    "jsdom": "^16.7.0",
     "steal": "^2.3.0"
   },
   "repository": {

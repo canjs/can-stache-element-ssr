@@ -8,10 +8,8 @@ console.log('main.js is imported~');
 // kevin, justin
 
 // Temp fix for -util.js is found at root for `node_modules/done-ssr/node_modules/can-dom-mutate/-util.js`
-// Temp fix for can-zone-jsdom dependency `node_modules/can-zone-jsdom/package.json ^16.7.0`
-// Delete package-lock.json and `npm i`
 module.exports = function(request) {
-  class CustomElement extends window.HTMLElement {
+  class CustomElement extends HTMLElement {
     constructor() {
       // Always call super first in constructor
       super();
@@ -24,13 +22,25 @@ module.exports = function(request) {
     }
   }
 
+  // class MyApp extends StacheElement {
+  //   static view = `Hello {{ this.name }}!`;
+  
+  //   static props = {
+  //     name: "world"
+  //   };
+  // }
+  
+  // customElements.define("my-app", MyApp);
+
   console.log('main.js default export');
 
-  window.customElements.define("my-custom-element", CustomElement);
+  customElements.define("my-custom-element", CustomElement);
 
   // Mock simple html
   // Simple div
   document.body.appendChild(document.createElement('div'));
   // Custom element
   document.body.appendChild(document.createElement('my-custom-element'));
+  // CanJS
+  // document.body.appendChild(document.createElement('my-app'));
 }
