@@ -1,9 +1,48 @@
 // main.js
+const type = require("can-type");
 const StacheElement = require("can-stache-element");
 // const {StacheElement} = require("can");
 // import { StacheElement } from "can";
 const view = require("./app.stache");
 // import view from "./app.stache";
+
+class ValueFromInput extends StacheElement {
+  static view = `
+    <input value:from="count"/>
+  `;
+
+  static props = {
+    count: {
+      // Makes count increase by 1 every
+      // second.
+      value(prop) {
+        let count = prop.resolve(20);
+        let timer = setInterval( () => {
+          prop.resolve(++count);
+        },1000);
+        // Return a cleanup function
+        // that is called when count
+        // is longer used.
+        return () => {
+          clearTimeout(timer);
+        };
+      }
+    }
+  };
+}
+customElements.define("my-value-from-input", ValueFromInput);
+
+class ValueToInput extends StacheElement {
+  static view = `
+    <input value:to="this.count"/> Count: {{ this.count }}
+  `;
+
+  static props = {
+    count: type.convert(Number)
+  };
+}
+
+customElements.define("my-value-to-input", ValueToInput);
 
 class MyStacheElement extends StacheElement {
   static view = view;
@@ -46,6 +85,8 @@ class MyApp extends StacheElement {
   static view = `
   <h1>Hello {{ this.name }}!</h1>
   <my-stache-element></my-stache-element>
+  <my-value-to-input></my-value-to-input>
+  <my-value-from-input></my-value-from-input>
   `;
 
   static props = {
@@ -67,9 +108,6 @@ class MyApp extends StacheElement {
   connected() {
     console.log('MyApp - connected');
     this.name = "canjs";
-    // TODO: this works for ssr, but doesn't for index.html
-    // index.html doesn't show this element
-    // but dist/output.html does show this element
     this.appendChild(document.createElement('my-counter'));
   }
 }
@@ -83,9 +121,10 @@ customElements.define("my-app", MyApp);
 module.exports = function(request) {
   console.log('main.js default export - START');
 
-  appendSimpleCustomElement();
-
   document.body.appendChild(document.createElement('my-app'));
+
+  // Note this doesn't show up on index.html, only for the ssr build
+  appendSimpleCustomElement();
 
   // document.body.innerHTML = `
   // <my-app></my-app>
