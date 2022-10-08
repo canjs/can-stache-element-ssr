@@ -23,6 +23,7 @@
     "can-type": "^1.1.6",
     "can-zone-jsdom": "git+ssh://git@github.com/canjs/can-zone-jsdom#jsdom-19-update",
     "done-ssr": "^3.3.1",
+    "fs-extra": "^10.1.0",
     "steal": "^2.3.0"
   },
   "repository": {
