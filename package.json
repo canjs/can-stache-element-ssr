@@ -2,7 +2,7 @@
   "name": "can-stache-element-ssr",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,7 @@
     "can": "^6.6.2",
     "can-zone-jsdom": "^2.1.0",
     "done-ssr": "^3.3.1",
+    "jsdom": "^16.7.0",
     "steal": "^2.3.0"
   },
   "repository": {
