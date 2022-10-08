@@ -1,5 +1,6 @@
 // main.js
 const StacheElement = require("can-stache-element");
+// const {StacheElement} = require("can");
 // import { StacheElement } from "can";
 const view = require("./app.stache");
 // import view from "./app.stache";
@@ -16,13 +17,22 @@ customElements.define("my-stache-element", MyStacheElement);
 
 // Extend Component to define a custom element
 class MyCounter extends StacheElement {
+  // TODO: https://canjs.com/doc/guides/html.html#Stachetemplatesandbindings
+  // {{# is(this.count, 1) }} Count is 1 {{ else }} Count is not 1 {{/ if }}
+  // should end with {{/ is }}
+  // {{# is(this.count, 1) }} Count is 1 {{ else }} Count is not 1 {{/ is }}
+
   static view = `
-      Count: <span>{{ this.count }}</span>
-      <button on:click='this.increment()'>+1</button>
+      <div>Count: <span>{{ this.count }}</span><button on:click='this.increment()'>+1</button></div>
+      <div>Count using if: {{# if(this.count) }} Count not 0 {{ else }} Count is 0 {{/ if }}</div>
+      <div>Count using is: {{# is(this.count, 1) }} Count is 1 {{ else }} Count is not 1 {{/ is }}</div>
+      <div>Count using for: {{# for(item of this.items) }} {{ item.name }} {{/ for }}</div>
   `;
 
   static props = {
-      count: 0
+      count: 0,
+      // TODO: example for using `for` isn't working as expected
+      items: [{ name: 'some-item' }, { name: 'some-next-item' }]
   };
 
   increment() {
@@ -57,6 +67,9 @@ class MyApp extends StacheElement {
   connected() {
     console.log('MyApp - connected');
     this.name = "canjs";
+    // TODO: this works for ssr, but doesn't for index.html
+    // index.html doesn't show this element
+    // but dist/output.html does show this element
     this.appendChild(document.createElement('my-counter'));
   }
 }
@@ -70,7 +83,7 @@ customElements.define("my-app", MyApp);
 module.exports = function(request) {
   console.log('main.js default export - START');
 
-  addSimpleCustomElement();
+  appendSimpleCustomElement();
 
   document.body.appendChild(document.createElement('my-app'));
 
@@ -83,21 +96,19 @@ module.exports = function(request) {
 /**
  * Adds simple custom element that updates its innerHTML
  */
-function addSimpleCustomElement() {
+/**
+ * Adds simple custom element that updates its innerHTML
+ */
+ function appendSimpleCustomElement() {
   class CustomElement extends HTMLElement {
     constructor() {
-      // Always call super first in constructor
       super();
-  
-      // write element functionality in here
     }
   
     connectedCallback() {
-      this.innerHTML = `<h1>Hello, World!</h1>`;
+      this.innerHTML = `<p>Hello, World! from CustomElement</p>`;
     }
   }
-
-  // connectedCallback
 
   customElements.define("my-custom-element", CustomElement);
 
