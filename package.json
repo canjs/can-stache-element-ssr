@@ -2,10 +2,12 @@
   "name": "can-stache-element-ssr",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "can-zone-jsdom/main.js",
   "scripts": {
-    "build": "node build.js",
-    "build:debug": "node --inspect-brk build.js"
+    "build": "node can-zone-jsdom-build.js",
+    "build:alt": "node jsdom-ssr/ssr.js",
+    "build:alt:debug": "node --inspect-brk jsdom-ssr/ssr.js",
+    "build:debug": "node --inspect-brk can-zone-jsdom-build.js"
   },
   "steal": {
     "babelOptions": {
@@ -19,11 +21,14 @@
   },
   "dependencies": {
     "can": "^6.6.2",
+    "can-route": "^5.0.2",
     "can-stache-element": "^1.2.0",
+    "can-stache-route-helpers": "^2.0.0",
     "can-type": "^1.1.6",
     "can-zone-jsdom": "git+ssh://git@github.com/canjs/can-zone-jsdom#jsdom-19-update",
     "done-ssr": "^3.3.1",
     "fs-extra": "^10.1.0",
+    "jsdom": "^19.0.0",
     "steal": "^2.3.0"
   },
   "repository": {
