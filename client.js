@@ -6,10 +6,7 @@ globals.setKeyValue('isNode', false);
 
 const type = require("can-type");
 const StacheElement = require("can-stache-element");
-// const {StacheElement} = require("can");
-// import { StacheElement } from "can";
-// const view = require("./app.stache");
-// import view from "./app.stache";
+const view = require("./app.stache");
 const route = require("can-route");
 require("can-stache-route-helpers");
 
@@ -94,15 +91,15 @@ class ValueToInput extends StacheElement {
 
 customElements.define("my-value-to-input", ValueToInput);
 
-// class MyStacheElement extends StacheElement {
-//   static view = view;
+class MyStacheElement extends StacheElement {
+  static view = view;
 
-//   static props = {
-//     message: "Stache is cool"
-//   };
-// }
+  static props = {
+    message: "Stache is cool"
+  };
+}
 
-// customElements.define("my-stache-element", MyStacheElement);
+customElements.define("my-stache-element", MyStacheElement);
 
 // Extend Component to define a custom element
 class MyCounter extends StacheElement {
@@ -132,10 +129,10 @@ class MyCounter extends StacheElement {
 customElements.define("my-counter", MyCounter);
 
 class MyApp extends StacheElement {
-    // <my-stache-element></my-stache-element><br>
     // <my-value-from-input></my-value-from-input><br>  
     static view = `
   <h1>Hello {{ this.name }}!</h1>
+  <my-stache-element></my-stache-element><br>
   <my-value-to-input></my-value-to-input><br>
   <my-routing-app></my-routing-app><br>
   `;

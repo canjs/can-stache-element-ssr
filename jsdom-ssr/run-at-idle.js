@@ -3,38 +3,50 @@ const fs = require("fs");
 const { fd } = process.stdout;
 
 /**
- * Runs callback once there are no more async logic
- * running result in nodejs being "idle".
+ * Runs callback once there node script is no longer
+ * running async logic.
  * 
- * Uses `async_hook` internally
+ * Uses [async_hook](https://nodejs.org/api/async_hooks.html#class-asynchook) internally
  */
 module.exports = function(cb) {
-    let counter = 0;
+    // Used to track pending asyncIds
+    const ids = {};
 
     const hook = async_hooks.createHook({
         init(asyncId, type, triggerAsyncId) {
-            counter += 1;
+            ids[asyncId] = true;
             // const eid = async_hooks.executionAsyncId();
-            // fs.writeSync(fd, `${type}(${asyncId}):` + ` trigger: ${triggerAsyncId} execution: ${eid} counter: ${counter}\n`);
-            // fs.writeSync(fd, `init:  ${counter}\n`);
+            // fs.writeSync(fd, `${type}(${asyncId}):` + ` trigger: ${triggerAsyncId} execution: ${eid}\n`);
         },
         destroy(asyncId) {
-            counter -= 1;
-            // fs.writeSync(fd, `destroy:  ${asyncId} counter: ${counter}\n`);
-            // fs.writeSync(fd, `destroy:  ${counter}\n`);
+            delete ids[asyncId];
+            // fs.writeSync(fd, `destroy:  ${asyncId}\n`);
 
-            if (!counter) {
-                // fs.writeSync(fd, `finished\n`);
-
-                onCounterIsZero();
-            }
+            checkIfIdle();
         },
+        promiseResolve(asyncId) {
+            delete ids[asyncId];
+            // fs.writeSync(fd, `promiseResolve:  ${asyncId}\n`);
+
+            checkIfIdle();
+        }
     });
     
+    // Start listening for async tasks
     hook.enable();
 
-    function onCounterIsZero() {
+    function checkIfIdle() {
+        // Check if async is pending
+        if (Object.keys(ids).length) {
+            return;
+        }
+
+        // Stop listening for async tasks
         hook.disable();
+
+        // fs.writeSync(fd, `async_hooks finished\n`);
+
+        // Call callback
         cb();
     }
 }

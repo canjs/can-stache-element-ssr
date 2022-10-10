@@ -1,19 +1,11 @@
 const { spawn: __node_spawn__ } = require('child_process');
-const fs = require('fs-extra');
 const path = require('path');
 
 const baseUrl = "http://127.0.0.1:5501/index.html";
 
-const dist = path.join(__dirname, '../dist');
 const altRequestBuild = path.join(__dirname, 'alt-request-build.js');
 
 module.exports = async function(url = baseUrl) {
-    // Create dist directory
-    await fs.ensureDir(dist);
-
-    // Clear it
-    await fs.emptyDir(dist);
-
     return spawn("node", [altRequestBuild, url]);
 }
 

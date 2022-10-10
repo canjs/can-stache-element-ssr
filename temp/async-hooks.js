@@ -5,57 +5,89 @@ const async_hooks = require("async_hooks");
 const fs = require("fs");
 const { fd } = process.stdout;
 
+function delay(t, v) {
+    return new Promise(function(resolve) { 
+        setTimeout(resolve.bind(null, v), t)
+    });
+ }
+
+ /**
+  * @deprecated 
+  */
 let counter = 0;
+
+const ids = {};
 
 const ah = async_hooks
     .createHook({
         init(asyncId, type, triggerAsyncId) {
             counter += 1;
+            ids[asyncId] = true;
             const eid = async_hooks.executionAsyncId();
-            fs.writeSync(fd, `${type}(${asyncId}):` + ` trigger: ${triggerAsyncId} execution: ${eid}\nInit counter: ${counter}\n`);
+            fs.writeSync(fd, `${type}(${asyncId}):` + ` trigger: ${triggerAsyncId} execution: ${eid} counter: ${counter} ids: ${Object.keys(ids).length}\n`);
         },
-        before(asyncId) {
-            fs.writeSync(fd, `before:  ${asyncId}\n`);
-        },
-        after(asyncId) {
-            fs.writeSync(fd, `after:  ${asyncId}\n`);
-        },
+        // before(asyncId) {
+        //     fs.writeSync(fd, `before:  ${asyncId}\n`);
+        // },
+        // after(asyncId) {
+        //     fs.writeSync(fd, `after:  ${asyncId}\n`);
+        // },
         destroy(asyncId) {
+            delete ids[asyncId];
+
             counter -= 1;
-            fs.writeSync(fd, `destroy:  ${asyncId}\nDestroy counter: ${counter}\n`);
-            if (!counter) {
-                test();
+            fs.writeSync(fd, `destroy:  ${asyncId} counter: ${counter} ids: ${Object.keys(ids).length}\n`);
+            // if (!counter) {
+            if (!Object.keys(ids).length) {
+                onIdle();
             }
         },
+        promiseResolve(asyncId) {
+            delete ids[asyncId];
+            
+            counter -= 1;
+            fs.writeSync(fd, `promiseResolve:  ${asyncId} counter: ${counter} ids: ${Object.keys(ids).length}\n`);
+            // if (!counter) {
+            if (!Object.keys(ids).length) {
+                onIdle();
+            }
+        }
     })
 ah.enable();
 
-function test() {
+function onIdle() {
     ah.disable();
     // fs.writeSync(fd, "~~~finished~~~");
     console.log("~~~finished~~~");
 };
 
-// Use steal 
-// Use steal in node to import app
-// 
-
-console.log("Before setTimeout", async_hooks.executionAsyncId());
-
-
 setTimeout(() => {
-    console.log("Inside setTimeout", async_hooks.executionAsyncId());
+    console.log('did another thing');
+}, 400);
 
-    setTimeout(() => {
-        console.log("Nested Inside setTimeout", async_hooks.executionAsyncId());
-    }, 1000);
-}, 1000);
+// setInterval(() => {
+//     console.log('did a thing');
+// }).unref();
 
-console.log("After setTimeout", async_hooks.executionAsyncId());
+delay(500);
+// delay(1000);
 
-setTimeout(() => {
-    console.log("test");
-});
+// console.log("Before setTimeout", async_hooks.executionAsyncId());
+
+
+// setTimeout(() => {
+//     console.log("Inside setTimeout", async_hooks.executionAsyncId());
+
+//     setTimeout(() => {
+//         console.log("Nested Inside setTimeout", async_hooks.executionAsyncId());
+//     }, 1000);
+// }, 1000);
+
+// console.log("After setTimeout", async_hooks.executionAsyncId());
+
+// setTimeout(() => {
+//     console.log("test");
+// });
 
 
 
