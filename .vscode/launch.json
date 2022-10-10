@@ -12,7 +12,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/can-zone-jsdom/build.js"
+            "program": "${workspaceFolder}/can-zone-jsdom-build.js"
         }
     ]
 }

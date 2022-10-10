@@ -1,3 +1,9 @@
+const globals = require("can-globals");
+
+const oldisNode = globals.getKeyValue('isNode');
+// hack to trick `can-route` to think this is a browser
+globals.setKeyValue('isNode', false);
+
 const type = require("can-type");
 const StacheElement = require("can-stache-element");
 // const {StacheElement} = require("can");
@@ -126,9 +132,8 @@ class MyCounter extends StacheElement {
 customElements.define("my-counter", MyCounter);
 
 class MyApp extends StacheElement {
-    //   <my-stache-element></my-stache-element><br>
-//   <my-value-from-input></my-value-from-input><br>
-    // <my-routing-app></my-routing-app><br>
+    // <my-stache-element></my-stache-element><br>
+    // <my-value-from-input></my-value-from-input><br>  
     static view = `
   <h1>Hello {{ this.name }}!</h1>
   <my-value-to-input></my-value-to-input><br>
@@ -162,3 +167,6 @@ customElements.define("my-app", MyApp);
 
 console.log('href', window.location.href);
 console.log('hash', window.location.hash);
+
+// restore `isNode` for globals
+globals.setKeyValue('isNode', oldisNode);
