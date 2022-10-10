@@ -7,6 +7,8 @@ const { fd } = process.stdout;
  * running async logic.
  * 
  * Uses [async_hook](https://nodejs.org/api/async_hooks.html#class-asynchook) internally
+ * 
+ * @deprecated use `process.once("beforeExit", (code) => { ... }` instead
  */
 module.exports = function(cb) {
     // Used to track pending asyncIds

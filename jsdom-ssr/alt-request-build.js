@@ -1,15 +1,15 @@
 const steal = require("steal");
-const runAtIdle = require("./run-at-idle");
 const setupWindow = require("./setup-window");
 const { writeFile } = require('fs-extra');
-
-// Prevent program from closing unexpectly
-// call `process.exit();` to end program when needed
-process.stdin.resume();
 
 // Get url from args
 const args = process.argv.slice(2);
 const url = args[0] || 'http://127.0.0.1:5501';
+
+process.once("beforeExit", (code) => {
+    // TODO: should we consider code? code === 0?
+    wrapUp();
+});
 
 // Setup jsdom
 const body = '{{ body }}';
@@ -20,9 +20,6 @@ const html = `<!doctype html>
 
 setupWindow(html.replace(body, ''), url);
 // Setup jsdom END
-
-// Setup creating dist once all async code is finished
-runAtIdle(wrapUp);
 
 populateHtml();
 
@@ -54,8 +51,6 @@ async function populateHtml() {
 async function wrapUp() {
     // Write scrapped dom to dist
     await writeFile(`dist/${getFilename(url)}.html`, html.replace(body, document.body.innerHTML));
-
-    process.exit();
 }
 
 /**
