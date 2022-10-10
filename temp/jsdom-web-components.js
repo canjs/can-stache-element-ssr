@@ -44,9 +44,9 @@ const doc2 = dom2.window.document;
 //     }
 // }
 
-// win2.customElements.define("my-element", MyElement);
+win2.customElements.define("my-element", MyElement);
 
-// doc2.body.append(doc.createElement("my-element"));
-doc2.body.innerHTML = '<my-element></my-element>';
+doc2.body.append(doc2.createElement("my-element"));
+// doc2.body.innerHTML = '<my-element></my-element>';
 
 console.log(doc2.body.innerHTML);

@@ -2,6 +2,7 @@ const globals = require("can-globals");
 
 const oldisNode = globals.getKeyValue('isNode');
 // hack to trick `can-route` to think this is a browser
+// This is required for routing to work (without this, it will always 404)
 globals.setKeyValue('isNode', false);
 
 const type = require("can-type");
@@ -118,7 +119,11 @@ class MyCounter extends StacheElement {
     static props = {
         count: 0,
         // TODO: example for using `for` isn't working as expected
-        items: [{ name: "some-item" }, { name: "some-next-item" }],
+        items: {
+            get default () {
+                return [{ name: "some-item" }, { name: "some-next-item" }];
+            }
+        },
     };
 
     increment() {

@@ -3,10 +3,8 @@ const path = require('path');
 
 const baseUrl = "http://127.0.0.1:5501/index.html";
 
-const altRequestBuild = path.join(__dirname, 'alt-request-build.js');
-
 module.exports = async function(url = baseUrl) {
-    return spawn("node", [altRequestBuild, url]);
+    return spawn("node", [path.join(__dirname, 'scrape.js'), url]);
 }
 
 /**

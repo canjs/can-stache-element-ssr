@@ -2,12 +2,10 @@
   "name": "can-stache-element-ssr",
   "version": "1.0.0",
   "description": "",
-  "main": "can-zone-jsdom/main.js",
+  "main": "main.js",
   "scripts": {
-    "build": "node can-zone-jsdom-build.js",
-    "build:alt": "node jsdom-ssr/ssr.js",
-    "build:alt:debug": "node --inspect-brk jsdom-ssr/ssr.js",
-    "build:debug": "node --inspect-brk can-zone-jsdom-build.js"
+    "build": "node jsdom-ssr/ssr.js",
+    "build:debug": "node --inspect-brk jsdom-ssr/ssr.js"
   },
   "steal": {
     "babelOptions": {
