@@ -107,6 +107,8 @@ List of tasks in order of most important to least important
 5. Provide this as cache from server to client
     1.  Store all api requests -> responses
     2.  Cached xhr assets for post initial page > cached s3 assests
+    -   `XHR_CACHE` originally in [can-zone](https://github.com/canjs/can-zone/blob/master/lib/zones/xhr.js)
+and [done-ssr](https://github.com/donejs/done-ssr/blob/master/zones/requests/xhr-cache.js)
 6. Progressive loading
 
 7. Application build push state
