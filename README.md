@@ -94,29 +94,26 @@ $ npm run build:debug
 
 List of tasks in order of most important to least important
 
-1. Figure out dist structure, ask everyone on how to go about query params
-
-2. escaping characters, etc
-
+1. Reattachment
+    -   Improve zones to handle web components on the frontend (!)
+    -   ConnectedCallback() <-- sync vs async > if it is async, then we have to make sure their connected hooks (...)
+2. Figure out dist structure, ask everyone on how to go about query params
+    -   Escaping characters, etc
 3. NodeJs Worker threads
+    -   improvement in performance instead of spawning processes
+4. Build a more robust application
+    -   Routing examples
+    -   Complex network request use fetch
+5. Provide this as cache from server to client
+    1.  Store all api requests -> responses
+    2.  Cached xhr assets for post initial page > cached s3 assests
+6. Progressive loading
 
-4. routing examples
+7. Application build push state
 
-5. reattachment
+8. Launch built versions of the files
 
-6. complex network request use fetch
-    1. store all api requests -> responses
+9. Production stuff for stealjs, etc
 
-    2.  provide this as cache from server to client
-
-    3.  TODO: Justin provide info CanJS
-
-7. progressive loading
-
-8. application build push state
-
-9. launch built versions of the files
-
-10. production stuff for stealjs, etc
-
-11. can-simple-dom
+10. can-simple-dom (optional)
+    -   Replace JSDOM
