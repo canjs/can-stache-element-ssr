@@ -32,3 +32,31 @@ if (isMainThread) {
         console.log(`EXIT: ${random}`);
     });
 }
+
+
+// for (const route of routes) {
+//     const worker = new Worker(altRequestBuild, {
+//         argv: [route]
+//     });
+//     worker.once("exit", () => {
+//         console.log("worker exit", route);
+//     });
+//     // Listen for messages from the worker and print them.
+//     // worker.on('message', (msg) => {
+//     //     console.log(msg);
+//     //     if (i === routes.length) {
+//     //         process.exit();
+//     //     }
+//     // });
+// }
+
+// if (isMainThread) {
+    
+// } else {
+//     i++;
+//     console.log("not parent thread", i);
+//     // This code is executed in the worker and not in the main thread.
+    
+//     // Send a message to the main thread.
+//     parentPort.postMessage('Hello world!');
+// }

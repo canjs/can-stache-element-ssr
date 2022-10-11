@@ -4,8 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "build": "node jsdom-ssr/ssr.js",
-    "build:debug": "node --inspect-brk jsdom-ssr/ssr.js"
+    "build": "node jsdom-ssr/index.js",
+    "build:debug": "node --inspect-brk jsdom-ssr/index.js"
   },
   "steal": {
     "babelOptions": {

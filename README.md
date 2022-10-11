@@ -1,8 +1,15 @@
 # can-stache-element-ssr
 
-Depends on `can-zone-jsdom` that uses `jsdom@^19.0.0` which is the latest version of jsdom that supports `node@^12`.
+Depends on `jsdom@^19.0.0` which is the latest version of jsdom that supports `node@^12`.
 
-Also have a custom ssr strategy using `jsdom` and `async_hooks`.
+```
+/dist - generated static files
+/jsdom-ssr - ssr logic
+/patches - files that are used to override files in node_modules
+/temp - random js that showcases ideas for implementions
+/index.html - serve to view application (not used for ssr)
+/main.js - client side code that generates CanJS 6 components
+```
 
 ### Environment
 
@@ -10,8 +17,6 @@ Also have a custom ssr strategy using `jsdom` and `async_hooks`.
 $ node -v // v12.22.11
 $ npm -v // 6.14.16
 ```
-
-These are the specific version required for `can-zone-jsdom` to function properly with `jsdom` to support custom elements.
 
 #### Installing dependencies:
 
@@ -22,12 +27,6 @@ $ npm install
 > TODO: Clean up patches and create issues / PRs as needed
 
 ~~For every file in `patches`, replace dependency in `node_modules`, instructions are at the top of each file~~ (when trying to use `npm run build`, there's no need for these patches now)
-
-### Client
-
-`index.html` <-- host for actual application
-
-`main.js` <-- Defining custom / CanJS elements
 
 ### Build
 
@@ -93,4 +92,31 @@ $ npm run build:debug
 
 ### Roadmap
 
-TODO
+List of tasks in order of most important to least important
+
+1. Figure out dist structure, ask everyone on how to go about query params
+
+2. escaping characters, etc
+
+3. NodeJs Worker threads
+
+4. routing examples
+
+5. reattachment
+
+6. complex network request use fetch
+    1. store all api requests -> responses
+
+    2.  provide this as cache from server to client
+
+    3.  TODO: Justin provide info CanJS
+
+7. progressive loading
+
+8. application build push state
+
+9. launch built versions of the files
+
+10. production stuff for stealjs, etc
+
+11. can-simple-dom
