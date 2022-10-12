@@ -26,7 +26,7 @@
     "can-zone-jsdom": "git+ssh://git@github.com/canjs/can-zone-jsdom#jsdom-19-update",
     "done-ssr": "^3.3.1",
     "fs-extra": "^10.1.0",
-    "jsdom": "^19.0.0",
+    "jsdom": "^20.0.1",
     "steal": "^2.3.0"
   },
   "repository": {
@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/canjs/can-stache-element-ssr#readme",
   "engines": {
-    "node": ">=12",
-    "npm": ">=6.0.0 <7"
+    "node": ">=18",
+    "npm": ">=8.0.0 <9"
   }
 }

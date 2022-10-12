@@ -2,12 +2,15 @@ const url = require("url");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
+// source: node_modules/can-zone-jsdom/lib/dom.js
+
 /**
  * A lot of logic stolen from `node_modules/can-zone-jsdom/lib/dom.js`
  */
 module.exports = function (html, requestUrl) {
     const dom = new JSDOM(html);
 
+    // Trick to get past overriding readonly location property
     delete dom.window.location;
     dom.window.location = url.parse(requestUrl, true);
 

@@ -7,9 +7,9 @@ globals.setKeyValue('isNode', false);
 
 const type = require("can-type");
 const StacheElement = require("can-stache-element");
-const view = require("./app.stache");
 const route = require("can-route");
 require("can-stache-route-helpers");
+const view = require("./app.stache");
 
 class MyRoutingApp extends StacheElement {
     static view = `

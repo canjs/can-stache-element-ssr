@@ -1,6 +1,6 @@
 # can-stache-element-ssr
 
-Depends on `jsdom@^19.0.0` which is the latest version of jsdom that supports `node@^12`.
+ssr solution for CanJS 6 custom elements
 
 ```
 /dist - generated static files
@@ -14,8 +14,8 @@ Depends on `jsdom@^19.0.0` which is the latest version of jsdom that supports `n
 ### Environment
 
 ```bash
-$ node -v // v12.22.11
-$ npm -v // 6.14.16
+$ node -v # v18.10.0
+$ npm -v # 8.19.2
 ```
 
 #### Installing dependencies:
@@ -54,8 +54,9 @@ Open chrome with url: `chrome://inspect/` --> `Open dedicated DevTools for Node`
 $ npm run build:debug
 ```
 ### Challenges
+1. `can-zone-jsdom` currently uses `JSDOM@^11` and custom elements aren't supported until `JSDOM@^16`. And because `can-zone-jsdom` gets warnings for `node@^14`, the latest supported version of `JSDOM` we can use with `can-zone-jsdom` is `JSDOM@^19`.
 
-1. `jsdom` doesn't not support web components being defined in multiple documents:
+2. `jsdom` doesn't not support web components being defined in multiple documents:
     ```javascript
     const { window } = new JSDOM(`<!DOCTYPE html>`);
     const document = window.document;
@@ -76,13 +77,17 @@ $ npm run build:debug
     // ! Error: Uncaught [NotSupportedError: Unexpected element owner document.]
     ```
 
-2. The above issue makes using `can-zone-jsdom` problematic as well since the same class must be reused, but each page is rendered using a different `JSDOM` instance.
+3. The above issue makes using `can-zone-jsdom` problematic as well since the same class must be reused, but each page is rendered using a different `JSDOM` instance.
 
 ### Technical Decisions
 
-1. We will have to reinitialize CanJS application and use a new `JSDOM` instance for each page. See challenges above (1 and 2)
+1. `can-zone-jsdom` isn't currently being used for two reasons:
+    1. `Challenges #3` (listed above)
+    2. We want to move away from using zones on the server side for performance (solution is listed below at `Technical Decisions 3`)
 
-2. To avoid having to use zones, we will initialize CanJS application and render each page and rely on:
+2. We will have to reinitialize CanJS application and use a new `JSDOM` instance for each page. See challenges above `Challenges #2 and #3` (listed above)
+
+3. To avoid having to use zones, we will initialize CanJS application and render each page and rely on:
     ```javascript
     process.once("beforeExit", (code) => {
         // TODO: scape document
