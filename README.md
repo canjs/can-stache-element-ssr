@@ -97,6 +97,9 @@ List of tasks in order of most important to least important
 1. Reattachment
     -   Improve zones to handle web components on the frontend (!)
     -   ConnectedCallback() <-- sync vs async > if it is async, then we have to make sure their connected hooks (...)
+    -   Handle updating / setting document title like `done-autorender` [template.txt](https://github.com/donejs/autorender/blob/master/src/template.txt)
+        -   [movetoDocument](https://github.com/donejs/autorender/blob/master/src/template.txt#L226)
+        -   [renderInZone](https://github.com/donejs/autorender/blob/master/src/template.txt#L298)
 2. Figure out dist structure, ask everyone on how to go about query params
     -   Escaping characters, etc
 3. NodeJs Worker threads
