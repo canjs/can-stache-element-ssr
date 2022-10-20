@@ -20,7 +20,7 @@
   "dependencies": {
     "can": "^6.6.2",
     "can-route": "^5.0.2",
-    "can-stache-element": "^1.2.0",
+    "can-stache-element": "git+ssh://git@github.com/canjs/can-stache-element#allow-static-inert",
     "can-stache-route-helpers": "^2.0.0",
     "can-type": "^1.1.6",
     "can-zone-jsdom": "git+ssh://git@github.com/canjs/can-zone-jsdom#jsdom-19-update",
