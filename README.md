@@ -120,31 +120,31 @@ List of tasks in order of most important to least important
     -   Handle updating / setting document title like `done-autorender` [template.txt](https://github.com/donejs/autorender/blob/master/src/template.txt)
         -   [movetoDocument](https://github.com/donejs/autorender/blob/master/src/template.txt#L226) -  this is what actually moves the CanJS app
         -   [renderInZone](https://github.com/donejs/autorender/blob/master/src/template.txt#L298)
+        
 2. Figure out dist structure, ask everyone on how to go about query params
     -   Escaping characters, etc
+
 3. NodeJs Worker threads
     -   improvement in performance instead of spawning processes
+
 4. Build a more robust application
     -   Routing examples
     -   Complex network request use fetch
+
 5. Provide this as cache from server to client
     1.  Store all api requests -> responses
     2.  Cached xhr assets for post initial page > cached s3 assests
     -   `XHR_CACHE` originally in [can-zone](https://github.com/canjs/can-zone/blob/master/lib/zones/xhr.js)
 and [done-ssr](https://github.com/donejs/done-ssr/blob/master/zones/requests/xhr-cache.js)
-6. 
 
-    // TODO: sub task - 
-    // Toggle between SPA vs SRA on the server
-    /**
-    * 
-    * steal.start();// Get list
-    * 
-    * steal.modules// <-- get "can-route" <-- get routing rules
-    * 
-    */
+6. Provide SPA <> SRA navigation for production / development
+    - JS+CSS Dev + SPA
+    - JS+CSS Prod + SRA
+    - [JS+CSS Dev, JS+CSS Prod]
+    - [SPA, SRA]
 
 7. Progressive loading
+    - Loading the application in split up chunks as needed
 
 8. Application build push state
 
