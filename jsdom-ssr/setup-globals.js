@@ -12,10 +12,12 @@ module.exports = async function (html, requestUrl) {
     url: requestUrl,
   })
 
+  // test~
   if (!dom.window.location.protocol) {
     dom.window.location.protocol = 'http:'
   }
 
+  // TODO: consider overriding headers for accept language
   // if(request.headers && request.headers["accept-language"]) {
   //     dom.navigator.language = request.headers["accept-language"];
   // }
