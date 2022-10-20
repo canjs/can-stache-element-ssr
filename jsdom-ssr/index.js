@@ -1,5 +1,5 @@
 const spawnBuildProcess = require('./spawn-build-process');
-const { ensureDirSync, emptyDirSync, readJsonSync } = require("fs-extra");
+const { ensureDirSync, emptyDirSync, readJsonSync } = require('fs-extra');
 // const { Worker, isMainThread, parentPort } = require('worker_threads');
 const path = require('path');
 
@@ -8,16 +8,16 @@ const path = require('path');
 main();
 
 async function main() {
-    // Create dist directory
-    await ensureDirSync('dist');
-    // Clear it
-    await emptyDirSync('dist');
+  // Create dist directory
+  await ensureDirSync('dist');
+  // Clear it
+  await emptyDirSync('dist');
 
-    const ssgSettings = readJsonSync('ssg.json');
+  const ssgSettings = readJsonSync('ssg.json');
 
-    const routes = ssgSettings.routes;
+  const routes = ssgSettings.routes;
 
-    for (const route of routes) {
-        spawnBuildProcess(route);
-    }
+  for (const route of routes) {
+    spawnBuildProcess(route);
+  }
 }
