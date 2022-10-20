@@ -1,11 +1,12 @@
 
 const steal = require("steal");
 const setupGlobals = require("./setup-globals");
-const { outputFile, existsSync, readFileSync, mkdirSync } = require("fs-extra");
+const { outputFile, existsSync, readFileSync } = require("fs-extra");
+
 
 // Get url from args
 const args = process.argv.slice(2);
-const url = args[0] || "http://127.0.0.1:5501";
+const url = args[0] || "http://127.0.0.1:8080";
 
 // Throw if build takes too long
 const timeout = setTimeout(() => {
@@ -56,11 +57,12 @@ setupGlobals(rootCode, url);
 async function populateDocument() {
   // Run client-side code
   await steal.startup(); // loads canjs app 
-  // disable jsdom script tags?
-
+  // TODO: disable jsdom script tags?
+  
   console.log("steal - done");
 }
-populateDocument();
+
+populateDocument()
 
 const injectToo = `
   <script>
@@ -86,7 +88,6 @@ const injectToo = `
  */
 async function scrapeDocument() {
   // Write scrapped dom to dist
-  // window.document.documentElement.outerHTML;
   let html = window.document.documentElement.outerHTML
 
   // re-inject steal before closing of head tag
@@ -102,14 +103,16 @@ async function scrapeDocument() {
 /**
  * Create filename based on url
  *
- * TODO: consider query params
+ * TODO: consider query params (or confirm that they aren't a part of requirements)
  */
 function getFilename(url) {
   const path = url
     .replace(/https?:\/\//, "")
     .replace(/[^a-zA-Z0-9 /]/g, "_")
     .replace(/^[^/]*?(\/|$)/, "")
-  // const [, ...rest] = url.replace("http://", "").replace("https://", "").split("/");
 
   return path || "index"
+  
+  // TODO: Create nested paths while supporting loading steal.js from node_modules
+  // return `${path}/index`.replace(/^\//, '')
 }

@@ -1,7 +1,7 @@
 const { spawn: __node_spawn__ } = require('child_process');
 const path = require('path');
 
-const baseUrl = "http://127.0.0.1:5501/index.html";
+const baseUrl = "http://127.0.0.1:8080/index.html";
 
 module.exports = async function(url = baseUrl) {
     return spawn("node", [path.join(__dirname, 'scrape.js'), url]);

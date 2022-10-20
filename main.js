@@ -5,8 +5,8 @@ import route from "can-route"
 import "can-stache-route-helpers"
 import view from "./app.stache"
 
-// import RoutePushstate from "can-route-pushstate"
-// route.urlData = new RoutePushstate()
+import RoutePushstate from "can-route-pushstate"
+route.urlData = new RoutePushstate()
 
 const oldisNode = globals.getKeyValue('isNode')
 // hack to trick `can-route` to think this is a browser
@@ -184,7 +184,6 @@ class MyApp extends StacheElement {
 customElements.define("canjs-app", MyApp)
 
 console.log('href', window.location.href)
-console.log('hash', window.location.hash)
 
 // restore `isNode` for globals
 globals.setKeyValue('isNode', oldisNode)

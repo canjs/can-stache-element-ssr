@@ -1,8 +1,3 @@
-console.log("Hello world");
-// const steal = require("steal");//.clone();
-
-// debugger;
-
 const StacheElement = require("can-stache-element");
 const view = require("../app.stache");
 
@@ -11,7 +6,7 @@ class MyStacheElement extends StacheElement {
 
   static props = {
     message: "Stache is cool"
-  };
+  }
 }
 
 customElements.define("my-stache-element", MyStacheElement);

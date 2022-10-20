@@ -28,6 +28,12 @@ $ npm install
 
 ~~For every file in `patches`, replace dependency in `node_modules`, instructions are at the top of each file~~ (when trying to use `npm run build`, there's no need for these patches now)
 
+### Serve
+
+```bash
+$ npm run serve
+```
+
 ### Build
 
 ```bash
@@ -53,6 +59,15 @@ Open chrome with url: `chrome://inspect/` --> `Open dedicated DevTools for Node`
 ```bash
 $ npm run build:debug
 ```
+
+#### Debugging spawn processes
+
+There will be times when you'll want to debug `scrape.js` which is executed through a spawn process. Debugging can be difficult if you use the existing debug npm scripts / vscode debugger. To get around this, you can just execute `scrape.js` directly:
+
+```bash
+$ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
+```
+
 ### Challenges
 1. `can-zone-jsdom` currently uses `JSDOM@^11` and custom elements aren't supported until `JSDOM@^16`. And because `can-zone-jsdom` gets warnings for `node@^14`, the latest supported version of `JSDOM` we can use with `can-zone-jsdom` is `JSDOM@^19`.
 
@@ -117,13 +132,25 @@ List of tasks in order of most important to least important
     2.  Cached xhr assets for post initial page > cached s3 assests
     -   `XHR_CACHE` originally in [can-zone](https://github.com/canjs/can-zone/blob/master/lib/zones/xhr.js)
 and [done-ssr](https://github.com/donejs/done-ssr/blob/master/zones/requests/xhr-cache.js)
-6. Progressive loading
+6. 
 
-7. Application build push state
+    // TODO: sub task - 
+    // Toggle between SPA vs SRA on the server
+    /**
+    * 
+    * steal.start();// Get list
+    * 
+    * steal.modules// <-- get "can-route" <-- get routing rules
+    * 
+    */
 
-8. Launch built versions of the files
+7. Progressive loading
 
-9. Production stuff for stealjs, etc
+8. Application build push state
 
-10. can-simple-dom (optional)
+9. Launch built versions of the files
+
+10. Production stuff for stealjs, etc
+
+11. can-simple-dom (optional)
     -   Replace JSDOM

@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "build": "node jsdom-ssr/index.js",
-    "build:debug": "node --inspect-brk jsdom-ssr/index.js"
+    "build:debug": "node --inspect-brk jsdom-ssr/index.js",
+    "serve": "http-server --port 8080 dist"
   },
   "steal": {
     "babelOptions": {

@@ -6,13 +6,13 @@
     "configurations": [
         {
             "type": "node",
-            "runtimeVersion": "12.22.12",
+            "runtimeVersion": "18.11.0",
             "request": "launch",
             "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/can-zone-jsdom-build.js"
+            "program": "${workspaceFolder}/jsdom-ssr/index.js"
         }
     ]
 }
