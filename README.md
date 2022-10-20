@@ -75,23 +75,23 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
 2. `jsdom` doesn't not support web components being defined in multiple documents:
 
    ```javascript
-   const { window } = new JSDOM(`<!DOCTYPE html>`);
-   const document = window.document;
+   const { window } = new JSDOM(`<!DOCTYPE html>`)
+   const document = window.document
 
    class MyElement extends window.HTMLElement {
      /** ... */
    }
 
-   window.customElements.define('my-element', MyElement);
-   document.body.append(doc.createElement('my-element')); // This is okay
+   window.customElements.define('my-element', MyElement)
+   document.body.append(doc.createElement('my-element')) // This is okay
 
    // Attempting to use `MyElement` again for a different window / document
 
-   const { window: window2 } = new JSDOM(`<!DOCTYPE html>`);
-   const document2 = window2.document;
+   const { window: window2 } = new JSDOM(`<!DOCTYPE html>`)
+   const document2 = window2.document
 
-   window2.customElements.define('my-element', MyElement);
-   document2.body.append(doc2.createElement('my-element')); // This throws
+   window2.customElements.define('my-element', MyElement)
+   document2.body.append(doc2.createElement('my-element')) // This throws
 
    // ! Error: Uncaught [NotSupportedError: Unexpected element owner document.]
    ```
@@ -111,7 +111,7 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
    ```javascript
    process.once('beforeExit', (code) => {
      // TODO: scape document
-   });
+   })
    ```
    to know when application is stable and can be scraped
 

@@ -1,33 +1,33 @@
-const steal = require('steal');
+const steal = require('steal')
 
-const url = require('url');
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+const url = require('url')
+const jsdom = require('jsdom')
+const { JSDOM } = jsdom
 
 const html = `<!doctype html>
 <title>CanJS and StealJS</title>
-<body></body>`;
+<body></body>`
 
-const dom = new JSDOM(html);
+const dom = new JSDOM(html)
 
-delete dom.window.location;
-dom.window.location = url.parse('http://localhost:4200', true);
+delete dom.window.location
+dom.window.location = url.parse('http://localhost:4200', true)
 
 if (!dom.window.location.protocol) {
-  dom.window.location.protocol = 'http:';
+  dom.window.location.protocol = 'http:'
 }
 
 // if(request.headers && request.headers["accept-language"]) {
 //     dom.navigator.language = request.headers["accept-language"];
 // }
 
-global.window = dom.window;
-global.HTMLElement = dom.window.HTMLElement;
-global.NodeFilter = dom.window.NodeFilter;
-global.customElements = dom.window.customElements;
-global.document = dom.window.document;
-global.location = dom.window.location;
-global.Node = window.Node;
+global.window = dom.window
+global.HTMLElement = dom.window.HTMLElement
+global.NodeFilter = dom.window.NodeFilter
+global.customElements = dom.window.customElements
+global.document = dom.window.document
+global.location = dom.window.location
+global.Node = window.Node
 
 steal
   .startup({
@@ -39,9 +39,9 @@ steal
   })
   .then(
     function () {
-      console.log('done');
+      console.log('done')
     },
     function (e) {
-      console.log(e);
+      console.log(e)
     },
-  );
+  )
