@@ -12,7 +12,6 @@ module.exports = async function (html, requestUrl) {
     url: requestUrl,
   })
 
-  // test~
   if (!dom.window.location.protocol) {
     dom.window.location.protocol = 'http:'
   }
