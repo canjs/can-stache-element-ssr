@@ -3,11 +3,11 @@
  *
  * Search for `// Patch` for code changes
  */
-const JSDOM = require('jsdom').JSDOM
-const once = require('once')
-const url = require('url')
-const zoneRegister = require('can-zone/register')
-const raf = require('raf')
+const JSDOM = require("jsdom").JSDOM
+const once = require("once")
+const url = require("url")
+const zoneRegister = require("can-zone/register")
+const raf = require("raf")
 
 module.exports = function (request, pageHTML) {
   return function (data) {
@@ -17,11 +17,11 @@ module.exports = function (request, pageHTML) {
     // Patch END
     window.location = url.parse(request.url, true)
     if (!window.location.protocol) {
-      window.location.protocol = 'http:'
+      window.location.protocol = "http:"
     }
 
-    if (request.headers && request.headers['accept-language']) {
-      window.navigator.language = request.headers['accept-language']
+    if (request.headers && request.headers["accept-language"]) {
+      window.navigator.language = request.headers["accept-language"]
     }
 
     window.requestAnimationFrame = raf

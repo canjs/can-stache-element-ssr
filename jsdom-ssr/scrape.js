@@ -1,14 +1,14 @@
-const steal = require('steal')
-const setupGlobals = require('./setup-globals')
-const { outputFile, existsSync, readFileSync } = require('fs-extra')
+const steal = require("steal")
+const setupGlobals = require("./setup-globals")
+const { outputFile, existsSync, readFileSync } = require("fs-extra")
 
 // Get url from args
 const args = process.argv.slice(2)
-const url = args[0] || 'http://127.0.0.1:8080'
+const url = args[0] || "http://127.0.0.1:8080"
 
 // Throw if build takes too long
 const timeout = setTimeout(() => {
-  throw new Error('timed out ):')
+  throw new Error("timed out ):")
 }, 5000).unref()
 
 /**
@@ -16,7 +16,7 @@ const timeout = setTimeout(() => {
  *
  * This is when it is safe to scrape document
  */
-process.once('beforeExit', (code) => {
+process.once("beforeExit", (code) => {
   clearTimeout(timeout)
 
   // TODO: should we consider code? code === 0?
@@ -24,25 +24,25 @@ process.once('beforeExit', (code) => {
 })
 
 // Setup JSDOM and global.window, global.document, global.location
-let captureSteal = ''
-let rootCode = ''
+let captureSteal = ""
+let rootCode = ""
 
-if (existsSync('index.html')) {
-  rootCode = readFileSync('index.html', { encoding: 'utf8', flag: 'r' }) // project"s index.html
+if (existsSync("index.html")) {
+  rootCode = readFileSync("index.html", { encoding: "utf8", flag: "r" }) // project"s index.html
     .replace(/(<script[^>]*steal\/steal.*?>.*?<\/script>)/i, (_, stealTag) => {
       captureSteal = stealTag
-      return '' // remove steal script tag (re-injected before exit)
+      return "" // remove steal script tag (re-injected before exit)
     })
 
   if (!/^<!doctype/i.test(rootCode)) {
-    rootCode = '<!doctype html>' + rootCode
+    rootCode = "<!doctype html>" + rootCode
   }
 
-  if (rootCode.indexOf('<canjs-app') === -1) {
-    if (rootCode.indexOf('</body') !== -1) {
-      rootCode = rootCode.replace('</body', '<canjs-app></canjs-app></body')
+  if (rootCode.indexOf("<canjs-app") === -1) {
+    if (rootCode.indexOf("</body") !== -1) {
+      rootCode = rootCode.replace("</body", "<canjs-app></canjs-app></body")
     } else {
-      rootCode += '<canjs-app></canjs-app>'
+      rootCode += "<canjs-app></canjs-app>"
     }
   }
 } else {
@@ -57,29 +57,10 @@ async function populateDocument() {
   await steal.startup() // loads canjs app
   // TODO: disable jsdom script tags?
 
-  console.log('steal - done')
+  console.log("steal - done")
 }
 
 populateDocument()
-
-const injectToo = `
-  <script>
-    setTimeout(() => {
-      delete globalThis.canStacheElementInertPrerendered;
-      const staticapp = document.querySelector("canjs-app")
-      const temp = document.createElement("div")
-      temp.innerHTML = "<canjs-app></canjs-app>" // TODO: scrape static attrs from page too
-      const liveapp = temp.querySelector("canjs-app")
-      liveapp.style.display = "none"
-      staticapp.parentNode.insertBefore(liveapp, staticapp)
-      setTimeout(() => {
-        staticapp.remove()
-        liveapp.style.display = "";
-        console.log("it's alive!")
-      }, 3000)
-    }, 3000)
-  </script>
-`
 
 /**
  * Once async tasks are completed, scrap document into dist
@@ -89,11 +70,9 @@ async function scrapeDocument() {
   let html = window.document.documentElement.outerHTML
 
   // re-inject steal before closing of head tag
-  // html = html.replace(/(<head[^>]*>)/, "$1" + inject)
-  html = html.replace(/(<head[^>]*>)/, '$1<script>globalThis.canStacheElementInertPrerendered = true;</script>')
-  html = html.replace('</head>', captureSteal + '</head>')
-  html = html.replace(/(<canjs-app[^>]*)>/, '$1 data-canjs-static-render>')
-  html = html.replace('</body>', injectToo + '</body>')
+  html = html.replace(/(<head[^>]*>)/, "$1<script>globalThis.canStacheElementInertPrerendered = true;</script>")
+  html = html.replace("</head>", captureSteal + "</head>")
+  html = html.replace(/(<canjs-app[^>]*)>/, "$1 data-canjs-static-render>")
 
   await outputFile(`dist/${getFilename(url)}.html`, html)
 }
@@ -105,12 +84,12 @@ async function scrapeDocument() {
  */
 function getFilename(url) {
   const path = url
-    .replace(/https?:\/\//, '')
-    .replace(/[^a-zA-Z0-9 /]/g, '_')
-    .replace(/^[^/]*?(\/|$)/, '')
+    .replace(/https?:\/\//, "")
+    .replace(/[^a-zA-Z0-9 /]/g, "_")
+    .replace(/^[^/]*?(\/|$)/, "")
 
-  return path || 'index'
+  // return path || "index"
 
   // TODO: Create nested paths while supporting loading steal.js from node_modules
-  // return `${path}/index`.replace(/^\//, '')
+  return `${path}/index`.replace(/^\//, "")
 }

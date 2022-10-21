@@ -1,5 +1,5 @@
-const async_hooks = require('async_hooks')
-const fs = require('fs')
+const async_hooks = require("async_hooks")
+const fs = require("fs")
 const { fd } = process.stdout
 
 /**

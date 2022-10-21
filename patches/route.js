@@ -3,7 +3,7 @@
  *
  * Search for `// Patch` for code changes
  */
-var canReflect = require('can-reflect')
+var canReflect = require("can-reflect")
 var noop = Function.prototype
 
 module.exports = function (response) {
@@ -11,14 +11,14 @@ module.exports = function (response) {
     var canRoute, routeData, oldRouteData, pathname
 
     function extractStatusCode() {
-      var statusCode = canReflect.getKeyValue(routeData, 'statusCode')
+      var statusCode = canReflect.getKeyValue(routeData, "statusCode")
 
       if (!statusCode) {
         var can = data.modules && data.modules.can
         if (can && can.route) {
           var currentRoute = can.route.rule(pathname)
           // fix: support root-url (i.e '/') in develop-mode
-          if (currentRoute || currentRoute === '') {
+          if (currentRoute || currentRoute === "") {
             statusCode = 200
           } else {
             // If there is no current route it is likely a 404
@@ -43,16 +43,16 @@ module.exports = function (response) {
           // Patch START
           routeData = canRoute && canRoute.data
           if (routeData) {
-            canReflect.onKeyValue(routeData, 'statusCode', noop)
+            canReflect.onKeyValue(routeData, "statusCode", noop)
           }
           // patch END
         }
       },
       afterRun: function () {
         try {
-          canRoute = require('can-route')
+          canRoute = require("can-route")
           routeData = canRoute.data
-          canReflect.onKeyValue(routeData, 'statusCode', noop)
+          canReflect.onKeyValue(routeData, "statusCode", noop)
         } catch (e) {}
       },
 
@@ -72,7 +72,7 @@ module.exports = function (response) {
       ended: function () {
         if (routeData) {
           data.statusCode = extractStatusCode()
-          canReflect.offKeyValue(routeData, 'statusCode', noop)
+          canReflect.offKeyValue(routeData, "statusCode", noop)
           response.statusCode = data.statusCode
         }
       },

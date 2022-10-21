@@ -1,3 +1,8 @@
 {
-  "routes": ["http://127.0.0.1:8080", "http://127.0.0.1:8080/tasks", "http://127.0.0.1:8080/this-page-does-not-exist"]
+  "routes": [
+    "http://127.0.0.1:5501",
+    "http://127.0.0.1:5501/tasks",
+    "http://127.0.0.1:5501/this-page-does-not-exist",
+    "http://127.0.0.1:5501/404"
+  ]
 }

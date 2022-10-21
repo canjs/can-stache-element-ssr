@@ -1,35 +1,35 @@
 const woop = once(function () {
   setTimeout(() => {
-    console.log('beforeExit -> setTimeout')
+    console.log("beforeExit -> setTimeout")
   }, 1000)
 })
 
-process.once('beforeExit', (code) => {
-  console.log('Process beforeExit event with code: ', code)
+process.once("beforeExit", (code) => {
+  console.log("Process beforeExit event with code: ", code)
 
   setTimeout(() => {
-    console.log('beforeExit -> setTimeout')
+    console.log("beforeExit -> setTimeout")
     setTimeout(() => {
-      console.log('beforeExit -> nested setTimeout')
+      console.log("beforeExit -> nested setTimeout")
     }, 1000)
   }, 1000)
 
   Promise.resolve().then(() => {
-    console.log('promises')
+    console.log("promises")
     setTimeout(() => {
-      console.log('beforeExit -> nested setTimeout')
+      console.log("beforeExit -> nested setTimeout")
     }, 1000)
   })
 })
 
-process.on('exit', (code) => {
-  console.log('Process exit event with code: ', code)
+process.on("exit", (code) => {
+  console.log("Process exit event with code: ", code)
 })
 
-console.log('This message is displayed first.')
+console.log("This message is displayed first.")
 
 setTimeout(() => {
-  console.log('setTimeout')
+  console.log("setTimeout")
 }, 1000)
 
 function once(fn, context) {

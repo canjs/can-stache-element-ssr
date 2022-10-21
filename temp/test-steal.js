@@ -1,7 +1,7 @@
-const steal = require('steal')
+const steal = require("steal")
 
-const url = require('url')
-const jsdom = require('jsdom')
+const url = require("url")
+const jsdom = require("jsdom")
 const { JSDOM } = jsdom
 
 const html = `<!doctype html>
@@ -11,10 +11,10 @@ const html = `<!doctype html>
 const dom = new JSDOM(html)
 
 delete dom.window.location
-dom.window.location = url.parse('http://localhost:4200', true)
+dom.window.location = url.parse("http://localhost:4200", true)
 
 if (!dom.window.location.protocol) {
-  dom.window.location.protocol = 'http:'
+  dom.window.location.protocol = "http:"
 }
 
 // if(request.headers && request.headers["accept-language"]) {
@@ -31,15 +31,15 @@ global.Node = window.Node
 
 steal
   .startup({
-    main: '~/temp/index',
+    main: "~/temp/index",
     babelOptions: {
-      plugins: ['transform-class-properties'],
+      plugins: ["transform-class-properties"],
     },
-    plugins: ['can'],
+    plugins: ["can"],
   })
   .then(
     function () {
-      console.log('done')
+      console.log("done")
     },
     function (e) {
       console.log(e)

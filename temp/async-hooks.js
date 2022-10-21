@@ -1,8 +1,8 @@
 /**
  * Experimenting with async_hooks
  */
-const async_hooks = require('async_hooks')
-const fs = require('fs')
+const async_hooks = require("async_hooks")
+const fs = require("fs")
 const { fd } = process.stdout
 
 function delay(t, v) {
@@ -60,11 +60,11 @@ ah.enable()
 function onIdle() {
   ah.disable()
   // fs.writeSync(fd, "~~~finished~~~");
-  console.log('~~~finished~~~')
+  console.log("~~~finished~~~")
 }
 
 setTimeout(() => {
-  console.log('did another thing')
+  console.log("did another thing")
 }, 400)
 
 // setInterval(() => {

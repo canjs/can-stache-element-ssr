@@ -1,10 +1,10 @@
-const { spawn: __node_spawn__ } = require('child_process')
-const path = require('path')
+const { spawn: __node_spawn__ } = require("child_process")
+const path = require("path")
 
-const baseUrl = 'http://127.0.0.1:8080/index.html'
+const baseUrl = "http://127.0.0.1:8080/index.html"
 
 module.exports = async function (url = baseUrl) {
-  return spawn('node', [path.join(__dirname, 'scrape.js'), url])
+  return spawn("node", [path.join(__dirname, "scrape.js"), url])
 }
 
 /**
@@ -13,7 +13,7 @@ module.exports = async function (url = baseUrl) {
 async function spawn(command, args, options = {}, spawnCallback) {
   return new Promise((resolve, reject) => {
     const spawnInstance = __node_spawn__(command, [...args], {
-      stdio: 'inherit',
+      stdio: "inherit",
       ...options,
     })
 
@@ -30,15 +30,15 @@ async function spawn(command, args, options = {}, spawnCallback) {
       error = _error
     }
 
-    spawnInstance.on('exit', (exitCode) => {
+    spawnInstance.on("exit", (exitCode) => {
       setCode(exitCode)
     })
 
-    spawnInstance.on('error', (spawnError) => {
+    spawnInstance.on("error", (spawnError) => {
       setError(spawnError)
     })
 
-    spawnInstance.on('close', (closeCode) => {
+    spawnInstance.on("close", (closeCode) => {
       setCode(closeCode)
 
       spawnInstance.stdin && spawnInstance.stdin.end()
@@ -48,7 +48,7 @@ async function spawn(command, args, options = {}, spawnCallback) {
       }
 
       if (code === 1) {
-        return reject('Unexpected spawn failed. Exit code 1')
+        return reject("Unexpected spawn failed. Exit code 1")
       }
 
       return resolve(code)

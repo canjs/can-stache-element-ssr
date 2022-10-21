@@ -28,12 +28,6 @@ $ npm install
 
 ~~For every file in `patches`, replace dependency in `node_modules`, instructions are at the top of each file~~ (when trying to use `npm run build`, there's no need for these patches now)
 
-### Serve
-
-```bash
-$ npm run serve
-```
-
 ### Build
 
 ```bash
@@ -41,6 +35,34 @@ $ npm run build
 ```
 
 generates `dist` <-- static html
+
+### Serve
+
+```bash
+$ npm run serve
+```
+
+Runs server.js in root and serves any file a request points at. If that file doesn't exist, it serves dist/404/index.html
+
+- http://localhost:8080/main.js -> serves the main.js file
+- http://localhost:8080/jane.ori -> serves dist/404/index.html with status 404
+
+If the request points at a directory, it will prepend "/dist" to the request path and serve the index.html in that folder. If the index.html file doesn't exist, it serves dist/404/index.html
+
+can-route data "page" is set to the first /slug/ or to "" if on the root
+
+- http://localhost:8080/ -> serves dist/index.html + page is ""
+- http://localhost:8080/tasks -> serves dist/tasks/index.html + page is "tasks"
+- http://localhost:8080/asdf -> serves dist/404/index.html (with status 404) + page is "asdf" (shows 404 page)
+
+If you prepend /dev to the request path, it serves root index.html file.
+
+main.js sets the can-route page data to the first /slug/ after /dev so the correct page loads in dev/spa mode.
+can-route then automatically uses pushstate to remove the "dev" sentenil value in the url quietly.
+
+- http://localhost:8080/dev/ -> serves /index.html + page is ""
+- http://localhost:8080/dev/tasks -> serves /index.html + page is "tasks"
+- http://localhost:8080/dev/asdf -> serves /index.html (with status 200) + page is "asdf" (shows 404 page)
 
 ### Debugging
 
@@ -82,16 +104,16 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
      /** ... */
    }
 
-   window.customElements.define('my-element', MyElement)
-   document.body.append(doc.createElement('my-element')) // This is okay
+   window.customElements.define("my-element", MyElement)
+   document.body.append(doc.createElement("my-element")) // This is okay
 
    // Attempting to use `MyElement` again for a different window / document
 
    const { window: window2 } = new JSDOM(`<!DOCTYPE html>`)
    const document2 = window2.document
 
-   window2.customElements.define('my-element', MyElement)
-   document2.body.append(doc2.createElement('my-element')) // This throws
+   window2.customElements.define("my-element", MyElement)
+   document2.body.append(doc2.createElement("my-element")) // This throws
 
    // ! Error: Uncaught [NotSupportedError: Unexpected element owner document.]
    ```
@@ -109,7 +131,7 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
 
 3. To avoid having to use zones, we will initialize CanJS application and render each page and rely on:
    ```javascript
-   process.once('beforeExit', (code) => {
+   process.once("beforeExit", (code) => {
      // TODO: scape document
    })
    ```

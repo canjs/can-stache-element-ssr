@@ -1,5 +1,5 @@
-const url = require('url')
-const jsdom = require('jsdom')
+const url = require("url")
+const jsdom = require("jsdom")
 const { JSDOM } = jsdom
 
 // source: node_modules/can-zone-jsdom/lib/dom.js
@@ -13,7 +13,7 @@ module.exports = async function (html, requestUrl) {
   })
 
   if (!dom.window.location.protocol) {
-    dom.window.location.protocol = 'http:'
+    dom.window.location.protocol = "http:"
   }
 
   // TODO: consider overriding headers for accept language

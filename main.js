@@ -1,17 +1,19 @@
-import globals from 'can-globals'
-import type from 'can-type'
-import StacheElement from 'can-stache-element'
-import route from 'can-route'
-import 'can-stache-route-helpers'
-import view from './app.stache'
+import globals from "can-globals"
+import type from "can-type"
+import StacheElement from "can-stache-element"
+import route from "can-route"
+import "can-stache-route-helpers"
+import view from "./app.stache"
+import Zone from "can-zone"
+import { ObservableObject } from "can"
 
-import RoutePushstate from 'can-route-pushstate'
+import RoutePushstate from "can-route-pushstate"
 route.urlData = new RoutePushstate()
 
-const oldisNode = globals.getKeyValue('isNode')
+const oldisNode = globals.getKeyValue("isNode")
 // hack to trick `can-route` to think this is a browser
 // This is required for routing to work (without this, it will always 404)
-globals.setKeyValue('isNode', false)
+globals.setKeyValue("isNode", false)
 
 class MyRoutingApp extends StacheElement {
   static view = `
@@ -26,8 +28,12 @@ class MyRoutingApp extends StacheElement {
   static props = {
     routeData: {
       get default() {
-        route.register('{page}', { page: 'home' })
-        route.register('tasks/{taskId}', { page: 'tasks' })
+        // set default page to the first slug, ignore "dev" sentinel
+        const page = window.location.pathname.replace(/\/?(?:dev\/)?([^/]*).*/, "$1")
+        route.data = new ObservableObject({ page })
+        console.log({ page })
+        route.register("{page}", { page: "home" })
+        route.register("tasks/{taskId}", { page: "tasks" })
         route.start()
         return route.data
       },
@@ -35,26 +41,26 @@ class MyRoutingApp extends StacheElement {
   }
 
   get componentToShow() {
-    console.log('componentToShow', this.routeData.page)
+    console.log("componentToShow", this.routeData.page)
 
     switch (this.routeData.page) {
-      case 'home':
-        const home = document.createElement('h2')
-        home.innerHTML = 'Home'
+      case "home":
+        const home = document.createElement("h2")
+        home.innerHTML = "Home"
         return home
-      case 'tasks':
-        const tasks = document.createElement('h2')
-        tasks.innerHTML = 'Tasks'
+      case "tasks":
+        const tasks = document.createElement("h2")
+        tasks.innerHTML = "Tasks"
         return tasks
       default:
-        const page404 = document.createElement('h2')
-        page404.innerHTML = 'Page Missing'
+        const page404 = document.createElement("h2")
+        page404.innerHTML = "Page Missing"
         return page404
     }
   }
 }
 
-customElements.define('my-routing-app', MyRoutingApp)
+customElements.define("my-routing-app", MyRoutingApp)
 
 // class ValueFromInput extends StacheElement {
 //     static view = `
@@ -92,17 +98,17 @@ class ValueToInput extends StacheElement {
   }
 }
 
-customElements.define('my-value-to-input', ValueToInput)
+customElements.define("my-value-to-input", ValueToInput)
 
 class MyStacheElement extends StacheElement {
   static view = view
 
   static props = {
-    message: 'Stache is cool',
+    message: "Stache is cool",
   }
 }
 
-customElements.define('my-stache-element', MyStacheElement)
+customElements.define("my-stache-element", MyStacheElement)
 
 // Extend Component to define a custom element
 class MyCounter extends StacheElement {
@@ -123,7 +129,7 @@ class MyCounter extends StacheElement {
     // TODO: example for using `for` isn't working as expected
     items: {
       get default() {
-        return [{ name: 'some-item' }, { name: 'some-next-item' }]
+        return [{ name: "some-item" }, { name: "some-next-item" }]
       },
     },
   }
@@ -133,7 +139,7 @@ class MyCounter extends StacheElement {
   }
 }
 
-customElements.define('my-counter', MyCounter)
+customElements.define("my-counter", MyCounter)
 
 class MyApp extends StacheElement {
   // <my-value-from-input></my-value-from-input><br>
@@ -145,7 +151,7 @@ class MyApp extends StacheElement {
   `
 
   static props = {
-    name: 'world',
+    name: "world",
   }
 
   /**
@@ -166,24 +172,46 @@ class MyApp extends StacheElement {
     if (this.INERT_PRERENDERED) {
       return
     }
-    console.log('constructing canjs-app')
-    this.style.color = 'lime'
-    setTimeout(() => (this.style.color = '#552255'), 1000)
+    console.log("constructing canjs-app")
+    this.style.color = "lime"
+    setTimeout(() => (this.style.color = "#552255"), 1000)
   }
 
   connected() {
     // non-standard lifecycle hooks won't run if this.INERT_PRERENDERED is true
-    this.style.backgroundColor = 'white'
-    setTimeout(() => (this.style.backgroundColor = 'violet'), 1000)
-    console.log('MyApp - connected')
-    this.name = 'canjs'
-    this.appendChild(document.createElement('my-counter'))
+    this.style.backgroundColor = "white"
+    setTimeout(() => (this.style.backgroundColor = "violet"), 1000)
+    console.log("MyApp - connected")
+    this.name = "canjs"
+    this.appendChild(document.createElement("my-counter"))
   }
 }
 
-customElements.define('canjs-app', MyApp)
+customElements.define("canjs-app", MyApp)
 
-console.log('href', window.location.href)
+// TODO: inject this instead
+if (globalThis.canStacheElementInertPrerendered) {
+  new Zone()
+    .run(function () {
+      delete globalThis.canStacheElementInertPrerendered
+      const staticapp = document.querySelector("canjs-app")
+      const temp = document.createElement("div")
+      temp.innerHTML = "<canjs-app></canjs-app>" // TODO: scrape static attrs from page too
+      const liveapp = temp.querySelector("canjs-app")
+      liveapp.style.display = "none"
+      staticapp.parentNode.insertBefore(liveapp, staticapp)
+
+      return { staticapp, liveapp }
+    })
+    .then(function (data) {
+      const { staticapp, liveapp } = data.result
+      staticapp.remove()
+      liveapp.style.display = ""
+      console.log("it's alive!")
+    })
+}
+
+console.log("href", window.location.href)
 
 // restore `isNode` for globals
-globals.setKeyValue('isNode', oldisNode)
+globals.setKeyValue("isNode", oldisNode)
