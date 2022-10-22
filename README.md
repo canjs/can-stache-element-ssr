@@ -14,7 +14,7 @@ ssr solution for CanJS 6 custom elements
 ### Environment
 
 ```bash
-$ node -v # v18.10.0
+$ node -v # v18.11.0
 $ npm -v # 8.19.2
 ```
 
@@ -38,29 +38,56 @@ generates `dist` <-- static html
 
 ### Serve
 
+To serve in static mode where built files from /dist are used by defualt
+
 ```bash
 $ npm run serve
 ```
 
-Runs server.js in root and serves any file a request points at. If that file doesn't exist, it serves dist/404/index.html
+To serve in dev mode where built files from /dist are not used (except dist/404/index.html as needed)
+
+```bash
+$ npm run serve-dev
+```
+
+Both commands run server.js in the project root and serves any file a request directly points at.
+
+If that file doesn't exist, it serves dist/404/index.html
 
 - http://localhost:8080/main.js -> serves the main.js file
 - http://localhost:8080/jane.ori -> serves dist/404/index.html with status 404
+- http://localhost:8080/dist/404/index.html -> serves dist/404/index.html with status 200
 
-If the request points at a directory, it will prepend "/dist" to the request path and serve the index.html in that folder. If the index.html file doesn't exist, it serves dist/404/index.html
+For directories,
 
-can-route data "page" is set to the first /slug/ or to "" if on the root
+#### In SPA `npm run serve-dev` mode
 
-- http://localhost:8080/ -> serves dist/index.html + page is ""
+Always serve the root /index.html
+
+main.js sets the can-route page data to the first /slug/ in the path so the correct page loads
+
+- http://localhost:8080/ -> serves /index.html + page is "home"
+- http://localhost:8080/tasks -> serves /index.html + page is "tasks"
+- http://localhost:8080/asdf -> serves /index.html (with status 200) + page is "asdf" (shows 404 page)
+
+#### In static `npm run serve` mode
+
+If the request points at a directory, it will prepend "/dist" to the request path and serve the index.html in that folder. If the path or its index.html file doesn't exist, it serves dist/404/index.html
+
+can-route data "page" is set to the first /slug/ or to "home" if on the root
+
+- http://localhost:8080/ -> serves dist/index.html + page is "home"
 - http://localhost:8080/tasks -> serves dist/tasks/index.html + page is "tasks"
 - http://localhost:8080/asdf -> serves dist/404/index.html (with status 404) + page is "asdf" (shows 404 page)
 
-If you prepend /dev to the request path, it serves root index.html file.
+#### In either mode
+
+If you prepend /dev to the request path, it serves root /index.html file.
 
 main.js sets the can-route page data to the first /slug/ after /dev so the correct page loads in dev/spa mode.
 can-route then automatically uses pushstate to remove the "dev" sentenil value in the url quietly.
 
-- http://localhost:8080/dev/ -> serves /index.html + page is ""
+- http://localhost:8080/dev/ -> serves /index.html + page is "home"
 - http://localhost:8080/dev/tasks -> serves /index.html + page is "tasks"
 - http://localhost:8080/dev/asdf -> serves /index.html (with status 200) + page is "asdf" (shows 404 page)
 

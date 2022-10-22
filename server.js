@@ -5,10 +5,6 @@ const argv = require("optimist").argv
 
 const app = express()
 
-// app.set("views", [__dirname + "/dist", __dirname]);
-
-app.use(express.static("/"))
-
 const sendFileOr404 = (req, res, dest) => {
   if (existsSync(dest)) {
     res.sendFile(dest)
@@ -33,8 +29,12 @@ app.get("/*", function (req, res) {
     // if env.production
     // res.sendFile(path.join(__dirname, "/production.html"));
   } else {
-    // it's still a directory but it didn't start with /dev, so serve from the static dist folder
-    sendFileOr404(req, res, path.join(__dirname, "/dist", reqPath, "/index.html"))
+    if (argv.dev) {
+      res.sendFile(path.join(__dirname, "/index.html"))
+    } else {
+      // it's still a directory but it didn't start with /dev, so serve from the static dist folder
+      sendFileOr404(req, res, path.join(__dirname, "/dist", reqPath, "/index.html"))
+    }
   }
 })
 

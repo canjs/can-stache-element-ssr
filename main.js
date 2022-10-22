@@ -29,12 +29,11 @@ class MyRoutingApp extends StacheElement {
     routeData: {
       get default() {
         // set default page to the first slug, ignore "dev" sentinel
-        const page = window.location.pathname.replace(/\/?(?:dev\/)?([^/]*).*/, "$1")
-        route.data = new ObservableObject({ page })
-        console.log({ page })
+        const page = window.location.pathname.split("/").filter((slug) => slug && slug !== "dev")[0] || "home"
         route.register("{page}", { page: "home" })
         route.register("tasks/{taskId}", { page: "tasks" })
         route.start()
+        route.data.page = page
         return route.data
       },
     },
