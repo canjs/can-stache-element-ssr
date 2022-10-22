@@ -91,6 +91,12 @@ can-route then automatically uses pushstate to remove the "dev" sentenil value i
 - http://localhost:8080/dev/tasks -> serves /index.html + page is "tasks"
 - http://localhost:8080/dev/asdf -> serves /index.html (with status 200) + page is "asdf" (shows 404 page)
 
+#### Also in either mode
+
+You can go directly to the built index.html file to load the built one, main.js and can-route update it to the correct "page" on hydrate and the url silently changes to the correct path
+
+- http://localhost:8080/dist/tasks/index.html -> serves dist/tasks/index.html + page is "tasks"
+
 ### Debugging
 
 #### vscode
