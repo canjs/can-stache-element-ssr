@@ -28,10 +28,10 @@ class MyRoutingApp extends StacheElement {
   static props = {
     routeData: {
       get default() {
-        // set default page to the first slug, ignore "dev" sentinel
+        // set default page to the first slug, ignore "dev" or "prod" sentinel
         const page =
           window.location.pathname.split("/").filter((slug) => {
-            return slug && slug !== "dev" && slug !== "dist"
+            return slug && slug !== "dev" && slug !== "prod" && slug !== "dist"
           })[0] || "home"
         route.register("{page}", { page: "home" })
         route.register("tasks/{taskId}", { page: "tasks" })
@@ -45,6 +45,7 @@ class MyRoutingApp extends StacheElement {
   get componentToShow() {
     console.log("componentToShow", this.routeData.page)
 
+    // TODO: Progressive loading
     switch (this.routeData.page) {
       case "home":
         const home = document.createElement("h2")

@@ -1,10 +1,14 @@
 const steal = require("steal")
 const setupGlobals = require("./setup-globals")
 const { outputFile, existsSync, readFileSync } = require("fs-extra")
+const argv = require("optimist").argv
 
-// Get url from args
-const args = process.argv.slice(2)
-const url = args[0] || "http://127.0.0.1:8080"
+// Get url from argv
+const url = argv.url || "http://127.0.0.1:8080"
+// Generate prod vs dev scapes
+const prod = argv.prod || false
+// Setup entry point based on prod
+const entryPoint = prod ? "production.html" : "index.html"
 
 // Throw if build takes too long
 const timeout = setTimeout(() => {
@@ -23,13 +27,21 @@ process.once("beforeExit", (code) => {
   scrapeDocument()
 })
 
-// Setup JSDOM and global.window, global.document, global.location
+// Strip steal / production bundle from entry point html file
 let captureSteal = ""
 let rootCode = ""
+let stealRegex = ""
 
-if (existsSync("index.html")) {
-  rootCode = readFileSync("index.html", { encoding: "utf8", flag: "r" }) // project"s index.html
-    .replace(/(<script[^>]*steal\/steal.*?>.*?<\/script>)/i, (_, stealTag) => {
+if (existsSync(entryPoint)) {
+  if (prod) {
+    // TODO: Create a better regex for production script
+    stealRegex = /(<script[^>]*main\.js.*?>.*?<\/script>)/i
+  } else {
+    stealRegex = /(<script[^>]*steal\/steal.*?>.*?<\/script>)/i
+  }
+
+  rootCode = readFileSync(entryPoint, { encoding: "utf8", flag: "r" }) // project"s index.html / production.html
+    .replace(stealRegex, (_, stealTag) => {
       captureSteal = stealTag
       return "" // remove steal script tag (re-injected before exit)
     })
@@ -47,9 +59,15 @@ if (existsSync("index.html")) {
   }
 } else {
   rootCode = `<!doctype html><title>CanJS and StealJS</title><canjs-app></canjs-app>`
-  captureSteal = `<script src="/node_modules/steal/steal.js" main></script>`
+
+  if (prod) {
+    captureSteal = `<script src="/dist/bundles/can-stache-element-ssr/main.js" main></script>`
+  } else {
+    captureSteal = `<script src="/node_modules/steal/steal.js" main></script>`
+  }
 }
 
+// Setup JSDOM and global.window, global.document, global.location
 setupGlobals(rootCode, url)
 
 async function populateDocument() {
@@ -69,12 +87,17 @@ async function scrapeDocument() {
   // Write scrapped dom to dist
   let html = window.document.documentElement.outerHTML
 
-  // re-inject steal before closing of head tag
+  // Set Inert Prerendered flag
   html = html.replace(/(<head[^>]*>)/, "$1<script>globalThis.canStacheElementInertPrerendered = true;</script>")
-  html = html.replace("</head>", captureSteal + "</head>")
+
+  // Re-inject steal before closing of body tag
+  // It's required that steal is injected at the end of body to avoid runtime errors involving `CustomElement`
+  // source: https://stackoverflow.com/questions/43836886/failed-to-construct-customelement-error-when-javascript-file-is-placed-in-head
+  html = html.replace("</body>", captureSteal + "</body>")
+
   html = html.replace(/(<canjs-app[^>]*)>/, "$1 data-canjs-static-render>")
 
-  await outputFile(`dist/${getFilename(url)}.html`, html)
+  await outputFile(`dist/ssr/${getFilename(url)}.html`, html)
 }
 
 /**
@@ -88,8 +111,5 @@ function getFilename(url) {
     .replace(/[^a-zA-Z0-9 /]/g, "_")
     .replace(/^[^/]*?(\/|$)/, "")
 
-  // return path || "index"
-
-  // TODO: Create nested paths while supporting loading steal.js from node_modules
   return `${path}/index`.replace(/^\//, "")
 }

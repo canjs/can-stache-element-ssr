@@ -5,12 +5,14 @@ const argv = require("optimist").argv
 
 const app = express()
 
+const ssrDist = "dist/ssr"
+
 const sendFileOr404 = (req, res, dest) => {
   if (existsSync(dest)) {
     res.sendFile(dest)
   } else {
     res.status(404)
-    res.sendFile(path.join(__dirname, "/dist/404/index.html"))
+    res.sendFile(path.join(__dirname, ssrDist, "/404/index.html"))
   }
 }
 
@@ -19,22 +21,24 @@ app.get("/*", function (req, res) {
 
   if (reqPath.indexOf(".") !== -1) {
     // pointing straight to a file? Serve the file
-    sendFileOr404(req, res, path.join(__dirname, reqPath))
-  } else if (reqPath.indexOf("/dev") === 0) {
+    if (reqPath.startsWith("/prod")) {
+      sendFileOr404(req, res, path.join(__dirname, reqPath.replace("/prod", "")))
+    } else {
+      sendFileOr404(req, res, path.join(__dirname, reqPath))
+    }
+  } else if (reqPath.indexOf("/dev") === 0 || argv.dev) {
     // it's not a file, it's a directory's index.html file to load
 
     // If it's dev mode, Serve root index html file, can-route handles it from there
     res.sendFile(path.join(__dirname, "/index.html"))
+  } else if (reqPath.indexOf("/prod") === 0 || argv.prod) {
+    // it's not a file, it's a directory's index.html file to load
 
-    // if env.production
-    // res.sendFile(path.join(__dirname, "/production.html"));
+    // If it's prod mode, Serve root production html file, can-route handles it from there
+    res.sendFile(path.join(__dirname, "/production.html"))
   } else {
-    if (argv.dev) {
-      res.sendFile(path.join(__dirname, "/index.html"))
-    } else {
-      // it's still a directory but it didn't start with /dev, so serve from the static dist folder
-      sendFileOr404(req, res, path.join(__dirname, "/dist", reqPath, "/index.html"))
-    }
+    // it's still a directory but it didn't start with /dev, so serve from the static dist folder
+    sendFileOr404(req, res, path.join(__dirname, ssrDist, reqPath, "/index.html"))
   }
 })
 

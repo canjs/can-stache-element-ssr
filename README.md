@@ -3,19 +3,21 @@
 ssr solution for CanJS 6 custom elements
 
 ```
-/dist - generated static files
+/dist/bundles - prod SPA
+/dist/ssr - generated static files
 /jsdom-ssr - ssr logic
-/patches - files that are used to override files in node_modules
+/patches - temporary files that are used to override files in node_modules
 /temp - random js that showcases ideas for implementions
-/index.html - serve to view application (not used for ssr)
+/index.html - dev SPA
 /main.js - client side code that generates CanJS 6 components
+/ssg.json - static files configuration (includes routes)
 ```
 
 ### Environment
 
 ```bash
-$ node -v # v18.11.0
-$ npm -v # 8.19.2
+$ node -v # 14.20.0
+$ npm -v # 6.14.17
 ```
 
 #### Installing dependencies:
@@ -31,10 +33,14 @@ $ npm install
 ### Build
 
 ```bash
-$ npm run build
+$ npm run build # Generates dev static pages
 ```
 
-generates `dist` <-- static html
+```bash
+$ npm run build-prod # Generates prod static pages
+```
+
+generates `dist/ssr` <-- static html files
 
 ### Serve
 
@@ -48,6 +54,12 @@ To serve in dev mode where built files from /dist are not used (except dist/404/
 
 ```bash
 $ npm run serve-dev
+```
+
+To serve in prod mode where built files from /dist are not used (except dist/404/index.html as needed)
+
+```bash
+$ npm run serve-prod
 ```
 
 Both commands run server.js in the project root and serves any file a request directly points at.
@@ -70,6 +82,16 @@ main.js sets the can-route page data to the first /slug/ in the path so the corr
 - http://localhost:8080/tasks -> serves /index.html + page is "tasks"
 - http://localhost:8080/asdf -> serves /index.html (with status 200) + page is "asdf" (shows 404 page)
 
+#### In SPA `npm run serve-prod` mode
+
+Functions like `npm run serve-dev` mode with 3 changes:
+
+1. Requires running `npm run build-prod` first to work as expected
+
+2. Always serve the root /production.html
+
+3. /dist/bundles/can-stache-element-ssr/main.js sets the can-route page data to the first /slug/ in the path so the correct page loads
+
 #### In static `npm run serve` mode
 
 If the request points at a directory, it will prepend "/dist" to the request path and serve the index.html in that folder. If the path or its index.html file doesn't exist, it serves dist/404/index.html
@@ -83,6 +105,7 @@ can-route data "page" is set to the first /slug/ or to "home" if on the root
 #### In either mode
 
 If you prepend /dev to the request path, it serves root /index.html file.
+If you prepend /prod to the request path, it serves root /production.html file.
 
 main.js sets the can-route page data to the first /slug/ after /dev so the correct page loads in dev/spa mode.
 can-route then automatically uses pushstate to remove the "dev" sentenil value in the url quietly.
@@ -112,7 +135,7 @@ Alter config to run `"${workspaceFolder}/can-zone-jsdom/build.js"` or `"${worksp
 Open chrome with url: `chrome://inspect/` --> `Open dedicated DevTools for Node`
 
 ```bash
-$ npm run build:debug
+$ npm run build-debug
 ```
 
 #### Debugging spawn processes
@@ -153,6 +176,8 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
 
 3. The above issue makes using `can-zone-jsdom` problematic as well since the same class must be reused, but each page is rendered using a different `JSDOM` instance.
 
+4. `steal-tools` doesn't support Node v18, the highest version of Node we can use is Node v14. This is the minimum version to use the latest version of `JSDOM`.
+
 ### Technical Decisions
 
 1. `can-zone-jsdom` isn't currently being used for two reasons:
@@ -169,6 +194,7 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
    })
    ```
    to know when application is stable and can be scraped
+4. TODO: explain why we're injecting steal and production bundle at the end of body tag
 
 ### Roadmap
 

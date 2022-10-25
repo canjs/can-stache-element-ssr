@@ -151,7 +151,7 @@ async function scrapeDocument() {
   html = html.replace("</head>", captureSteal + "</head>")
   html = html.replace("</body>", "<foobar-test></foobar-test></body>")
 
-  await outputFile(`dist/${getFilename(url)}.html`, html)
+  await outputFile(`dist/ssr/${getFilename(url)}.html`, html)
 }
 
 /**
