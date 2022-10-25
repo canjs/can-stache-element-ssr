@@ -96,6 +96,7 @@ async function scrapeDocument() {
   html = html.replace("</body>", captureSteal + "</body>")
 
   html = html.replace(/(<canjs-app[^>]*)>/, "$1 data-canjs-static-render>")
+  // html = html.replace("</body>", injectHydrateInZoneWithCache + "</body>")
 
   await outputFile(`dist/ssr/${getFilename(url)}.html`, html)
 }

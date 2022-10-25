@@ -35,7 +35,8 @@
     "done-ssr": "^3.3.1",
     "fs-extra": "^10.1.0",
     "jsdom": "^20.0.1",
-    "steal": "^2.3.0"
+    "steal": "^2.3.0",
+    "w3c-xmlhttprequest": "^3.0.4"
   },
   "repository": {
     "type": "git",
