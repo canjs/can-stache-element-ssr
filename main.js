@@ -5,7 +5,7 @@ import route from "can-route"
 import "can-stache-route-helpers"
 import view from "./app.stache"
 import Zone from "can-zone"
-import { ObservableObject } from "can"
+import "./styles.css"
 
 import RoutePushstate from "can-route-pushstate"
 route.urlData = new RoutePushstate()
