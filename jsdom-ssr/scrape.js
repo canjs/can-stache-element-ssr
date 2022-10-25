@@ -69,10 +69,10 @@ async function scrapeDocument() {
   // Write scrapped dom to dist
   let html = window.document.documentElement.outerHTML
 
-  // re-inject steal before closing of head tag
   html = html.replace(/(<head[^>]*>)/, "$1<script>globalThis.canStacheElementInertPrerendered = true;</script>")
-  html = html.replace("</head>", captureSteal + "</head>")
+  html = html.replace("</head>", captureSteal + "</head>") // re-inject steal before closing of head tag
   html = html.replace(/(<canjs-app[^>]*)>/, "$1 data-canjs-static-render>")
+  // html = html.replace("</body>", injectHydrateInZoneWithCache + "</body>")
 
   await outputFile(`dist/${getFilename(url)}.html`, html)
 }

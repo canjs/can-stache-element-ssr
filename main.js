@@ -1,19 +1,13 @@
-import globals from "can-globals"
 import type from "can-type"
 import StacheElement from "can-stache-element"
 import route from "can-route"
 import "can-stache-route-helpers"
 import view from "./app.stache"
-import Zone from "can-zone"
-import { ObservableObject } from "can"
+
+import { ssrDefineElement, ssrEnd } from "./jsdom-ssr/ssr-helpers.js"
 
 import RoutePushstate from "can-route-pushstate"
 route.urlData = new RoutePushstate()
-
-const oldisNode = globals.getKeyValue("isNode")
-// hack to trick `can-route` to think this is a browser
-// This is required for routing to work (without this, it will always 404)
-globals.setKeyValue("isNode", false)
 
 class MyRoutingApp extends StacheElement {
   static view = `
@@ -62,7 +56,7 @@ class MyRoutingApp extends StacheElement {
   }
 }
 
-customElements.define("my-routing-app", MyRoutingApp)
+ssrDefineElement("my-routing-app", MyRoutingApp)
 
 // class ValueFromInput extends StacheElement {
 //     static view = `
@@ -100,17 +94,43 @@ class ValueToInput extends StacheElement {
   }
 }
 
-customElements.define("my-value-to-input", ValueToInput)
+ssrDefineElement("my-value-to-input", ValueToInput)
+
+function xhrGet(url) {
+  return new Promise((res) => {
+    const req = new XMLHttpRequest()
+    req.onload = () => {
+      if (req.readyState === req.DONE) {
+        if (req.status === 200) {
+          res(JSON.parse(req.responseText))
+        }
+      }
+    }
+    req.open("GET", url)
+    req.send()
+  })
+}
 
 class MyStacheElement extends StacheElement {
   static view = view
 
   static props = {
     message: "Stache is cool",
+    response: "",
+  }
+
+  connected() {
+    if (this.INERT_PRERENDERED) {
+      return
+    }
+    setTimeout(() => (this.style.color = "red"), 1500)
+    xhrGet("https://dummyjson.com/products?limit=10&skip=10&select=title,price").then((jsonData) => {
+      this.response = jsonData.products[0].title
+    })
   }
 }
 
-customElements.define("my-stache-element", MyStacheElement)
+ssrDefineElement("my-stache-element", MyStacheElement)
 
 // Extend Component to define a custom element
 class MyCounter extends StacheElement {
@@ -141,7 +161,7 @@ class MyCounter extends StacheElement {
   }
 }
 
-customElements.define("my-counter", MyCounter)
+ssrDefineElement("my-counter", MyCounter)
 
 class MyApp extends StacheElement {
   // <my-value-from-input></my-value-from-input><br>
@@ -189,31 +209,8 @@ class MyApp extends StacheElement {
   }
 }
 
-customElements.define("canjs-app", MyApp)
+ssrDefineElement("canjs-app", MyApp)
 
-// TODO: inject this instead
-if (globalThis.canStacheElementInertPrerendered) {
-  new Zone()
-    .run(function () {
-      delete globalThis.canStacheElementInertPrerendered
-      const staticapp = document.querySelector("canjs-app")
-      const temp = document.createElement("div")
-      temp.innerHTML = "<canjs-app></canjs-app>" // TODO: scrape static attrs from page too
-      const liveapp = temp.querySelector("canjs-app")
-      liveapp.style.display = "none"
-      staticapp.parentNode.insertBefore(liveapp, staticapp)
-
-      return { staticapp, liveapp }
-    })
-    .then(function (data) {
-      const { staticapp, liveapp } = data.result
-      staticapp.remove()
-      liveapp.style.display = ""
-      console.log("it's alive!")
-    })
-}
+ssrEnd()
 
 console.log("href", window.location.href)
-
-// restore `isNode` for globals
-globals.setKeyValue("isNode", oldisNode)
