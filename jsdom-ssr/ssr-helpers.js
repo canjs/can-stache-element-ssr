@@ -2,22 +2,14 @@
 import Zone from "can-zone"
 import xhrZone from "can-zone/xhr"
 
-// const oldisNode = globals.getKeyValue("isNode")
-// hack to trick `can-route` to think this is a browser
-// This is required for routing to work (without this, it will always 404)
-// globals.setKeyValue("isNode", false)
-
-const ceQueue = []
-export const ssrDefineElement = (...args) => ceQueue.push(args)
+const sharedZone = new Zone({ plugins: [xhrZone] })
+export const ssrDefineElement = (...args) => {
+  sharedZone.run(() => customElements.define(...args))
+}
 
 export const ssrEnd = () => {
-  new Zone({
-    plugins: [xhrZone],
-  })
-    .run(function () {
-      ceQueue.forEach((args) => customElements.define(...args))
-      ceQueue.length = 0
-    })
+  sharedZone
+    .run(() => {})
     .then(function (data) {
       if (!globalThis.XHR_CACHE) {
         const temp = document.createElement("div")
@@ -47,7 +39,4 @@ export const ssrEnd = () => {
         // console.log("it's alive!")
       })
   }
-
-  // restore `isNode` for globals
-  // globals.setKeyValue("isNode", oldisNode)
 }

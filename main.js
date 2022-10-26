@@ -178,7 +178,7 @@ ssrDefineElement("my-counter", MyCounter)
 class MyApp extends StacheElement {
   // <my-value-from-input></my-value-from-input><br>
   static view = `
-    <h1>Hello {{ this.name }}!</h1>
+    <h1>Hello {{ this.name }}! {{this.response2}}</h1>
     <my-stache-element></my-stache-element><br>
     <my-value-to-input></my-value-to-input><br>
     <my-routing-app></my-routing-app><br>
@@ -186,6 +186,7 @@ class MyApp extends StacheElement {
 
   static props = {
     name: "world",
+    response2: "",
   }
 
   /**
@@ -218,6 +219,10 @@ class MyApp extends StacheElement {
     console.log("MyApp - connected")
     this.name = "canjs"
     this.appendChild(document.createElement("my-counter"))
+
+    xhrGet("https://dummyjson.com/products?limit=2&skip=10&select=title,price").then((jsonData) => {
+      this.response2 = jsonData.products[1].title
+    })
   }
 }
 
