@@ -5,6 +5,7 @@ import "can-stache-route-helpers"
 import view from "./app.stache"
 import { ssrDefineElement, ssrEnd } from "./jsdom-ssr/ssr-helpers.js"
 import "./styles.css"
+import "./components/root/root"
 
 import RoutePushstate from "can-route-pushstate"
 route.urlData = new RoutePushstate()
@@ -12,10 +13,13 @@ route.urlData = new RoutePushstate()
 class MyRoutingApp extends StacheElement {
   static view = `
     {{ this.componentToShow }}
-    <span>Routes: </span>
-    <a href="{{ routeUrl(page='home') }}">Home</a>
-    <a href="{{ routeUrl(page='tasks') }}">Tasks</a>
-    <a href="{{ routeUrl(page='unknown') }}">404</a>
+    <div>
+      <span>Routes: </span>
+      <a href="{{ routeUrl(page='home') }}">Home</a>
+      <a href="{{ routeUrl(page='tasks') }}">Tasks</a>
+      <a href="{{ routeUrl(page='unknown') }}">404</a>
+      <a href="{{ routeUrl(page='progressive-loading') }}">Progressive Loading</a>
+    </div>
     <p>The current page is {{ this.routeData.page }}.</p>
   `
 
@@ -27,8 +31,13 @@ class MyRoutingApp extends StacheElement {
           window.location.pathname.split("/").filter((slug) => {
             return slug && slug !== "dev" && slug !== "prod" && slug !== "dist"
           })[0] || "home"
+
         route.register("{page}", { page: "home" })
         route.register("tasks/{taskId}", { page: "tasks" })
+        route.register("progressive-loading/{loadId}", { loadId: "root", page: "progressive-loading" })
+        route.register("progressive-loading/moo", { loadId: "moo", page: "moo" })
+        route.register("progressive-loading/cow", { loadId: "cow", page: "cow" })
+
         route.start()
         route.data.page = page
         return route.data
@@ -49,6 +58,8 @@ class MyRoutingApp extends StacheElement {
         const tasks = document.createElement("h2")
         tasks.innerHTML = "Tasks"
         return tasks
+      case "progressive-loading":
+        return document.createElement("progressive-loading")
       default:
         const page404 = document.createElement("h2")
         page404.innerHTML = "Page Missing"

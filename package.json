@@ -22,6 +22,10 @@
     "plugins": [
       "can",
       "steal-css"
+    ],
+    "bundle": [
+      "can-stache-element-ssr/components/moo/moo",
+      "can-stache-element-ssr/components/cow/cow"
     ]
   },
   "dependencies": {
