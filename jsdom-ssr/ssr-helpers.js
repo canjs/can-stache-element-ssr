@@ -6,12 +6,15 @@ export const ssrDefineElement = (...args) => {
   sharedZone.run(() => customElements.define(...args))
 }
 
-// TODO: check if in cache already
+/**
+ * @deprecated You should be able to just use `steal.import` directly
+ *
+ * Gonna keep this here for now in case it turns out not to be true
+ */
 export const stealImport = (stealPath, callback) => {
   return new Promise((resolve) => {
     sharedZone.run(() => {
       return steal.import(stealPath).then((data) => {
-        console.log({ data })
         resolve(callback())
       })
     })

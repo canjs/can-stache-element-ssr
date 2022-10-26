@@ -1,5 +1,5 @@
 import StacheElement from "can-stache-element"
-import { ssrDefineElement, stealImport } from "../../jsdom-ssr/ssr-helpers"
+import { ssrDefineElement } from "../../jsdom-ssr/ssr-helpers"
 import route from "can-route"
 import "can-stache-route-helpers"
 // import "../moo/moo"
@@ -40,14 +40,9 @@ export class MyRoot extends StacheElement {
     }
 
     if (loadId === "moo") {
-      return stealImport(`can-stache-element-ssr/components/moo/moo`, function () {
+      return steal.import(`can-stache-element-ssr/components/moo/moo`).then(() => {
         return document.createElement("progressive-moo")
       })
-
-      // TODO: Check this
-      // return steal.import(`can-stache-element-ssr/components/moo/moo`).then(() => {
-      //   return document.createElement("progressive-moo")
-      // })
     }
 
     if (loadId === "cow") {
