@@ -27,26 +27,29 @@ class MyRoutingApp extends StacheElement {
     routeData: {
       get default() {
         // set default page to the first slug, ignore "dev" or "prod" sentinel
-        const page =
-          window.location.pathname.split("/").filter((slug) => {
-            return slug && slug !== "dev" && slug !== "prod" && slug !== "dist"
-          })[0] || "home"
+
+        // Strip dev, prod, or dist and override route data
+        const routeDataOverrides = window.location.pathname.split("/").filter((slug) => {
+          return slug && slug !== "dev" && slug !== "prod" && slug !== "dist"
+        })
+
+        const page = routeDataOverrides[0] || "home"
+        const loadId = routeDataOverrides[1]
 
         route.register("{page}", { page: "home" })
         route.register("tasks/{taskId}", { page: "tasks" })
-        route.register("progressive-loading/{loadId}", { loadId: "root", page: "progressive-loading" })
-        route.register("progressive-loading/moo", { loadId: "moo", page: "moo" })
-        route.register("progressive-loading/cow", { loadId: "cow", page: "cow" })
+        route.register("progressive-loading/{loadId}", { page: "progressive-loading" })
 
         route.start()
         route.data.page = page
+        route.data.loadId = loadId
         return route.data
       },
     },
   }
 
   get componentToShow() {
-    console.log("componentToShow", this.routeData.page)
+    console.log("route.data.page", this.routeData.page)
 
     // TODO: Progressive loading
     switch (this.routeData.page) {

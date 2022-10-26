@@ -1,6 +1,7 @@
 const steal = require("steal")
 const setupGlobals = require("./setup-globals")
 const { outputFile, existsSync, readFileSync } = require("fs-extra")
+const getFilepath = require("../util/get-filepath")
 const argv = require("optimist").argv
 
 // Get url from argv
@@ -98,19 +99,5 @@ async function scrapeDocument() {
   html = html.replace(/(<canjs-app[^>]*)>/, "$1 data-canjs-static-render>")
   // html = html.replace("</body>", injectHydrateInZoneWithCache + "</body>")
 
-  await outputFile(`dist/ssr/${getFilename(url)}.html`, html)
-}
-
-/**
- * Create filename based on url
- *
- * TODO: consider query params (or confirm that they aren't a part of requirements)
- */
-function getFilename(url) {
-  const path = url
-    .replace(/https?:\/\//, "")
-    .replace(/[^a-zA-Z0-9 /]/g, "_")
-    .replace(/^[^/]*?(\/|$)/, "")
-
-  return `${path}/index`.replace(/^\//, "")
+  await outputFile(`dist/ssr/${getFilepath(url, "index.html")}`, html)
 }

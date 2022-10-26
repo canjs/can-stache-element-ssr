@@ -1,3 +1,10 @@
 {
-  "routes": ["http://127.0.0.1:5501", "http://127.0.0.1:5501/tasks", "http://127.0.0.1:5501/404"]
+  "routes": [
+    "http://127.0.0.1:8080",
+    "http://127.0.0.1:8080/tasks",
+    "http://127.0.0.1:8080/progressive-loading",
+    "http://127.0.0.1:8080/progressive-loading/moo",
+    "http://127.0.0.1:8080/progressive-loading/cow",
+    "http://127.0.0.1:8080/404"
+  ]
 }

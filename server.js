@@ -7,7 +7,9 @@ const app = express()
 
 const ssrDist = "dist/ssr"
 
-const sendFileOr404 = (req, res, dest) => {
+const sendFileOr404 = (req, res, reqPath) => {
+  const dest = path.join(__dirname, reqPath)
+
   if (existsSync(dest)) {
     res.sendFile(dest)
   } else {
@@ -22,9 +24,9 @@ app.get("/*", function (req, res) {
   if (reqPath.indexOf(".") !== -1) {
     // pointing straight to a file? Serve the file
     if (reqPath.startsWith("/prod")) {
-      sendFileOr404(req, res, path.join(__dirname, reqPath.replace("/prod", "")))
+      sendFileOr404(req, res, reqPath.replace("/prod", ""))
     } else {
-      sendFileOr404(req, res, path.join(__dirname, reqPath))
+      sendFileOr404(req, res, reqPath)
     }
   } else if (reqPath.indexOf("/dev") === 0 || argv.dev) {
     // it's not a file, it's a directory's index.html file to load
@@ -38,7 +40,7 @@ app.get("/*", function (req, res) {
     res.sendFile(path.join(__dirname, "/production.html"))
   } else {
     // it's still a directory but it didn't start with /dev, so serve from the static dist folder
-    sendFileOr404(req, res, path.join(__dirname, ssrDist, reqPath, "/index.html"))
+    sendFileOr404(req, res, path.join(ssrDist, reqPath, "/index.html"))
   }
 })
 

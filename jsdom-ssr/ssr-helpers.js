@@ -1,10 +1,21 @@
-// import globals from "can-globals"
 import Zone from "can-zone"
 import xhrZone from "can-zone/xhr"
 
 const sharedZone = new Zone({ plugins: [xhrZone] })
 export const ssrDefineElement = (...args) => {
   sharedZone.run(() => customElements.define(...args))
+}
+
+// TODO: check if in cache already
+export const stealImport = (stealPath, callback) => {
+  return new Promise((resolve) => {
+    sharedZone.run(() => {
+      return steal.import(stealPath).then((data) => {
+        console.log({ data })
+        resolve(callback())
+      })
+    })
+  })
 }
 
 export const ssrEnd = () => {
