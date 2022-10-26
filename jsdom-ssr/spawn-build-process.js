@@ -3,8 +3,14 @@ const path = require("path")
 
 const baseUrl = "http://127.0.0.1:8080/index.html"
 
-module.exports = async function (url = baseUrl) {
-  return spawn("node", [path.join(__dirname, "scrape.js"), url])
+module.exports = async function (url = baseUrl, prod = false) {
+  const args = [path.join(__dirname, "scrape.js"), "--url", url]
+
+  if (prod) {
+    args.push("--prod", "true")
+  }
+
+  return spawn("node", args)
 }
 
 /**
