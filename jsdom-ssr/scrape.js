@@ -89,7 +89,13 @@ async function scrapeDocument() {
   let html = window.document.documentElement.outerHTML
 
   // Set Inert Prerendered flag
-  html = html.replace(/(<head[^>]*>)/, "$1<script>globalThis.canStacheElementInertPrerendered = true;</script>")
+  html = html.replace(
+    /(<head[^>]*>)/,
+    `$1<script>
+    globalThis.canStacheElementInertPrerendered = true;
+    globalThis.canMooStache = true;
+  </script>`,
+  )
 
   // Re-inject steal before closing of body tag
   // It's required that steal is injected at the end of body to avoid runtime errors involving `CustomElement`

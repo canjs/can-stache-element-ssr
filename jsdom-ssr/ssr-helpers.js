@@ -47,10 +47,10 @@ export const ssrEnd = () => {
         return { staticapp, liveapp }
       })
       .then(function (data) {
+        delete globalThis.canMooStache
         const { staticapp, liveapp } = data.result
         staticapp.remove()
         liveapp.style.display = ""
-        // console.log("it's alive!")
       })
   }
 }
