@@ -5,6 +5,7 @@ import "can-stache-route-helpers"
 import view from "./app.stache"
 import { ssrDefineElement, ssrEnd } from "./jsdom-ssr/ssr-helpers.js"
 import "./styles.css"
+import "./components/root/root"
 
 import RoutePushstate from "can-route-pushstate"
 route.urlData = new RoutePushstate()
@@ -12,10 +13,13 @@ route.urlData = new RoutePushstate()
 class MyRoutingApp extends StacheElement {
   static view = `
     {{ this.componentToShow }}
-    <span>Routes: </span>
-    <a href="{{ routeUrl(page='home') }}">Home</a>
-    <a href="{{ routeUrl(page='tasks') }}">Tasks</a>
-    <a href="{{ routeUrl(page='unknown') }}">404</a>
+    <div>
+      <span>Routes: </span>
+      <a href="{{ routeUrl(page='home') }}">Home</a>
+      <a href="{{ routeUrl(page='tasks') }}">Tasks</a>
+      <a href="{{ routeUrl(page='unknown') }}">404</a>
+      <a href="{{ routeUrl(page='progressive-loading') }}">Progressive Loading</a>
+    </div>
     <p>The current page is {{ this.routeData.page }}.</p>
   `
 
@@ -23,21 +27,29 @@ class MyRoutingApp extends StacheElement {
     routeData: {
       get default() {
         // set default page to the first slug, ignore "dev" or "prod" sentinel
-        const page =
-          window.location.pathname.split("/").filter((slug) => {
-            return slug && slug !== "dev" && slug !== "prod" && slug !== "dist"
-          })[0] || "home"
+
+        // Strip dev, prod, or dist and override route data
+        const routeDataOverrides = window.location.pathname.split("/").filter((slug) => {
+          return slug && slug !== "dev" && slug !== "prod" && slug !== "dist"
+        })
+
+        const page = routeDataOverrides[0] || "home"
+        const loadId = routeDataOverrides[1]
+
         route.register("{page}", { page: "home" })
         route.register("tasks/{taskId}", { page: "tasks" })
+        route.register("progressive-loading/{loadId}", { page: "progressive-loading" })
+
         route.start()
         route.data.page = page
+        route.data.loadId = loadId
         return route.data
       },
     },
   }
 
   get componentToShow() {
-    console.log("componentToShow", this.routeData.page)
+    console.log("route.data.page", this.routeData.page)
 
     // TODO: Progressive loading
     switch (this.routeData.page) {
@@ -49,6 +61,8 @@ class MyRoutingApp extends StacheElement {
         const tasks = document.createElement("h2")
         tasks.innerHTML = "Tasks"
         return tasks
+      case "progressive-loading":
+        return document.createElement("progressive-root")
       default:
         const page404 = document.createElement("h2")
         page404.innerHTML = "Page Missing"

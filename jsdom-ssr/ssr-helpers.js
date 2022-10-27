@@ -1,10 +1,24 @@
-// import globals from "can-globals"
 import Zone from "can-zone"
 import xhrZone from "can-zone/xhr"
 
 const sharedZone = new Zone({ plugins: [xhrZone] })
 export const ssrDefineElement = (...args) => {
   sharedZone.run(() => customElements.define(...args))
+}
+
+/**
+ * @deprecated You should be able to just use `steal.import` directly
+ *
+ * Gonna keep this here for now in case it turns out not to be true
+ */
+export const stealImport = (stealPath, callback) => {
+  return new Promise((resolve) => {
+    sharedZone.run(() => {
+      return steal.import(stealPath).then((data) => {
+        resolve(callback())
+      })
+    })
+  })
 }
 
 export const ssrEnd = () => {
@@ -33,10 +47,10 @@ export const ssrEnd = () => {
         return { staticapp, liveapp }
       })
       .then(function (data) {
+        delete globalThis.canMooStache
         const { staticapp, liveapp } = data.result
         staticapp.remove()
         liveapp.style.display = ""
-        // console.log("it's alive!")
       })
   }
 }
