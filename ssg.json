@@ -3,6 +3,7 @@
     "http://127.0.0.1:8080",
     "http://127.0.0.1:8080/tasks",
     "http://127.0.0.1:8080/progressive-loading",
+    "http://127.0.0.1:8080/progressive-loading/root",
     "http://127.0.0.1:8080/progressive-loading/moo",
     "http://127.0.0.1:8080/progressive-loading/cow",
     "http://127.0.0.1:8080/404"
