@@ -2,7 +2,7 @@ import StacheElement from "can-stache-element"
 import { ssrDefineElement } from "../../jsdom-ssr/ssr-helpers"
 import "./moo.css"
 
-class MyMoo extends StacheElement {
+class Moo extends StacheElement {
   static view = `
     <h3>Moo</h3>
     <p>Cows go Moooo~~</p>
@@ -32,7 +32,7 @@ class MyMoo extends StacheElement {
   }
 }
 
-ssrDefineElement("progressive-moo", MyMoo)
+ssrDefineElement("progressive-moo", Moo)
 
 // Copied from main.js
 function xhrGet(url) {

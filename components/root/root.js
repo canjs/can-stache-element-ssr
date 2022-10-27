@@ -6,7 +6,7 @@ import "can-stache-route-helpers"
 // import "../cow/cow"
 import "./root.css"
 
-export class MyRoot extends StacheElement {
+export class Root extends StacheElement {
   static view = `
     <a href="{{ routeUrl(loadId='cow') }}">Cow</a> <a href="{{ routeUrl(loadId='moo') }}">Moo</a> <a href="{{ routeUrl(loadId='root') }}">Root</a>
 
@@ -57,4 +57,4 @@ export class MyRoot extends StacheElement {
   }
 }
 
-ssrDefineElement("progressive-loading", MyRoot)
+ssrDefineElement("progressive-root", Root)

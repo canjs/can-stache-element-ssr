@@ -62,7 +62,7 @@ class MyRoutingApp extends StacheElement {
         tasks.innerHTML = "Tasks"
         return tasks
       case "progressive-loading":
-        return document.createElement("progressive-loading")
+        return document.createElement("progressive-root")
       default:
         const page404 = document.createElement("h2")
         page404.innerHTML = "Page Missing"
