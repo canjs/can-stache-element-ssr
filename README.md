@@ -1,6 +1,6 @@
 # can-stache-element-ssr
 
-ssr solution for CanJS 6 custom elements
+ssr solution for CanJS 6 custom stache elements
 
 ```
 /dist/bundles - prod SPA
@@ -13,6 +13,14 @@ ssr solution for CanJS 6 custom elements
 /ssg.json - static files configuration (includes routes)
 ```
 
+### Limitations
+
+Using `setInterval` will cause the build progress for static pages to hang. For more information look into Technical Decisions #3 involving 
+```javascript
+process.once("beforeExit", (code) => {
+   // ...
+})
+```
 ### Environment
 
 ```bash
@@ -25,10 +33,6 @@ $ npm -v # 6.14.17
 ```bash
 $ npm install
 ```
-
-> TODO: Clean up patches and create issues / PRs as needed
-
-~~For every file in `patches`, replace dependency in `node_modules`, instructions are at the top of each file~~ (when trying to use `npm run build`, there's no need for these patches now)
 
 ### Build
 
