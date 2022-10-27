@@ -14,9 +14,7 @@ const sendFileOr404 = (req, res, reqPath) => {
   // ex "/progressive-loading/dist/bundles/can-stache-element-ssr/main.css"
   // Issue only affects prod
   if (reqPath.includes("dist/bundles")) {
-    console.log(reqPath)
     reqPath = /^.*(dist\/bundles.*)/.exec(reqPath)[1]
-    console.log(reqPath)
   }
 
   const dest = path.join(__dirname, reqPath)
