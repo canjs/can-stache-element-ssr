@@ -3,12 +3,17 @@ import StacheElement from "can-stache-element"
 import route from "can-route"
 import "can-stache-route-helpers"
 import view from "./app.stache"
-import { ssrDefineElement, ssrEnd } from "./jsdom-ssr/ssr-helpers.js"
+import { ssrDefineElement, ssrEnd, prepareRouting } from "./jsdom-ssr/ssr-helpers.js"
 import "./styles.css"
 import "./components/root/root"
 
-import RoutePushstate from "can-route-pushstate"
-route.urlData = new RoutePushstate()
+prepareRouting(route)
+
+route.register("{page}", { page: "home" })
+route.register("tasks/{taskId}", { page: "tasks" })
+route.register("progressive-loading/{loadId}", { page: "progressive-loading" })
+
+route.start()
 
 class MyRoutingApp extends StacheElement {
   static view = `
@@ -26,23 +31,6 @@ class MyRoutingApp extends StacheElement {
   static props = {
     routeData: {
       get default() {
-        // set default page to the first slug, ignore "dev" or "prod" sentinel
-
-        // Strip dev, prod, or dist and override route data
-        const routeDataOverrides = window.location.pathname.split("/").filter((slug) => {
-          return slug && slug !== "dev" && slug !== "prod" && slug !== "dist"
-        })
-
-        const page = routeDataOverrides[0] || "home"
-        const loadId = routeDataOverrides[1]
-
-        route.register("{page}", { page: "home" })
-        route.register("tasks/{taskId}", { page: "tasks" })
-        route.register("progressive-loading/{loadId}", { page: "progressive-loading" })
-
-        route.start()
-        route.data.page = page
-        route.data.loadId = loadId
         return route.data
       },
     },
@@ -96,7 +84,7 @@ ssrDefineElement("my-routing-app", MyRoutingApp)
 //         },
 //     }
 // }
-// customElements.define("my-value-from-input", ValueFromInput)
+// ssrDefineElement("my-value-from-input", ValueFromInput)
 
 class ValueToInput extends StacheElement {
   static view = `

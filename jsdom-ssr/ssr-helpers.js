@@ -1,5 +1,6 @@
 import Zone from "can-zone"
 import xhrZone from "can-zone/xhr"
+import RoutePushstate from "can-route-pushstate"
 
 const sharedZone = new Zone({ plugins: [xhrZone] })
 export const ssrDefineElement = (...args) => {
@@ -19,6 +20,24 @@ export const stealImport = (stealPath, callback) => {
       })
     })
   })
+}
+
+/**
+ * Configures `can-route` to use pushstate to change the
+ * window's pathname instead of the hash
+ *
+ * Also sets `can-route`'s root to dev or prod based on location's pathname
+ */
+export const prepareRouting = (route) => {
+  route.urlData = new RoutePushstate()
+
+  const root = window.location.pathname.split("/")[1]
+
+  if (root === "dev") {
+    route.urlData.root += "dev/"
+  } else if (root === "prod") {
+    route.urlData.root += "prod/"
+  }
 }
 
 export const ssrEnd = () => {

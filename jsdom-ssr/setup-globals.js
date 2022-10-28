@@ -1,8 +1,5 @@
-const url = require("url")
 const jsdom = require("jsdom")
 const { JSDOM } = jsdom
-// const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
-
 const { XMLHttpRequest } = require("w3c-xmlhttprequest")
 
 // source: node_modules/can-zone-jsdom/lib/dom.js
