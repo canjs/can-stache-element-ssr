@@ -27,6 +27,7 @@ async function main() {
   await emptyDir("dist/ssr")
 
   // Read paths to generate static pages
+  // const ssgSettings = await readJson("ssg.json")
   const ssgSettings = await readJson("ssg-max.json")
 
   const routes = ssgSettings.routes
@@ -67,3 +68,13 @@ async function onExit(worker, callback) {
 // npm run build | gnomon
 // pool of 32 -> 71.0153s
 // pool of 32 -> 90.5499s (while watching something on youtube)
+
+// Invalid constructor, the constructor is not part of the custom element registry
+// 81.6880s
+// Recreatable from 1 to 11
+/**
+ *     "http://127.0.0.1:8080/progressive-loading/cow",
+    "http://127.0.0.1:8080/progressive-loading/moo"
+ */
+
+// 400 -> 84.0856s

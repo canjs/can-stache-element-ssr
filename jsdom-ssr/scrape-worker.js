@@ -78,7 +78,7 @@ async function generate() {
   }
 
   setMode("GENERATING")
-  // console.log(url)
+  console.log(url)
 
   if (existsSync(entryPoint)) {
     if (prod) {

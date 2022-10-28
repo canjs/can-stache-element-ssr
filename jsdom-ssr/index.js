@@ -51,3 +51,8 @@ async function main() {
 // At 400,  155.3191s with all processes -> crash...
 // pool of 32 -> 95.6140s
 // pool of 32 -> 118.9888s (while watching something on youtube)
+
+// after
+
+// pool of 32 -> 111.2810s
+// pool of 32 -> 117.4962s <-- includes moo and cow ):
