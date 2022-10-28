@@ -5,7 +5,7 @@ const argv = require("optimist").argv
 
 const app = express()
 
-const ssrDist = "dist/ssr"
+const ssgDist = "dist/ssg"
 
 const sendFileOr404 = (req, res, reqPath) => {
   // Fixes issues where when in a nested route,
@@ -23,7 +23,7 @@ const sendFileOr404 = (req, res, reqPath) => {
     res.sendFile(dest)
   } else {
     res.status(404)
-    res.sendFile(path.join(__dirname, ssrDist, "/404/index.html"))
+    res.sendFile(path.join(__dirname, ssgDist, "/404/index.html"))
   }
 }
 
@@ -48,8 +48,8 @@ app.get("/*", function (req, res) {
     // If it's prod mode, Serve root production html file, can-route handles it from there
     res.sendFile(path.join(__dirname, "/production.html"))
   } else {
-    // it's still a directory but it didn't start with /dev or /prod, so serve from the static dist/ssr folder
-    sendFileOr404(req, res, path.join(ssrDist, reqPath, "/index.html"))
+    // it's still a directory but it didn't start with /dev or /prod, so serve from the static dist/ssg folder
+    sendFileOr404(req, res, path.join(ssgDist, reqPath, "/index.html"))
   }
 })
 

@@ -1,11 +1,11 @@
 # can-stache-element-ssr
 
-ssr solution for CanJS 6 custom stache elements
+ssg solution for CanJS 6 custom stache elements
 
 ```
 /dist/bundles - prod SPA
-/dist/ssr - generated static files
-/jsdom-ssr - ssr logic
+/dist/ssg - generated static files
+/jsdom-ssg - ssg logic
 /mock-can-globals - includes mocks for `can-globals`'s `isNode` and `isBrowserWindow` for `can-route` to function properly
 /patches - temporary files that are used to override files in node_modules
 /temp - random js that showcases ideas for implementions
@@ -47,7 +47,7 @@ $ npm run build # Generates dev static pages
 $ npm run build-prod # Generates prod static pages
 ```
 
-generates `dist/ssr` <-- static html files
+generates `dist/ssg` <-- static html files
 
 ### Serve
 
@@ -135,7 +135,7 @@ Or debug using vscode:
 
 `RUN AND DEBUG` -> `Launch Program`
 
-Alter config to run `"${workspaceFolder}/can-zone-jsdom/build.js"` or `"${workspaceFolder}/jsdom-ssr/ssr.js"`
+Alter config to run `"${workspaceFolder}/jsdom-ssg/index.js"`
 
 #### chrome inspector
 
@@ -150,7 +150,7 @@ $ npm run build-debug
 There will be times when you'll want to debug `scrape.js` which is executed through a spawn process. Debugging can be difficult if you use the existing debug npm scripts / vscode debugger. To get around this, you can just execute `scrape.js` directly:
 
 ```bash
-$ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
+$ node --inspect-brk jsdom-ssg/scrape.js http://127.0.0.1:8080/index.html
 ```
 
 ### Challenges
@@ -209,7 +209,7 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
      <title>CanJS and StealJS</title>
    </head>
    <body>
-     <canjs-app></canjs-app>
+     <can-app></can-app>
      <!-- script tag must be the last tag in body -->
      <script src="/node_modules/steal/steal.js" main></script>
    </body>

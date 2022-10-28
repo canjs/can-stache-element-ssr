@@ -1,5 +1,5 @@
 import StacheElement from "can-stache-element"
-import { ssrDefineElement } from "../../jsdom-ssr/ssr-helpers"
+import { ssgDefineElement } from "../../jsdom-ssg/ssg-helpers"
 import "./moo.css"
 
 class Moo extends StacheElement {
@@ -32,7 +32,7 @@ class Moo extends StacheElement {
   }
 }
 
-ssrDefineElement("progressive-moo", Moo)
+ssgDefineElement("progressive-moo", Moo)
 
 // Copied from main.js
 function xhrGet(url) {

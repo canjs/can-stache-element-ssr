@@ -1,5 +1,5 @@
 import StacheElement from "can-stache-element"
-import { ssrDefineElement } from "../../jsdom-ssr/ssr-helpers"
+import { ssgDefineElement } from "../../jsdom-ssg/ssg-helpers"
 import "./cow.css"
 
 class Cow extends StacheElement {
@@ -26,4 +26,4 @@ class Cow extends StacheElement {
   }
 }
 
-ssrDefineElement("progressive-cow", Cow)
+ssgDefineElement("progressive-cow", Cow)
