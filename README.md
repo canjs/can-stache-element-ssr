@@ -1,6 +1,6 @@
 # can-stache-element-ssr
 
-ssr solution for CanJS 6 custom elements
+ssr solution for CanJS 6 custom stache elements
 
 ```
 /dist/bundles - prod SPA
@@ -13,6 +13,14 @@ ssr solution for CanJS 6 custom elements
 /ssg.json - static files configuration (includes routes)
 ```
 
+### Limitations
+
+Using `setInterval` will cause the build progress for static pages to hang. For more information look into Technical Decisions #3 involving 
+```javascript
+process.once("beforeExit", (code) => {
+   // ...
+})
+```
 ### Environment
 
 ```bash
@@ -25,10 +33,6 @@ $ npm -v # 6.14.17
 ```bash
 $ npm install
 ```
-
-> TODO: Clean up patches and create issues / PRs as needed
-
-~~For every file in `patches`, replace dependency in `node_modules`, instructions are at the top of each file~~ (when trying to use `npm run build`, there's no need for these patches now)
 
 ### Build
 
@@ -194,7 +198,23 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
    })
    ```
    to know when application is stable and can be scraped
-4. TODO: explain why we're injecting steal and production bundle at the end of body tag
+4. When injecting steal or production bundle into index.html, the script tag must be injected at the end of the body tag:
+   ```html
+   <!DOCTYPE html>
+   <head>
+   <title>CanJS and StealJS</title>
+   </head>
+   <body>
+   <canjs-app></canjs-app>
+   <!-- script tag must be the last tag in body -->
+   <script src="/node_modules/steal/steal.js" main></script>
+   </body>
+   ```
+   Putting it anywhere else will result in a runtime error: 
+   
+   `Uncaught DOMException: Failed to construct 'CustomElement': The result must not have attributes`
+   
+   This issue is only recreatable for production bundles. Here is more [information on why this is the case when using Custom Elements](https://stackoverflow.com/a/43837330/9115419)
 
 ### Roadmap
 

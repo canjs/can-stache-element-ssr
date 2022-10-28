@@ -51,7 +51,6 @@ class MyRoutingApp extends StacheElement {
   get componentToShow() {
     console.log("route.data.page", this.routeData.page)
 
-    // TODO: Progressive loading
     switch (this.routeData.page) {
       case "home":
         const home = document.createElement("h2")
