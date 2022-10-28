@@ -5,6 +5,7 @@ import "./moo.css"
 class Moo extends StacheElement {
   static view = `
     <h3>Moo</h3>
+    <img class="cow-image" src="/assets/cow.webp">
     <p>Cows go Moooo~~</p>
     <p>First: {{ first }}</p>
     <p>Second: {{ second }}</p>

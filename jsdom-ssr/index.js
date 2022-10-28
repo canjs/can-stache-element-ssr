@@ -1,5 +1,5 @@
 const spawnBuildProcess = require("./spawn-build-process")
-const { ensureDir, emptyDir, readJson } = require("fs-extra")
+const { ensureDir, emptyDir, readJson, copy, readFile, writeFile, remove } = require("fs-extra")
 const stealTools = require("steal-tools")
 const argv = require("optimist").argv
 
@@ -31,4 +31,15 @@ async function main() {
   for (const route of routes) {
     spawnBuildProcess(route, !!argv.prod)
   }
+
+  // Copy assets
+  await remove("dist/assets")
+  await copy("assets", "dist/assets")
+
+  // TODO: when SPA production, we should read only from dist for everything
+  // Copy production.html and rename to index.html
+  // if (argv.prod) {
+  //   const entryPoint = await readFile('production.html')
+  //   await writeFile('dist/index.html', entryPoint)
+  // }
 }

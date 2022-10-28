@@ -46,6 +46,7 @@ app.get("/*", function (req, res) {
     res.sendFile(path.join(__dirname, "/index.html"))
   } else if (reqPath.indexOf("/prod") === 0 || argv.prod) {
     // If it's prod mode, Serve root production html file, can-route handles it from there
+    // TODO: res.sendFile(path.join(__dirname, "/dist/index.html"))
     res.sendFile(path.join(__dirname, "/production.html"))
   } else {
     // it's still a directory but it didn't start with /dev or /prod, so serve from the static dist/ssr folder
