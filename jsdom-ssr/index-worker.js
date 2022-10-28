@@ -70,6 +70,7 @@ async function onExit(worker, callback) {
 // pool of 32 -> 90.5499s (while watching something on youtube)
 
 // Invalid constructor, the constructor is not part of the custom element registry
+// error comes from jsdom, file search node_modules
 // 81.6880s
 // Recreatable from 1 to 11
 /**
