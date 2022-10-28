@@ -6,6 +6,7 @@ ssr solution for CanJS 6 custom stache elements
 /dist/bundles - prod SPA
 /dist/ssr - generated static files
 /jsdom-ssr - ssr logic
+/mock-can-globals - includes mocks for `can-globals`'s `isNode` and `isBrowserWindow` for `can-route` to function properly
 /patches - temporary files that are used to override files in node_modules
 /temp - random js that showcases ideas for implementions
 /index.html - dev SPA
@@ -15,12 +16,14 @@ ssr solution for CanJS 6 custom stache elements
 
 ### Limitations
 
-Using `setInterval` will cause the build progress for static pages to hang. For more information look into Technical Decisions #3 involving 
+Using `setInterval` will cause the build progress for static pages to hang. For more information look into Technical Decisions #3 involving
+
 ```javascript
 process.once("beforeExit", (code) => {
-   // ...
+  // ...
 })
 ```
+
 ### Environment
 
 ```bash
@@ -199,21 +202,23 @@ $ node --inspect-brk jsdom-ssr/scrape.js http://127.0.0.1:8080/index.html
    ```
    to know when application is stable and can be scraped
 4. When injecting steal or production bundle into index.html, the script tag must be injected at the end of the body tag:
+
    ```html
    <!DOCTYPE html>
    <head>
-   <title>CanJS and StealJS</title>
+     <title>CanJS and StealJS</title>
    </head>
    <body>
-   <canjs-app></canjs-app>
-   <!-- script tag must be the last tag in body -->
-   <script src="/node_modules/steal/steal.js" main></script>
+     <canjs-app></canjs-app>
+     <!-- script tag must be the last tag in body -->
+     <script src="/node_modules/steal/steal.js" main></script>
    </body>
    ```
-   Putting it anywhere else will result in a runtime error: 
-   
+
+   Putting it anywhere else will result in a runtime error:
+
    `Uncaught DOMException: Failed to construct 'CustomElement': The result must not have attributes`
-   
+
    This issue is only recreatable for production bundles. Here is more [information on why this is the case when using Custom Elements](https://stackoverflow.com/a/43837330/9115419)
 
 ### Roadmap
