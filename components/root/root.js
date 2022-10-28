@@ -1,5 +1,5 @@
 import StacheElement from "can-stache-element"
-import { ssrDefineElement } from "../../jsdom-ssr/ssr-helpers"
+import { ssgDefineElement } from "../../jsdom-ssg/ssg-helpers"
 import route from "can-route"
 import "can-stache-route-helpers"
 // import "../moo/moo"
@@ -57,4 +57,4 @@ export class Root extends StacheElement {
   }
 }
 
-ssrDefineElement("progressive-root", Root)
+ssgDefineElement("progressive-root", Root)

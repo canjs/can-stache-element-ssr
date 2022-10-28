@@ -5,9 +5,9 @@
   "main": "main.js",
   "scripts": {
     "prepare": "husky install",
-    "build": "node jsdom-ssr/index.js",
-    "build-prod": "node jsdom-ssr/index.js --prod true",
-    "build-debug": "node --inspect-brk jsdom-ssr/index.js",
+    "build": "node jsdom-ssg/index.js",
+    "build-prod": "node jsdom-ssg/index.js --prod true",
+    "build-debug": "node --inspect-brk jsdom-ssg/index.js",
     "serve": "node server.js --port 8080",
     "serve-dev": "node server.js --dev true --port 8080",
     "serve-prod": "node server.js --prod true --port 8080",

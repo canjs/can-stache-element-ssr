@@ -7,7 +7,7 @@ main()
 
 async function main() {
   // Create production bundle as needed
-  // Development doesn't require a build for ssr
+  // Development doesn't require a build for ssg
   if (argv.prod) {
     await stealTools.build(
       {},
@@ -18,10 +18,10 @@ async function main() {
   }
 
   // Create dist directory
-  await ensureDir("dist/ssr")
+  await ensureDir("dist/ssg")
 
   // Clear it
-  await emptyDir("dist/ssr")
+  await emptyDir("dist/ssg")
 
   // Read paths to generate static pages
   const ssgSettings = await readJson("ssg.json")

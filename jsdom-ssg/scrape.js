@@ -51,15 +51,15 @@ if (existsSync(entryPoint)) {
     rootCode = "<!doctype html>" + rootCode
   }
 
-  if (rootCode.indexOf("<canjs-app") === -1) {
+  if (rootCode.indexOf("<can-app") === -1) {
     if (rootCode.indexOf("</body") !== -1) {
-      rootCode = rootCode.replace("</body", "<canjs-app></canjs-app></body")
+      rootCode = rootCode.replace("</body", "<can-app></can-app></body")
     } else {
-      rootCode += "<canjs-app></canjs-app>"
+      rootCode += "<can-app></can-app>"
     }
   }
 } else {
-  rootCode = `<!doctype html><title>CanJS and StealJS</title><canjs-app></canjs-app>`
+  rootCode = `<!doctype html><title>CanJS and StealJS</title><can-app></can-app>`
 
   if (prod) {
     captureSteal = `<script src="/dist/bundles/can-stache-element-ssr/main.js" main></script>`
@@ -102,8 +102,8 @@ async function scrapeDocument() {
   // source: https://stackoverflow.com/questions/43836886/failed-to-construct-customelement-error-when-javascript-file-is-placed-in-head
   html = html.replace("</body>", captureSteal + "</body>")
 
-  html = html.replace(/(<canjs-app[^>]*)>/, "$1 data-canjs-static-render>")
+  html = html.replace(/(<can-app[^>]*)>/, "$1 data-canjs-static-render>")
   // html = html.replace("</body>", injectHydrateInZoneWithCache + "</body>")
 
-  await outputFile(`dist/ssr/${getFilepath(url, "index.html")}`, html)
+  await outputFile(`dist/ssg/${getFilepath(url, "index.html")}`, html)
 }

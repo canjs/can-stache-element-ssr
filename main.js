@@ -3,7 +3,7 @@ import StacheElement from "can-stache-element"
 import route from "can-route"
 import "can-stache-route-helpers"
 import view from "./app.stache"
-import { ssrDefineElement, ssrEnd, prepareRouting } from "./jsdom-ssr/ssr-helpers.js"
+import { ssgDefineElement, ssgEnd, prepareRouting } from "./jsdom-ssg/ssg-helpers.js"
 import "./styles.css"
 import "./components/root/root"
 
@@ -58,7 +58,7 @@ class MyRoutingApp extends StacheElement {
   }
 }
 
-ssrDefineElement("my-routing-app", MyRoutingApp)
+ssgDefineElement("my-routing-app", MyRoutingApp)
 
 // class ValueFromInput extends StacheElement {
 //     static view = `
@@ -84,7 +84,7 @@ ssrDefineElement("my-routing-app", MyRoutingApp)
 //         },
 //     }
 // }
-// ssrDefineElement("my-value-from-input", ValueFromInput)
+// ssgDefineElement("my-value-from-input", ValueFromInput)
 
 class ValueToInput extends StacheElement {
   static view = `
@@ -96,7 +96,7 @@ class ValueToInput extends StacheElement {
   }
 }
 
-ssrDefineElement("my-value-to-input", ValueToInput)
+ssgDefineElement("my-value-to-input", ValueToInput)
 
 function xhrGet(url) {
   return new Promise((res) => {
@@ -132,7 +132,7 @@ class MyStacheElement extends StacheElement {
   }
 }
 
-ssrDefineElement("my-stache-element", MyStacheElement)
+ssgDefineElement("my-stache-element", MyStacheElement)
 
 // Extend Component to define a custom element
 class MyCounter extends StacheElement {
@@ -163,7 +163,7 @@ class MyCounter extends StacheElement {
   }
 }
 
-ssrDefineElement("my-counter", MyCounter)
+ssgDefineElement("my-counter", MyCounter)
 
 class MyApp extends StacheElement {
   // <my-value-from-input></my-value-from-input><br>
@@ -197,7 +197,7 @@ class MyApp extends StacheElement {
     if (this.INERT_PRERENDERED) {
       return
     }
-    console.log("constructing canjs-app")
+    console.log("constructing can-app")
     this.style.color = "lime"
     setTimeout(() => (this.style.color = "#552255"), 1000)
   }
@@ -216,8 +216,8 @@ class MyApp extends StacheElement {
   }
 }
 
-ssrDefineElement("canjs-app", MyApp)
+ssgDefineElement("can-app", MyApp)
 
-ssrEnd()
+ssgEnd()
 
 console.log("href", window.location.href)
