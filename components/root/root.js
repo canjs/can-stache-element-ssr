@@ -31,7 +31,7 @@ export class Root extends StacheElement {
 
   get comp() {
     const loadId = this.routeData.loadId
-    console.log("route.data.loadId", loadId)
+    // console.log("route.data.loadId", loadId)
 
     if (!loadId || loadId === "root") {
       const root = document.createElement("h2")

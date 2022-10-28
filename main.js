@@ -49,7 +49,7 @@ class MyRoutingApp extends StacheElement {
   }
 
   get componentToShow() {
-    console.log("route.data.page", this.routeData.page)
+    // console.log("route.data.page", this.routeData.page)
 
     // TODO: Progressive loading
     switch (this.routeData.page) {
@@ -210,7 +210,7 @@ class MyApp extends StacheElement {
     if (this.INERT_PRERENDERED) {
       return
     }
-    console.log("constructing canjs-app")
+    // console.log("constructing canjs-app")
     this.style.color = "lime"
     setTimeout(() => (this.style.color = "#552255"), 1000)
   }
@@ -219,7 +219,7 @@ class MyApp extends StacheElement {
     // non-standard lifecycle hooks won't run if this.INERT_PRERENDERED is true
     this.style.backgroundColor = "white"
     setTimeout(() => (this.style.backgroundColor = "violet"), 1000)
-    console.log("MyApp - connected")
+    // console.log("MyApp - connected")
     this.name = "canjs"
     this.appendChild(document.createElement("my-counter"))
 
@@ -233,4 +233,4 @@ ssrDefineElement("canjs-app", MyApp)
 
 ssrEnd()
 
-console.log("href", window.location.href)
+// console.log("href", window.location.href)

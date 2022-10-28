@@ -6,6 +6,7 @@
   "scripts": {
     "prepare": "husky install",
     "build": "node jsdom-ssr/index.js",
+    "build-worker": "node jsdom-ssr/index-worker.js",
     "build-prod": "node jsdom-ssr/index.js --prod true",
     "build-debug": "node --inspect-brk jsdom-ssr/index.js",
     "serve": "node server.js --port 8080",

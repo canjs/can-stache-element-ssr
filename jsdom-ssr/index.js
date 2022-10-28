@@ -1,4 +1,7 @@
+const pLimit = require("p-limit")
+
 const spawnBuildProcess = require("./spawn-build-process")
+
 const { ensureDir, emptyDir, readJson } = require("fs-extra")
 const stealTools = require("steal-tools")
 const argv = require("optimist").argv
@@ -24,11 +27,32 @@ async function main() {
   await emptyDir("dist/ssr")
 
   // Read paths to generate static pages
-  const ssgSettings = await readJson("ssg.json")
+  const ssgSettings = await readJson("ssg-max.json")
 
   const routes = ssgSettings.routes
 
-  for (const route of routes) {
-    spawnBuildProcess(route, !!argv.prod)
-  }
+  const limit = pLimit(32)
+
+  const pool = routes.map((route) =>
+    limit(function () {
+      return spawnBuildProcess(route, !!argv.prod)
+    }),
+  )
+
+  const completed = await Promise.all(pool)
+
+  console.log(`Finished: ${completed.length}`)
 }
+
+// Time things:
+// npm i -D gnomon
+// npm run build | gnomon
+
+// At 400,  155.3191s with all processes -> crash...
+// pool of 32 -> 95.6140s
+// pool of 32 -> 118.9888s (while watching something on youtube)
+
+// after
+
+// pool of 32 -> 111.2810s
+// pool of 32 -> 117.4962s <-- includes moo and cow ):

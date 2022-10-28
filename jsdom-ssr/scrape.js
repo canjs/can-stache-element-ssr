@@ -12,9 +12,9 @@ const prod = argv.prod || false
 const entryPoint = prod ? "production.html" : "index.html"
 
 // Throw if build takes too long
-const timeout = setTimeout(() => {
-  throw new Error("timed out ):")
-}, 5000).unref()
+// const timeout = setTimeout(() => {
+//   throw new Error("timed out ):")
+// }, 5000).unref()
 
 /**
  * Wait for process to become idle (no async tasks are pending)
@@ -22,7 +22,7 @@ const timeout = setTimeout(() => {
  * This is when it is safe to scrape document
  */
 process.once("beforeExit", (code) => {
-  clearTimeout(timeout)
+  // clearTimeout(timeout)
 
   // TODO: should we consider code? code === 0?
   scrapeDocument()
@@ -76,7 +76,7 @@ async function populateDocument() {
   await steal.startup() // loads canjs app
   // TODO: disable jsdom script tags?
 
-  console.log("steal - done")
+  // console.log("steal - done")
 }
 
 populateDocument()
