@@ -1,23 +1,29 @@
-// import globals from "can-globals"
 import Zone from "can-zone"
 import xhrZone from "can-zone/xhr"
 
-// const oldisNode = globals.getKeyValue("isNode")
-// hack to trick `can-route` to think this is a browser
-// This is required for routing to work (without this, it will always 404)
-// globals.setKeyValue("isNode", false)
+const sharedZone = new Zone({ plugins: [xhrZone] })
+export const ssrDefineElement = (...args) => {
+  sharedZone.run(() => customElements.define(...args))
+}
 
-const ceQueue = []
-export const ssrDefineElement = (...args) => ceQueue.push(args)
+/**
+ * @deprecated You should be able to just use `steal.import` directly
+ *
+ * Gonna keep this here for now in case it turns out not to be true
+ */
+export const stealImport = (stealPath, callback) => {
+  return new Promise((resolve) => {
+    sharedZone.run(() => {
+      return steal.import(stealPath).then((data) => {
+        resolve(callback())
+      })
+    })
+  })
+}
 
 export const ssrEnd = () => {
-  new Zone({
-    plugins: [xhrZone],
-  })
-    .run(function () {
-      ceQueue.forEach((args) => customElements.define(...args))
-      ceQueue.length = 0
-    })
+  sharedZone
+    .run(() => {})
     .then(function (data) {
       if (!globalThis.XHR_CACHE) {
         const temp = document.createElement("div")
@@ -41,13 +47,10 @@ export const ssrEnd = () => {
         return { staticapp, liveapp }
       })
       .then(function (data) {
+        delete globalThis.canMooStache
         const { staticapp, liveapp } = data.result
         staticapp.remove()
         liveapp.style.display = ""
-        // console.log("it's alive!")
       })
   }
-
-  // restore `isNode` for globals
-  // globals.setKeyValue("isNode", oldisNode)
 }
