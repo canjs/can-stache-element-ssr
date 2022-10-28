@@ -24,7 +24,24 @@ process.once("beforeExit", (code) => {
 })
 ```
 
-### Environment
+### Assets
+
+Assets exist in the `assets` directory found at root. This directory is copied to `dist` at build. These include things like images that can be imported relatively or absolutely:
+
+Absolute path normally points at the root of the project
+
+```
+<img src="/assets/image.png">
+```
+
+Relative path is **relative based on url** and not where the javascript file is found in your project
+
+```
+<!-- url is: http://0.0.0.0:8080/progressive-loading/cow -->
+<img src="../assets/image.png">
+```
+
+### Node
 
 ```bash
 $ node -v # 14.20.0
