@@ -1,7 +1,6 @@
 const pLimit = require("p-limit")
 
 const spawnBuildProcess = require("./spawn-build-process")
-const workerThread = require("./worker-thread")
 
 const { ensureDir, emptyDir, readJson } = require("fs-extra")
 const stealTools = require("steal-tools")
@@ -32,23 +31,23 @@ async function main() {
 
   const routes = ssgSettings.routes
 
-  // const limit = pLimit(40);
+  const limit = pLimit(32)
 
-  // const pool = routes.map(route => limit(function(){
-  //   // return spawnBuildProcess(route, !!argv.prod)
-  //   return workerThread(route,!!argv.prod)
-  // }));
+  const pool = routes.map((route) =>
+    limit(function () {
+      return spawnBuildProcess(route, !!argv.prod)
+    }),
+  )
 
-  // const completed = await Promise.all(pool);
+  const completed = await Promise.all(pool)
 
-  // console.log(completed.length);
-
-  for (const route of routes) {
-    // spawnBuildProcess(route, !!argv.prod)
-    workerThread(route, !!argv.prod)
-  }
+  console.log(`Finished: ${completed.length}`)
 }
 
 // Time things:
 // npm i -D gnomon
 // npm run build | gnomon
+
+// At 400,  155.3191s with all processes -> crash...
+// pool of 32 -> 95.6140s
+// pool of 32 -> 118.9888s (while watching something on youtube)

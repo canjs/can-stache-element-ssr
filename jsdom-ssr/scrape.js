@@ -76,7 +76,7 @@ async function populateDocument() {
   await steal.startup() // loads canjs app
   // TODO: disable jsdom script tags?
 
-  console.log("steal - done")
+  // console.log("steal - done")
 }
 
 populateDocument()
