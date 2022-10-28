@@ -32,7 +32,9 @@ app.get("/*", function (req, res) {
 
   if (reqPath.indexOf(".") !== -1) {
     // pointing straight to a file? Serve the file
-    if (reqPath.startsWith("/prod")) {
+    if (reqPath.startsWith("/dev")) {
+      sendFileOr404(req, res, reqPath.replace("/dev", ""))
+    } else if (reqPath.startsWith("/prod")) {
       sendFileOr404(req, res, reqPath.replace("/prod", ""))
     } else {
       sendFileOr404(req, res, reqPath)
