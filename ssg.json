@@ -1,5 +1,4 @@
 {
-  "appSelector": "can-app",
   "assets": ["assets"],
   "defaultServerMode": "ssg",
   "defaultEnv": "dev",

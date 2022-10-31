@@ -10,6 +10,9 @@ const envConfiguration = getEnvConfiguration(getEnvironment())
 
 main()
 
+/**
+ * Builds static pages for application
+ */
 async function main() {
   // Create and clear dist directory for static pages
   const distPath = path.join("dist", envConfiguration.dist.basePath)
