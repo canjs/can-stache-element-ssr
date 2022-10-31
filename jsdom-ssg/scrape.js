@@ -1,6 +1,6 @@
 const steal = require("steal")
 const setupGlobals = require("./setup-globals")
-const { outputFile, existsSync, readFileSync } = require("fs-extra")
+const { outputFile } = require("fs-extra")
 const getFilepath = require("./util/get-filepath")
 const argv = require("optimist").argv
 const path = require("path")

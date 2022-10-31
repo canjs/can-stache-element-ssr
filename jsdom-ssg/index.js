@@ -1,4 +1,4 @@
-const { ensureDir, emptyDir, copy, readFile, writeFile } = require("fs-extra")
+const { ensureDir, emptyDir, copy, writeFile } = require("fs-extra")
 const path = require("path")
 const spawnBuildProcess = require("./spawn-build-process")
 const { getEnvConfiguration, getSggConfiguration } = require("../client-helpers/environment-helpers")
