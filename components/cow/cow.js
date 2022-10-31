@@ -1,10 +1,11 @@
 import StacheElement from "can-stache-element"
-import { ssrDefineElement } from "../../jsdom-ssr/ssr-helpers"
+import { ssgDefineElement } from "../../jsdom-ssg/ssg-helpers"
 import "./cow.css"
 
 class Cow extends StacheElement {
   static view = `
     <h3>Cow</h3>
+    <img class="cow-image" src="../assets/cow-strawberry.webp">
     <p>Top 5 animal in the world is Cow</p>
     <p>First: {{ first }}</p>
     <p>Second: {{ second }}</p>
@@ -26,4 +27,4 @@ class Cow extends StacheElement {
   }
 }
 
-ssrDefineElement("progressive-cow", Cow)
+ssgDefineElement("progressive-cow", Cow)

@@ -3,7 +3,7 @@ import xhrZone from "can-zone/xhr"
 import RoutePushstate from "can-route-pushstate"
 
 const sharedZone = new Zone({ plugins: [xhrZone] })
-export const ssrDefineElement = (...args) => {
+export const ssgDefineElement = (...args) => {
   sharedZone.run(() => customElements.define(...args))
 }
 
@@ -40,7 +40,7 @@ export const prepareRouting = (route) => {
   }
 }
 
-export const ssrEnd = () => {
+export const ssgEnd = () => {
   sharedZone
     .run(() => {})
     .then(function (data) {
@@ -57,10 +57,10 @@ export const ssrEnd = () => {
     })
       .run(function () {
         delete globalThis.canStacheElementInertPrerendered
-        const staticapp = document.querySelector("canjs-app")
+        const staticapp = document.querySelector("can-app")
         const temp = document.createElement("div")
-        temp.innerHTML = "<canjs-app></canjs-app>" // TODO: scrape static attrs from page too
-        const liveapp = temp.querySelector("canjs-app")
+        temp.innerHTML = "<can-app></can-app>" // TODO: scrape static attrs from page too
+        const liveapp = temp.querySelector("can-app")
         liveapp.style.display = "none"
         staticapp.parentNode.insertBefore(liveapp, staticapp)
         return { staticapp, liveapp }

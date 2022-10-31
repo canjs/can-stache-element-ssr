@@ -1,10 +1,11 @@
 import StacheElement from "can-stache-element"
-import { ssrDefineElement } from "../../jsdom-ssr/ssr-helpers"
+import { ssgDefineElement } from "../../jsdom-ssg/ssg-helpers"
 import "./moo.css"
 
 class Moo extends StacheElement {
   static view = `
     <h3>Moo</h3>
+    <img class="cow-image" src="/assets/cow.webp">
     <p>Cows go Moooo~~</p>
     <p>First: {{ first }}</p>
     <p>Second: {{ second }}</p>
@@ -32,7 +33,7 @@ class Moo extends StacheElement {
   }
 }
 
-ssrDefineElement("progressive-moo", Moo)
+ssgDefineElement("progressive-moo", Moo)
 
 // Copied from main.js
 function xhrGet(url) {

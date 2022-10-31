@@ -2,7 +2,7 @@
 scrape.js
 
 loads :defined elements in an iframe, copies them into parent dom and replaces
-the :not(:defined) ssg canjs-app with the live version from the iframe
+the :not(:defined) ssg can-app with the live version from the iframe
 
 children are also live 
 
@@ -52,15 +52,15 @@ if (existsSync("index.html")) {
     rootCode = "<!doctype html>" + rootCode
   }
 
-  if (rootCode.indexOf("<canjs-app") === -1) {
+  if (rootCode.indexOf("<can-app") === -1) {
     if (rootCode.indexOf("</body") !== -1) {
-      rootCode = rootCode.replace("</body", "<canjs-app></canjs-app></body")
+      rootCode = rootCode.replace("</body", "<can-app></can-app></body")
     } else {
-      rootCode += "<canjs-app></canjs-app>"
+      rootCode += "<can-app></can-app>"
     }
   }
 } else {
-  rootCode = `<!doctype html><title>CanJS and StealJS</title><canjs-app></canjs-app>`
+  rootCode = `<!doctype html><title>CanJS and StealJS</title><can-app></can-app>`
   captureSteal = `<script src="/node_modules/steal/steal.js" main></script>`
 }
 
@@ -117,9 +117,9 @@ const inject = `
         console.log("LOADED")
 
         // repalce static app with hydrated already rendered live app
-        document.querySelector("canjs-app").replaceWith(
+        document.querySelector("can-app").replaceWith(
           document.adoptNode(
-            hydrationWindow.document.querySelector("canjs-app")
+            hydrationWindow.document.querySelector("can-app")
           )
         )
   
@@ -151,7 +151,7 @@ async function scrapeDocument() {
   html = html.replace("</head>", captureSteal + "</head>")
   html = html.replace("</body>", "<foobar-test></foobar-test></body>")
 
-  await outputFile(`dist/ssr/${getFilename(url)}.html`, html)
+  await outputFile(`dist/ssg/${getFilename(url)}.html`, html)
 }
 
 /**
