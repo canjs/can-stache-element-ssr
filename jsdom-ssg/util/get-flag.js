@@ -1,4 +1,4 @@
-const { readJsonSync } = require("fs-extra")
+const { getSggConfiguration } = require("../../client-helpers/environment-helpers")
 const argv = require("optimist").argv
 
 /**
@@ -10,7 +10,7 @@ const argv = require("optimist").argv
  * SSG_ENVIRONMENT=prod node jsdom-ssg
  * ```
  *
- * 2. argument:
+ * 2. node argument:
  * ```
  * node jsdom-ssg --environment prod
  * ```
@@ -22,7 +22,46 @@ const argv = require("optimist").argv
  * ```
  */
 module.exports = function (processEnv, argument, ssgConfigurationProp) {
-  const value = process.env[processEnv] || argv[argument] || readJsonSync("ssg.json")[ssgConfigurationProp]
+  const value = getProcessEnvValue(processEnv) || getArgumentValue(argument) || getSggConfigurationDefault(ssgConfigurationProp)
+
+  if (!value) {
+    throw new Error(`Unexpected missing flag value: ${value}`)
+  }
+
+  // Set process env variable so that further node processes can pick up that flag value
   process.env[processEnv] = value
   return value
+}
+
+/**
+ * Get flag value by process env variable
+ */
+function getProcessEnvValue(processEnv) {
+  if (!processEnv) {
+    throw new Error(`Unexpected missing process env variable name: ${processEnv}`)
+  }
+
+  return process.env[processEnv]
+}
+
+/**
+ * Get flag value by node argument
+ */
+function getArgumentValue(argument) {
+  if (!argument) {
+    return
+  }
+
+  return argv[argument]
+}
+
+/**
+ * Get flag value by checking SSG configuration
+ */
+function getSggConfigurationDefault(prop) {
+  if (!prop) {
+    return
+  }
+
+  return getSggConfiguration()[prop]
 }
