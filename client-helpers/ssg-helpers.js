@@ -9,21 +9,6 @@ export const ssgDefineElement = (...args) => {
 }
 
 /**
- * @deprecated You should be able to just use `steal.import` directly
- *
- * Gonna keep this here for now in case it turns out not to be true
- */
-export const stealImport = (stealPath, callback) => {
-  return new Promise((resolve) => {
-    sharedZone.run(() => {
-      return steal.import(stealPath).then((data) => {
-        resolve(callback())
-      })
-    })
-  })
-}
-
-/**
  * Configures `can-route` to use pushstate to change the
  * window's pathname instead of the hash
  *
@@ -34,10 +19,13 @@ export const prepareRouting = (route) => {
 
   const root = window.location.pathname.split("/")[1]
 
+  // Check if begining of pathname matches an environment
   const environments = getEnvironments()
 
   const matchedEnvironment = environments.find((environment) => root === environment)
 
+  // If so, append environment to root for `can-route`
+  // so server can customize behavior based on environment
   if (matchedEnvironment) {
     route.urlData.root += `${matchedEnvironment}/`
   }

@@ -4,8 +4,8 @@ const { existsSync } = require("fs-extra")
 const { getEnvironments, getEnvConfiguration } = require("./client-helpers/environment-helpers")
 const argv = require("optimist").argv
 const app = express()
-const defaultEnvironment = require("./jsdom-ssg/get-environment")()
-const serverMode = require("./jsdom-ssg/get-server-mode")()
+const defaultEnvironment = require("./jsdom-ssg/flags/get-ssg-environment")()
+const serverMode = require("./jsdom-ssg/flags/get-server-mode")()
 
 // ssg settings based on environment
 let staticDir = ""

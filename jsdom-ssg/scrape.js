@@ -1,10 +1,10 @@
 const steal = require("steal")
 const setupGlobals = require("./setup-globals")
 const { outputFile, existsSync, readFileSync } = require("fs-extra")
-const getFilepath = require("./get-filepath")
+const getFilepath = require("./util/get-filepath")
 const argv = require("optimist").argv
 const path = require("path")
-const getEnvironment = require("./get-environment")
+const getEnvironment = require("./flags/get-ssg-environment")
 const { getEnvConfiguration, getSggConfiguration } = require("../client-helpers/environment-helpers")
 
 // Get url from argv
