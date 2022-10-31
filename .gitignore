@@ -30,3 +30,6 @@ node_modules
 
 doc/
 dist/
+/test-results/
+/playwright-report/
+/playwright/.cache/
