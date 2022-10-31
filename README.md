@@ -2,16 +2,63 @@
 
 ssg solution for CanJS 6 custom stache elements
 
+
+
 ```
-/dist/bundles - prod SPA
-/dist/ssg - generated static files
-/jsdom-ssg - ssg logic
+/client-helpers - functions that are safe to use in a browser (and can be imported using node)
+/dist - ssg and production spa build
+/jsdom-ssg - ssg nodejs logic (not browser-safe)
 /mock-can-globals - includes mocks for `can-globals`'s `isNode` and `isBrowserWindow` for `can-route` to function properly
-/patches - temporary files that are used to override files in node_modules
 /temp - random js that showcases ideas for implementions
 /index.html - dev SPA
 /main.js - client side code that generates CanJS 6 components
-/ssg.json - static files configuration (includes routes)
+/production.html - dev SPA
+/ssg.json - general ssg configuration (includes routes and default settings) and defines environments
+```
+
+### ssg.json
+
+```json
+{
+  // Paths to assets such as images, favicons, etc, they will be copied to dist
+  "assets": ["assets"],
+  // Default serve mode. Options: "ssg" and "spa"
+  "defaultServerMode": "ssg",
+  // Default environment. Options: "dev" and "prod" (given the current configuration, you can add or remove environments as you need)
+  "defaultEnv": "dev",
+  "environments": {
+    // Environment name (can be whatever you want)
+    "prod": {
+      // prebuild (optional) - prebuild script (allows you to run steal-tools)
+      "prebuild": "build.js",
+      // dist - All builds will be generated in the /dist/ directory
+      "dist": {
+        // mainTag (optional) - steal/main tag specific to builds 
+        "mainTag": "<script src=\"/bundles/can-stache-element-ssr/main.js\" main></script>",
+        //basePath - sub-directory in /dist/ where all generated build files will go
+        // /dist/prod
+        "basePath": "prod",
+        // static - sub-directory for where ssg pages will be stored
+        "static": "static",
+        // assets - sub-directory where all assets will be copied to
+        "assets": "",
+        // entryPoint (optional) - path to entry point specific to serving from dist
+        "entryPoint": "index.html"
+      },
+      // entryPoint - path to entry point for serving (if not from dist)
+      "entryPoint": "production.html",
+      // serveFromDist (optional) - Determines if serving should use dist or root of project
+      "serveFromDist": true
+    }
+  },
+  // Routes for generating ssg pages
+  "routes": [
+    "http://127.0.0.1:8080",
+    "http://127.0.0.1:8080/tasks",
+    "http://127.0.0.1:8080/404"
+    // ...
+  ]
+}
 ```
 
 ### Limitations
@@ -26,7 +73,7 @@ process.once("beforeExit", (code) => {
 
 ### Assets
 
-Assets exist in the `assets` directory found at root. This directory is copied to `dist` at build. These include things like images that can be imported relatively or absolutely:
+Assets directories are defined in `ssg.json`. These directories are copied to `dist` at build. These include things like images, svgs, favicons, etc and can be imported using relatively or absolutely:
 
 Absolute path normally points at the root of the project
 
@@ -56,37 +103,71 @@ $ npm install
 
 ### Build
 
+For dev environment (default)
+
 ```bash
-$ npm run build # Generates dev static pages
+$ npm run build # Generates dev static pages (default)
+# or
+$ node jsdom-ssg/index.js # Generates dev static pages (default)
+# or
+$ SSR_ENVIRONMENT=dev node jsdom-ssg/index.js # Generates dev static pages
+# or
+$ node jsdom-ssg/index.js --environment dev # Generates dev static pages
 ```
+
+generates `dist/dev` <-- specific to dev environment and is configurable in `ssg.json`
+
+For prod environment
 
 ```bash
 $ npm run build-prod # Generates prod static pages
+# or
+$ SSR_ENVIRONMENT=prod node jsdom-ssg/index.js # Generates prod static pages
+# or
+$ node jsdom-ssg/index.js --environment prod # Generates prod static pages
 ```
 
-generates `dist/ssg` <-- static html files
+generates `dist/prod` <-- specific to prod environment and is configurable in `ssg.json`
 
 ### Serve
 
-To serve in static mode where built files from /dist are used by defualt
+To serve in ssg (static) mode where built files from /dist are used by default
 
 ```bash
-$ npm run serve
+$ npm run serve # serves ssg dev application (default)
+# or
+$ node server.js # serves ssg dev application (default)
+# or
+$ SSR_ENVIRONMENT=dev SERVER_MODE=ssg node server.js # serves ssg dev application
+# or
+$ node server.js --environment dev --serverMode ssg # serves ssg dev application
 ```
 
-To serve in dev mode where built files from /dist are not used (except dist/404/index.html as needed)
+To serve in spa mode where built files from /dist are not used (except dist/404/index.html as needed)
 
 ```bash
-$ npm run serve-dev
+$ npm run serve-dev # serves spa dev application
+# or
+$ SERVER_MODE=spa node server.js # serves spa dev application
+# or
+$ SSR_ENVIRONMENT=dev SERVER_MODE=spa node server.js # serves spa dev application
+# or
+$ node server.js --environment dev --serverMode spa # serves spa dev application
 ```
 
 To serve in prod mode where built files from /dist are not used (except dist/404/index.html as needed)
 
 ```bash
-$ npm run serve-prod
+$ npm run serve-prod # serves spa prod application
+# or
+$ SERVER_MODE=spa node server.js # serves spa prod application
+# or
+$ SSR_ENVIRONMENT=prod SERVER_MODE=spa node server.js # serves spa prod application
+# or
+$ node server.js --environment prod --serverMode spa # serves spa prod application
 ```
 
-Both commands run server.js in the project root and serves any file a request directly points at.
+Both commands run server.js in the project root or dist (based on `ssg.json`) and serves any file a request directly points at.
 
 If that file doesn't exist, it serves dist/404/index.html
 
@@ -108,30 +189,28 @@ main.js sets the can-route page data to the first /slug/ in the path so the corr
 
 #### In SPA `npm run serve-prod` mode
 
-Functions like `npm run serve-dev` mode with 3 changes:
+Functions like `npm run serve-dev` mode with changes which are configurable through `ssg.json`:
 
-1. Requires running `npm run build-prod` first to work as expected
+1. Requires running `npm run build-prod` (or any of the other variations listed above) first to work as expected
 
-2. Always serve the root /production.html
-
-[//]: # "TODO: should be dist/index.html"
-
-3. /dist/bundles/can-stache-element-ssr/main.js sets the can-route page data to the first /slug/ in the path so the correct page loads
+2. Serves from `dist/prod/index.html`
 
 #### In static `npm run serve` mode
 
-If the request points at a directory, it will prepend "/dist" to the request path and serve the index.html in that folder. If the path or its index.html file doesn't exist, it serves dist/404/index.html
+If the request points at a directory, it will prepend "/dist/dev/static-dev/*" to the request path and serve the index.html in that folder. If the path or its index.html file doesn't exist, it serves dist/404/index.html
 
 can-route data "page" is set to the first /slug/ or to "home" if on the root
 
-- http://localhost:8080/ -> serves dist/index.html + page is "home"
-- http://localhost:8080/tasks -> serves dist/tasks/index.html + page is "tasks"
-- http://localhost:8080/asdf -> serves dist/404/index.html (with status 404) + page is "asdf" (shows 404 page)
+- http://localhost:8080/ -> serves dist/dev/static-dev/index.html + page is "home"
+- http://localhost:8080/tasks -> serves dist/dev/static-dev/tasks/index.html + page is "tasks"
+- http://localhost:8080/asdf -> serves dist/dev/static-dev/404/index.html (with status 404) + page is "asdf" (shows 404 page)
 
 #### In either mode
 
 If you prepend /dev to the request path, it serves root /index.html file.
-If you prepend /prod to the request path, it serves root /dist/index.html file.
+If you prepend /prod to the request path, it serves root /dist/prod/index.html file.
+
+Both are configurable through `ssg.json`
 
 main.js sets the can-route page data to the first /slug/ after /dev so the correct page loads in dev/spa mode.
 can-route then automatically uses pushstate to remove the "dev" sentenil value in the url quietly.
