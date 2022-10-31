@@ -6,11 +6,12 @@
   "scripts": {
     "prepare": "husky install",
     "build": "node jsdom-ssg/index.js",
-    "build-prod": "node jsdom-ssg/index.js --prod true",
+    "build-prod": "node jsdom-ssg/index.js --environment prod",
     "build-debug": "node --inspect-brk jsdom-ssg/index.js",
     "serve": "node server.js --port 8080",
-    "serve-dev": "node server.js --dev true --port 8080",
-    "serve-prod": "node server.js --prod true --port 8080",
+    "serve-prod": "node server.js --environment prod --port 8080",
+    "serve-spa-dev": "node server.js --environment dev --serverMode spa --port 8080",
+    "serve-spa-prod": "node server.js --environment prod --serverMode spa --port 8080",
     "format": "prettier --write ."
   },
   "steal": {

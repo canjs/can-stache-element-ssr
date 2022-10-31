@@ -1,4 +1,30 @@
 {
+  "appSelector": "can-app",
+  "assets": ["assets"],
+  "defaultEnv": "dev",
+  "environments": {
+    "dev": {
+      "dist": {
+        "basePath": "dist/dev",
+        "static": "static-dev",
+        "assets": "",
+        "entryPoint": "index.html"
+      },
+      "entryPoint": "index.html"
+    },
+    "prod": {
+      "build": "build.js",
+      "dist": {
+        "mainTag": "<script src=\"/bundles/can-stache-element-ssr/main.js\" main></script>",
+        "basePath": "dist/prod",
+        "static": "static",
+        "assets": "",
+        "entryPoint": "index.html"
+      },
+      "entryPoint": "production.html",
+      "serveFromDist": true
+    }
+  },
   "routes": [
     "http://127.0.0.1:8080",
     "http://127.0.0.1:8080/tasks",

@@ -1,3 +1,5 @@
+const spawn = require("../util/spawn-promise")
+
 /**
  * Create a normalized file path based on url
  *

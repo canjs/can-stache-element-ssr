@@ -1,15 +1,20 @@
 const steal = require("steal")
 const setupGlobals = require("./setup-globals")
-const { outputFile, existsSync, readFileSync } = require("fs-extra")
+const { outputFile, existsSync, readFileSync, readJsonSync } = require("fs-extra")
 const getFilepath = require("../util/get-filepath")
 const argv = require("optimist").argv
+const path = require("path")
+const getEnvSettings = require("./get-env-settings")
+const ssgSettings = readJsonSync("ssg.json")
 
 // Get url from argv
 const url = argv.url || "http://127.0.0.1:8080"
 // Generate prod vs dev scapes
-const prod = argv.prod || false
+// const prod = argv.environment === "prod" || false
 // Setup entry point based on prod
-const entryPoint = prod ? "production.html" : "index.html"
+
+// Get ssg settings based on environment
+const envSettings = getEnvSettings()
 
 // Throw if build takes too long
 const timeout = setTimeout(() => {
@@ -29,47 +34,58 @@ process.once("beforeExit", (code) => {
 })
 
 // Strip steal / production bundle from entry point html file
-let captureSteal = ""
+let captureMain = ""
 let rootCode = ""
-let stealRegex = ""
+// Remove any script where its last attribute is main
+const stealRegex = /<script.*\s+main(\s*=".*")?\s*><\/script>/
 
-if (existsSync(entryPoint)) {
-  if (prod) {
-    // TODO: Create a better regex for production script
-    stealRegex = /(<script[^>]*main\.js.*?>.*?<\/script>)/i
-  } else {
-    stealRegex = /(<script[^>]*steal\/steal.*?>.*?<\/script>)/i
-  }
+main()
 
-  rootCode = readFileSync(entryPoint, { encoding: "utf8", flag: "r" }) // project"s index.html / production.html
-    .replace(stealRegex, (_, stealTag) => {
-      captureSteal = stealTag
-      return "" // remove steal script tag (re-injected before exit)
-    })
+async function main() {
+  const entryPoint = envSettings.entryPoint
+  const appSelector = ssgSettings.appSelector
 
-  if (!/^<!doctype/i.test(rootCode)) {
-    rootCode = "<!doctype html>" + rootCode
-  }
+  if (existsSync(envSettings.entryPoint)) {
+    // TODO: better scrap script tags
+    // if (prod) {
+    //   // TODO: Create a better regex for production script
+    //   stealRegex = /(<script[^>]*main\.js.*?>.*?<\/script>)/i
+    // } else {
+    //   stealRegex = /(<script[^>]*steal\/steal.*?>.*?<\/script>)/i
+    // }
 
-  if (rootCode.indexOf("<can-app") === -1) {
-    if (rootCode.indexOf("</body") !== -1) {
-      rootCode = rootCode.replace("</body", "<can-app></can-app></body")
-    } else {
-      rootCode += "<can-app></can-app>"
+    rootCode = readFileSync(entryPoint, { encoding: "utf8", flag: "r" }) // project"s index.html / production.html
+      .replace(stealRegex, (_, mainTag) => {
+        captureMain = mainTag
+        return "" // remove steal script tag (re-injected before exit)
+      })
+
+    if (!/^<!doctype/i.test(rootCode)) {
+      rootCode = "<!doctype html>" + rootCode
     }
-  }
-} else {
-  rootCode = `<!doctype html><title>CanJS and StealJS</title><can-app></can-app>`
 
-  if (prod) {
-    captureSteal = `<script src="/dist/bundles/can-stache-element-ssr/main.js" main></script>`
+    if (rootCode.indexOf(`<${appSelector}`) === -1) {
+      if (rootCode.indexOf("</body") !== -1) {
+        rootCode = rootCode.replace("</body", `<${appSelector}></${appSelector}></body`)
+      } else {
+        rootCode += `<${appSelector}></${appSelector}>`
+      }
+    }
   } else {
-    captureSteal = `<script src="/node_modules/steal/steal.js" main></script>`
-  }
-}
+    rootCode = `<!doctype html><title>CanJS and StealJS</title><${appSelector}></${appSelector}>`
 
-// Setup JSDOM and global.window, global.document, global.location
-setupGlobals(rootCode, url)
+    // if (prod) {
+    //   captureMain = `<script src="/dist/bundles/can-stache-element-ssr/main.js" main></script>`
+    // } else {
+    //   captureMain = `<script src="/node_modules/steal/steal.js" main></script>`
+    // }
+  }
+
+  // Setup JSDOM and global.window, global.document, global.location
+  setupGlobals(rootCode, url)
+
+  populateDocument()
+}
 
 async function populateDocument() {
   // Run client-side code
@@ -78,8 +94,6 @@ async function populateDocument() {
 
   console.log("steal - done")
 }
-
-populateDocument()
 
 /**
  * Once async tasks are completed, scrap document into dist
@@ -97,13 +111,19 @@ async function scrapeDocument() {
   </script>`,
   )
 
+  captureMain = envSettings.dist.mainTag || captureMain || '<script src="/node_modules/steal/steal.js" main></script>'
+  console.log(captureMain)
   // Re-inject steal before closing of body tag
   // It's required that steal is injected at the end of body to avoid runtime errors involving `CustomElement`
   // source: https://stackoverflow.com/questions/43836886/failed-to-construct-customelement-error-when-javascript-file-is-placed-in-head
-  html = html.replace("</body>", captureSteal + "</body>")
+  html = html.replace("</body>", captureMain + "</body>")
 
+  // TODO: how to use settings.appSelector with regex
   html = html.replace(/(<can-app[^>]*)>/, "$1 data-canjs-static-render>")
   // html = html.replace("</body>", injectHydrateInZoneWithCache + "</body>")
 
-  await outputFile(`dist/ssg/${getFilepath(url, "index.html")}`, html)
+  // await outputFile(`dist/ssg/${getFilepath(url, "index.html")}`, html)
+  const staticPath = path.join(envSettings.dist.basePath, envSettings.dist.static)
+
+  await outputFile(path.join(staticPath, getFilepath(url, "index.html")), html)
 }
