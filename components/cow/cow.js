@@ -1,5 +1,5 @@
 import StacheElement from "can-stache-element"
-import { ssgDefineElement } from "../../jsdom-ssg/ssg-helpers"
+import { ssgDefineElement } from "../../client-helpers/ssg-helpers"
 import "./cow.css"
 
 class Cow extends StacheElement {

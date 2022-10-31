@@ -1,26 +1,27 @@
-const { ensureDir, emptyDir, readJson, copy, readFile, writeFile, remove } = require("fs-extra")
+const { ensureDir, emptyDir, copy, readFile, writeFile } = require("fs-extra")
 const path = require("path")
-const argv = require("optimist").argv
 const spawnBuildProcess = require("./spawn-build-process")
-const getEnvSettings = require("./get-env-settings")
-const spawn = require("../util/spawn-promise")
+const { getEnvConfiguration, getSggConfiguration } = require("../client-helpers/environment-helpers")
+const spawn = require("./spawn-promise")
+const getEnvironment = require("./get-environment")
+
 // Get ssg settings based on environment
-const envSettings = getEnvSettings()
+const envConfiguration = getEnvConfiguration(getEnvironment())
 
 main()
 
 async function main() {
   // Create and clear dist directory for static pages
-  await ensureDir(envSettings.dist.basePath)
-  await emptyDir(envSettings.dist.basePath)
+  await ensureDir(envConfiguration.dist.basePath)
+  await emptyDir(envConfiguration.dist.basePath)
 
   // Do SPA build if there's a build property for environment
-  if (envSettings.build) {
-    await spawn("node", envSettings.build.split(" "))
+  if (envConfiguration.build) {
+    await spawn("node", envConfiguration.build.split(" "))
   }
 
   // Create and clear dist directory for static pages
-  const staticPath = path.join(envSettings.dist.basePath, envSettings.dist.static)
+  const staticPath = path.join(envConfiguration.dist.basePath, envConfiguration.dist.static)
   await ensureDir(staticPath)
   await emptyDir(staticPath)
 
@@ -28,9 +29,9 @@ async function main() {
   // await emptyDir("dist/ssg")
 
   // Read paths to generate static pages
-  const ssgSettings = await readJson("ssg.json")
+  const ssgConfiguration = getSggConfiguration()
 
-  const routes = ssgSettings.routes
+  const routes = ssgConfiguration.routes
 
   // Generate static pages
   for (const route of routes) {
@@ -38,11 +39,11 @@ async function main() {
   }
 
   // Copy assets
-  const baseAssetsDistPath = envSettings.dist.assets
-    ? path.join(envSettings.dist.basePath, envSettings.dist.assets)
-    : envSettings.dist.basePath
+  const baseAssetsDistPath = envConfiguration.dist.assets
+    ? path.join(envConfiguration.dist.basePath, envConfiguration.dist.assets)
+    : envConfiguration.dist.basePath
 
-  for (const assetPath of ssgSettings.assets) {
+  for (const assetPath of ssgConfiguration.assets) {
     const assetsDistPathInDist = path.join(baseAssetsDistPath, assetPath)
 
     await copy(assetPath, assetsDistPathInDist)
@@ -58,10 +59,10 @@ async function main() {
   //   await writeFile('dist/index.html', entryPoint)
   // }
 
-  if (envSettings.dist.entryPoint) {
-    const entryPointDistPath = path.join(envSettings.dist.basePath, envSettings.dist.entryPoint)
+  if (envConfiguration.dist.entryPoint) {
+    const entryPointDistPath = path.join(envConfiguration.dist.basePath, envConfiguration.dist.entryPoint)
 
-    const entryPoint = await readFile(envSettings.entryPoint)
+    const entryPoint = await readFile(envConfiguration.entryPoint)
     await writeFile(entryPointDistPath, entryPoint)
   }
 }

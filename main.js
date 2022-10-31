@@ -3,7 +3,7 @@ import StacheElement from "can-stache-element"
 import route from "can-route"
 import "can-stache-route-helpers"
 import view from "./app.stache"
-import { ssgDefineElement, ssgEnd, prepareRouting } from "./jsdom-ssg/ssg-helpers.js"
+import { ssgDefineElement, ssgEnd, prepareRouting } from "./client-helpers/ssg-helpers.js"
 import "./styles.css"
 import "./components/root/root"
 

@@ -1,20 +1,20 @@
 const steal = require("steal")
 const setupGlobals = require("./setup-globals")
-const { outputFile, existsSync, readFileSync, readJsonSync } = require("fs-extra")
-const getFilepath = require("../util/get-filepath")
+const { outputFile, existsSync, readFileSync } = require("fs-extra")
+const getFilepath = require("./get-filepath")
 const argv = require("optimist").argv
 const path = require("path")
-const getEnvSettings = require("./get-env-settings")
-const ssgSettings = readJsonSync("ssg.json")
+const getEnvironment = require("./get-environment")
+const { getEnvConfiguration, getSggConfiguration } = require("../client-helpers/environment-helpers")
 
 // Get url from argv
 const url = argv.url || "http://127.0.0.1:8080"
-// Generate prod vs dev scapes
-// const prod = argv.environment === "prod" || false
-// Setup entry point based on prod
 
-// Get ssg settings based on environment
-const envSettings = getEnvSettings()
+// Get general ssg configuration
+const ssgConfiguration = getSggConfiguration()
+
+// Get ssg configuration based on environment
+const envConfiguration = getEnvConfiguration(getEnvironment())
 
 // Throw if build takes too long
 const timeout = setTimeout(() => {
@@ -37,15 +37,16 @@ process.once("beforeExit", (code) => {
 let captureMain = ""
 let rootCode = ""
 // Remove any script where its last attribute is main
-const stealRegex = /<script.*\s+main(\s*=".*")?\s*><\/script>/
+// TODO: should improve this
+const stealRegex = /<script.*?\s+main(\s*=".*")?\s*><\/script>/
 
 main()
 
 async function main() {
-  const entryPoint = envSettings.entryPoint
-  const appSelector = ssgSettings.appSelector
+  const entryPoint = envConfiguration.entryPoint
+  const appSelector = ssgConfiguration.appSelector
 
-  if (existsSync(envSettings.entryPoint)) {
+  if (existsSync(envConfiguration.entryPoint)) {
     // TODO: better scrap script tags
     // if (prod) {
     //   // TODO: Create a better regex for production script
@@ -111,7 +112,7 @@ async function scrapeDocument() {
   </script>`,
   )
 
-  captureMain = envSettings.dist.mainTag || captureMain || '<script src="/node_modules/steal/steal.js" main></script>'
+  captureMain = envConfiguration.dist.mainTag || captureMain || '<script src="/node_modules/steal/steal.js" main></script>'
   console.log(captureMain)
   // Re-inject steal before closing of body tag
   // It's required that steal is injected at the end of body to avoid runtime errors involving `CustomElement`
@@ -123,7 +124,7 @@ async function scrapeDocument() {
   // html = html.replace("</body>", injectHydrateInZoneWithCache + "</body>")
 
   // await outputFile(`dist/ssg/${getFilepath(url, "index.html")}`, html)
-  const staticPath = path.join(envSettings.dist.basePath, envSettings.dist.static)
+  const staticPath = path.join(envConfiguration.dist.basePath, envConfiguration.dist.static)
 
   await outputFile(path.join(staticPath, getFilepath(url, "index.html")), html)
 }

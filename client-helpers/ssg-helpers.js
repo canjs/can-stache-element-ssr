@@ -1,6 +1,7 @@
 import Zone from "can-zone"
 import xhrZone from "can-zone/xhr"
 import RoutePushstate from "can-route-pushstate"
+import { getEnvironments } from "../client-helpers/environment-helpers"
 
 const sharedZone = new Zone({ plugins: [xhrZone] })
 export const ssgDefineElement = (...args) => {
@@ -26,17 +27,19 @@ export const stealImport = (stealPath, callback) => {
  * Configures `can-route` to use pushstate to change the
  * window's pathname instead of the hash
  *
- * Also sets `can-route`'s root to dev or prod based on location's pathname
+ * Also sets `can-route`'s root to environment based on location's pathname. This is used to switch to SPA mode while serving SSG
  */
 export const prepareRouting = (route) => {
   route.urlData = new RoutePushstate()
 
   const root = window.location.pathname.split("/")[1]
 
-  if (root === "dev") {
-    route.urlData.root += "dev/"
-  } else if (root === "prod") {
-    route.urlData.root += "prod/"
+  const environments = getEnvironments()
+
+  const matchedEnvironment = environments.find((environment) => root === environment)
+
+  if (matchedEnvironment) {
+    route.urlData.root += `${matchedEnvironment}/`
   }
 }
 

@@ -1,49 +1,21 @@
 const express = require("express")
 const path = require("path")
-const { existsSync, readJsonSync } = require("fs-extra")
+const { existsSync } = require("fs-extra")
+const { getEnvironments, getEnvConfiguration } = require("./client-helpers/environment-helpers")
 const argv = require("optimist").argv
-const ssgSettings = readJsonSync("ssg.json")
 const app = express()
 const defaultEnvironment = require("./jsdom-ssg/get-environment")()
-let serverMode = require("./jsdom-ssg/get-server-mode")()
+const serverMode = require("./jsdom-ssg/get-server-mode")()
 
-/**
- * 
- * 
-"mainTag": "<script src=\"/bundles/can-stache-element-ssr/main.js\" main></script>",
-"basePath": "dist/prod",
-"static": "static",
-"assets": "",
-"entryPoint": "index.html"
- * 
- * 
- * 
- */
+// ssg settings based on environment
+let staticDir = ""
+let entryPointDir = ""
+let envConfiguration = null
 
-// Get ssg settings based on environment
-// const envSettings = getEnvSettings()
-let staticDir = "" // path.join(envSettings.dist.basePath, envSettings.dist.static)
-let entryPointDir = "" // envSettings.serveFromDist ? path.join(envSettings.dist.basePath, envSettings.dist.entryPoint) : envSettings.entryPoint
-let envSettings = null
 setEnvDirs(defaultEnvironment)
 
 const sendFileOr404 = (req, res, reqPath) => {
-  console.log(reqPath)
-  // Fixes issues where when in a nested route,
-  // dist is expected to be relative to that path
-  // instead of the root of the project
-  // ex "/progressive-loading/dist/bundles/can-stache-element-ssr/main.css"
-  // Issue only affects prod
-  // if (reqPath.includes("dist/bundles")) {
-  //   reqPath = /^.*(dist\/bundles.*)/.exec(reqPath)[1]
-  // }
-
-  // if (reqPath.includes(envSettings.dist.basePath)) {
-  //   reqPath = [,reqPath.split(reqPath)].join('/')
-  // }
-
   const dest = path.join(__dirname, reqPath)
-  console.log(dest)
 
   if (existsSync(dest)) {
     res.sendFile(dest)
@@ -60,17 +32,17 @@ app.get("/*", function (req, res) {
   console.log(reqPath)
 
   const overrideEnvironment = environments.find((env) => reqPath.startsWith(`/${env}`))
+
   if (overrideEnvironment) {
     setEnvDirs(overrideEnvironment)
     reqPath.replace(`/${overrideEnvironment}`, "")
-    serverMode = "spa"
   }
 
   // Handle files that are local (node_modules, etc) by checking for file extensions (".")
   if (reqPath.indexOf(".") !== -1) {
-    if (envSettings.serveFromDist) {
+    if (envConfiguration.serveFromDist) {
       // TODO: how do we go about handling "dist/prod/progressive-loading/dist/bundles/can-stache-element-ssr/main.css"
-      sendFileOr404(req, res, path.join(envSettings.dist.basePath, reqPath.replace(/^.*\/dist\//, "")))
+      sendFileOr404(req, res, path.join(envConfiguration.dist.basePath, reqPath.replace(/^.*\/dist\//, "")))
       return
     }
 
@@ -79,7 +51,7 @@ app.get("/*", function (req, res) {
     return
   }
 
-  if (serverMode === "spa") {
+  if (overrideEnvironment || serverMode === "spa") {
     sendFileOr404(req, res, entryPointDir)
     return
   }
@@ -100,19 +72,16 @@ app.listen(argv.port || 8080, function () {
   console.log("Example app listening on port " + argv.port || 8080)
 })
 
+/**
+ * Gets environment configuration and overrides global configurations for server
+ */
 function setEnvDirs(environment) {
-  const _envSettings = ssgSettings.environments[environment]
-
-  if (!_envSettings) {
-    throw new Error("Unexpected missing environment setting")
-  }
+  const configuration = getEnvConfiguration(environment)
 
   console.log("server environment:", environment)
-  envSettings = _envSettings
-  staticDir = path.join(envSettings.dist.basePath, envSettings.dist.static)
-  entryPointDir = envSettings.serveFromDist ? path.join(envSettings.dist.basePath, envSettings.dist.entryPoint) : envSettings.entryPoint
-}
-
-function getEnvironments() {
-  return Object.keys(ssgSettings.environments)
+  envConfiguration = configuration
+  staticDir = path.join(envConfiguration.dist.basePath, envConfiguration.dist.static)
+  entryPointDir = envConfiguration.serveFromDist
+    ? path.join(envConfiguration.dist.basePath, envConfiguration.dist.entryPoint)
+    : envConfiguration.entryPoint
 }

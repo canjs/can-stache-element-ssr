@@ -1,9 +1,5 @@
-const spawn = require("../util/spawn-promise")
-
 /**
  * Create a normalized file path based on url
- *
- * TODO: consider query params (or confirm that they aren't a part of requirements)
  */
 module.exports = function (url, filename) {
   const path = url
