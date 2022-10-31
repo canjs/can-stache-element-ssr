@@ -35,7 +35,7 @@ export const ssgEnd = () => {
   sharedZone
     .run(() => {})
     .then(function (data) {
-      if (!globalThis.XHR_CACHE) {
+      if (!globalThis.XHR_CACHE && data.xhr) {
         const temp = document.createElement("div")
         temp.innerHTML = `<script>${data.xhr}</script>`
         document.body.appendChild(temp.lastChild)

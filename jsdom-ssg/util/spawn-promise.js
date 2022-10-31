@@ -3,7 +3,7 @@ const { spawn: __node_spawn__ } = require("child_process")
 /**
  * Promise wrapper for child_process.spawn
  */
-module.exports = async function spawn(command, args, options = {}, spawnCallback) {
+module.exports = async function (command, args, options = {}, spawnCallback) {
   return new Promise((resolve, reject) => {
     const spawnInstance = __node_spawn__(command, [...args], {
       stdio: "inherit",

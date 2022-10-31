@@ -6,6 +6,7 @@ const argv = require("optimist").argv
 const path = require("path")
 const getEnvironment = require("./flags/get-ssg-environment")
 const { getEnvConfiguration } = require("../client-helpers/environment-helpers")
+const stripMainScript = require("./util/strip-main-script")
 
 // Get url from argv
 const url = argv.url || "http://127.0.0.1:8080"
@@ -31,11 +32,7 @@ process.once("beforeExit", (code) => {
 })
 
 // Strip steal / production bundle from entry point html file
-let captureMain = ""
-let rootCode = ""
-// TODO: should improve this
-// Remove any script where its last attribute is main
-const stealRegex = /<script.*?\s+main(\s*=".*")?\s*><\/script>/
+const { captureMain, rootCode } = stripMainScript(envConfiguration.entryPoint)
 
 main()
 
@@ -47,30 +44,6 @@ main()
  * Then populates `JSDOM` document with SPA application
  */
 async function main() {
-  const entryPoint = envConfiguration.entryPoint
-
-  if (existsSync(envConfiguration.entryPoint)) {
-    rootCode = readFileSync(entryPoint, { encoding: "utf8", flag: "r" }) // project"s index.html / production.html
-      .replace(stealRegex, (_, mainTag) => {
-        captureMain = mainTag
-        return "" // remove steal script tag (re-injected before exit)
-      })
-
-    if (!/^<!doctype/i.test(rootCode)) {
-      rootCode = "<!doctype html>" + rootCode
-    }
-
-    if (rootCode.indexOf(`<can-app`) === -1) {
-      if (rootCode.indexOf("</body") !== -1) {
-        rootCode = rootCode.replace("</body", `<can-app></can-app></body`)
-      } else {
-        rootCode += `<can-app></can-app>`
-      }
-    }
-  } else {
-    rootCode = `<!doctype html><title>CanJS and StealJS</title><can-app></can-app>`
-  }
-
   // Setup JSDOM and global.window, global.document, global.location
   setupGlobals(rootCode, url)
 
@@ -104,12 +77,11 @@ async function scrapeDocument() {
   </script>`,
   )
 
-  captureMain = envConfiguration.dist.mainTag || captureMain || '<script src="/node_modules/steal/steal.js" main></script>'
-  console.log(captureMain)
-  // Re-inject steal before closing of body tag
-  // It's required that steal is injected at the end of body to avoid runtime errors involving `CustomElement`
+  const mainTag = envConfiguration.dist.mainTag || captureMain
+  // Re-inject steal/main before closing of body tag
+  // It's required that steal/main is injected at the end of body to avoid runtime errors involving `CustomElement`
   // source: https://stackoverflow.com/questions/43836886/failed-to-construct-customelement-error-when-javascript-file-is-placed-in-head
-  html = html.replace("</body>", captureMain + "</body>")
+  html = html.replace("</body>", mainTag + "</body>")
 
   // Append `data-canjs-static-render` attribute to determine which `can-app` contains the static rendered stache elements
   html = html.replace(/(<can-app[^>]*)>/, "$1 data-canjs-static-render>")

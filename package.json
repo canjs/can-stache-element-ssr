@@ -10,8 +10,8 @@
     "build-debug": "node --inspect-brk jsdom-ssg/index.js",
     "serve": "node server.js --port 8080",
     "serve-prod": "node server.js --environment prod --port 8080",
-    "serve-spa-dev": "node server.js --environment dev --serverMode spa --port 8080",
-    "serve-spa-prod": "node server.js --environment prod --serverMode spa --port 8080",
+    "serve-spa": "node server.js --environment dev --serverMode spa --port 8080",
+    "serve-prod-spa": "node server.js --environment prod --serverMode spa --port 8080",
     "format": "prettier --write ."
   },
   "steal": {

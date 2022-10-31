@@ -13,7 +13,7 @@
       "entryPoint": "index.html"
     },
     "prod": {
-      "build": "build.js",
+      "prebuild": "build.js",
       "dist": {
         "mainTag": "<script src=\"/bundles/can-stache-element-ssr/main.js\" main></script>",
         "basePath": "prod",

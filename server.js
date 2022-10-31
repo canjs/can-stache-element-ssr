@@ -7,7 +7,7 @@ const app = express()
 const defaultEnvironment = require("./jsdom-ssg/flags/get-ssg-environment")()
 const serverMode = require("./jsdom-ssg/flags/get-server-mode")()
 
-// ssg settings based on environment
+// ssg configuration based on environment
 let staticDir = ""
 let entryPointDir = ""
 let envConfiguration = null
@@ -29,7 +29,6 @@ const environments = getEnvironments()
 
 app.get("/*", function (req, res) {
   const reqPath = req.path
-  console.log(reqPath)
 
   const overrideEnvironment = environments.find((env) => reqPath.startsWith(`/${env}`))
 
@@ -78,7 +77,7 @@ app.listen(argv.port || 8080, function () {
 function setEnvDirs(environment) {
   const configuration = getEnvConfiguration(environment)
 
-  console.log("server environment:", environment)
+  console.log("server environment:", environment, "mode:", serverMode)
   envConfiguration = configuration
   staticDir = path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.static)
   entryPointDir = envConfiguration.serveFromDist
