@@ -124,7 +124,7 @@ async function scrapeDocument() {
   // html = html.replace("</body>", injectHydrateInZoneWithCache + "</body>")
 
   // await outputFile(`dist/ssg/${getFilepath(url, "index.html")}`, html)
-  const staticPath = path.join(envConfiguration.dist.basePath, envConfiguration.dist.static)
+  const staticPath = path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.static)
 
   await outputFile(path.join(staticPath, getFilepath(url, "index.html")), html)
 }

@@ -42,7 +42,7 @@ app.get("/*", function (req, res) {
   if (reqPath.indexOf(".") !== -1) {
     if (envConfiguration.serveFromDist) {
       // TODO: how do we go about handling "dist/prod/progressive-loading/dist/bundles/can-stache-element-ssr/main.css"
-      sendFileOr404(req, res, path.join(envConfiguration.dist.basePath, reqPath.replace(/^.*\/dist\//, "")))
+      sendFileOr404(req, res, path.join("dist", envConfiguration.dist.basePath, reqPath.replace(/^.*\/dist\//, "")))
       return
     }
 
@@ -80,8 +80,8 @@ function setEnvDirs(environment) {
 
   console.log("server environment:", environment)
   envConfiguration = configuration
-  staticDir = path.join(envConfiguration.dist.basePath, envConfiguration.dist.static)
+  staticDir = path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.static)
   entryPointDir = envConfiguration.serveFromDist
-    ? path.join(envConfiguration.dist.basePath, envConfiguration.dist.entryPoint)
+    ? path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.entryPoint)
     : envConfiguration.entryPoint
 }

@@ -12,8 +12,10 @@ main()
 
 async function main() {
   // Create and clear dist directory for static pages
-  await ensureDir(envConfiguration.dist.basePath)
-  await emptyDir(envConfiguration.dist.basePath)
+  const distPath = path.join("dist", envConfiguration.dist.basePath)
+
+  await ensureDir(distPath)
+  await emptyDir(distPath)
 
   // Do SPA build if there's a build property for environment
   if (envConfiguration.build) {
@@ -21,12 +23,10 @@ async function main() {
   }
 
   // Create and clear dist directory for static pages
-  const staticPath = path.join(envConfiguration.dist.basePath, envConfiguration.dist.static)
+  const staticPath = path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.static)
+
   await ensureDir(staticPath)
   await emptyDir(staticPath)
-
-  // await ensureDir("dist/ssg")
-  // await emptyDir("dist/ssg")
 
   // Read paths to generate static pages
   const ssgConfiguration = getSggConfiguration()
@@ -40,8 +40,8 @@ async function main() {
 
   // Copy assets
   const baseAssetsDistPath = envConfiguration.dist.assets
-    ? path.join(envConfiguration.dist.basePath, envConfiguration.dist.assets)
-    : envConfiguration.dist.basePath
+    ? path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.assets)
+    : distPath
 
   for (const assetPath of ssgConfiguration.assets) {
     const assetsDistPathInDist = path.join(baseAssetsDistPath, assetPath)
@@ -49,20 +49,10 @@ async function main() {
     await copy(assetPath, assetsDistPathInDist)
   }
 
-  // await remove("dist/assets")
-  // await copy("assets", "dist/assets")
-
-  // TODO: when SPA production, we should read only from dist for everything
-  // Copy production.html and rename to index.html
-  // if (argv.prod) {
-  //   const entryPoint = await readFile('production.html')
-  //   await writeFile('dist/index.html', entryPoint)
-  // }
-
   if (envConfiguration.dist.entryPoint) {
-    const entryPointDistPath = path.join(envConfiguration.dist.basePath, envConfiguration.dist.entryPoint)
+    const entryPointPath = path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.entryPoint)
 
     const entryPoint = await readFile(envConfiguration.entryPoint)
-    await writeFile(entryPointDistPath, entryPoint)
+    await writeFile(entryPointPath, entryPoint)
   }
 }

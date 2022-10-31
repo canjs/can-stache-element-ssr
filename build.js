@@ -1,11 +1,11 @@
-const { readJsonSync } = require("fs-extra")
 const stealTools = require("steal-tools")
+const path = require("path")
+const { getEnvConfiguration } = require("./client-helpers/environment-helpers")
 
-const settings = readJsonSync("ssg.json")
 stealTools.build(
   {},
   {
     bundleSteal: true,
-    dest: settings.environments.prod.dist.basePath,
+    dest: path.join("dist", getEnvConfiguration("prod").dist.basePath),
   },
 )

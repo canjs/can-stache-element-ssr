@@ -5,7 +5,7 @@
   "environments": {
     "dev": {
       "dist": {
-        "basePath": "dist/dev",
+        "basePath": "dev",
         "static": "static-dev",
         "assets": "",
         "entryPoint": "index.html"
@@ -16,7 +16,7 @@
       "build": "build.js",
       "dist": {
         "mainTag": "<script src=\"/bundles/can-stache-element-ssr/main.js\" main></script>",
-        "basePath": "dist/prod",
+        "basePath": "prod",
         "static": "static",
         "assets": "",
         "entryPoint": "index.html"
