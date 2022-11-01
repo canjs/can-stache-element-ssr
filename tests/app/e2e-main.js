@@ -5,13 +5,17 @@ import { ssgDefineElement, ssgEnd } from "../../../client-helpers/ssg-helpers.js
 
 import "./stache-example/stache-example"
 import "./route-example/route-example"
+import "./counter-example/counter-example"
+import "./timeout-example/timeout-example"
 
 class MyApp extends StacheElement {
   static view = `
       <h1>Hello {{ this.name }}</h1>
 
-      <can-stache-example></can-stache-example>
       <can-route-example></can-route-example>
+      <can-stache-example></can-stache-example>
+      <can-counter-example></can-counter-example>
+      <can-timeout-example></can-timeout-example>
     `
 
   static props = {
