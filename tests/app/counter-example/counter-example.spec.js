@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 
-test.describe("Counter logic", () => {
+test.describe("CounterExample", () => {
   test("clicking increment button", async ({ page }) => {
     await page.goto("http://0.0.0.0:8080/")
 

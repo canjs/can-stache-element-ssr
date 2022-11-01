@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 
-test.describe("Basic routing", () => {
+test.describe("RouteExample", () => {
   test("home route loads", async ({ page }) => {
     await page.goto("http://0.0.0.0:8080/")
 

@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 
-test.describe("importing css files", () => {
+test.describe("CssExample", () => {
   test("css affects page", async ({ page }) => {
     await page.goto("http://0.0.0.0:8080/css")
 

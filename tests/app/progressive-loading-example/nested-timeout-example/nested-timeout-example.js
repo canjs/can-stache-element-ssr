@@ -7,12 +7,12 @@ class NestedTimeoutExample extends StacheElement {
     `
 
   static props = {
-    label: "before timeout",
+    label: "before nested timeout",
   }
 
   connected() {
     setTimeout(() => {
-      this.label = "after timeout"
+      this.label = "after nested timeout"
     }, 500)
   }
 }

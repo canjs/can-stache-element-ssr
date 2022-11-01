@@ -5,7 +5,7 @@ class NestedRequestExample extends StacheElement {
   static view = `
      <p id="nested-request-example">
         {{# if(this.request.isPending) }}
-            before request
+            before nested request
         {{/ if }}
         {{# if(this.request.isRejected) }}
             Rejected {{ this.request.reason }}

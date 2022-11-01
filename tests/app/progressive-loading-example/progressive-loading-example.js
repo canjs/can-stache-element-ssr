@@ -4,39 +4,42 @@ import { ssgDefineElement } from "../../../client-helpers/ssg-helpers.js"
 
 class ProgressiveLoadingExample extends StacheElement {
   static view = `
-      <div>
-        <a id="nested-root" href="{{ routeUrl(nestedPage='root') }}">Root</a>
-        <a id="nested-timeout" href="{{ routeUrl(nestedPage='nested-timeout') }}">Nested Timeout</a>
-        <a id="nested-request" href="{{ routeUrl(nestedPage='nested-request') }}">Nested Request</a>
-      </div>
-      <p id="nested-page-tracker">The current nestedPage is {{ this.routeData.nestedPage }}.</p>
-      {{# if(this.componentToShow.isPending) }}
-          <h2>Nested Route Loading...</h2>
-      {{/ if }}
-      {{# if(this.componentToShow.isRejected) }}
-        <h2>Rejected {{ componentToShow.reason }}</h2>
-      {{/ if }}
-      {{# if(this.componentToShow.isResolved) }}
-        {{ componentToShow.value }}
-      {{/ if }}
-    `
+    <h3>Progressive Loading Route</h3>
+    <div>
+      <a id="nested-root" href="{{ routeUrl(nestedPage='root') }}">Root</a>
+      <a id="nested-timeout" href="{{ routeUrl(nestedPage='nested-timeout') }}">Nested Timeout</a>
+      <a id="nested-request" href="{{ routeUrl(nestedPage='nested-request') }}">Nested Request</a>
+    </div>
+    <p id="nested-page-tracker">The current nestedPage is {{ this.nestedPage }}.</p>
+    {{# if(this.componentToShow.isPending) }}
+        <h2>Nested Route Loading...</h2>
+    {{/ if }}
+    {{# if(this.componentToShow.isRejected) }}
+      <h2>Rejected {{ componentToShow.reason }}</h2>
+    {{/ if }}
+    {{# if(this.componentToShow.isResolved) }}
+      {{ componentToShow.value }}
+    {{/ if }}
+  `
 
   static props = {
     routeData: {
       get default() {
-        return route.data
+        return route.data || "root"
       },
     },
   }
 
-  get componentToShow() {
-    if (!this.routeData.nestedPage || this.routeData.nestedPage === "root") {
-      const root = document.createElement("h4")
-      root.innerHTML = "Nested Root Route"
-      return Promise.resolve(root)
-    }
+  get nestedPage() {
+    return this.routeData.nestedPage || "root"
+  }
 
-    switch (this.routeData.nestedPage) {
+  get componentToShow() {
+    switch (this.nestedPage) {
+      case "root":
+        const root = document.createElement("h4")
+        root.innerHTML = "Nested Root Route"
+        return Promise.resolve(root)
       case "nested-request":
         return steal
           .import(`can-stache-element-ssr/tests/app/progressive-loading-example/nested-request-example/nested-request-example`)

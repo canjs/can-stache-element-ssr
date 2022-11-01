@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 
-test.describe("Request logic", () => {
+test.describe("RequestExample", () => {
   test("label should update", async ({ page }) => {
     await page.goto("http://0.0.0.0:8080/")
 

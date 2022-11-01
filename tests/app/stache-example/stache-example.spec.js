@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 
-test.describe("Importing stache files", () => {
+test.describe("StacheExampleApp", () => {
   test("homepage uses stache files", async ({ page }) => {
     await page.goto("http://0.0.0.0:8080/")
 

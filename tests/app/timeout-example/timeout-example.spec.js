@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 
-test.describe("Timeout logic", () => {
+test.describe("TimeoutExample", () => {
   test("label should update", async ({ page }) => {
     await page.goto("http://0.0.0.0:8080/")
 
