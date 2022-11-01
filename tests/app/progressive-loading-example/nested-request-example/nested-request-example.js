@@ -1,9 +1,9 @@
 import StacheElement from "can-stache-element"
-import { ssgDefineElement } from "../../../client-helpers/ssg-helpers.js"
+import { ssgDefineElement } from "../../../../client-helpers/ssg-helpers.js"
 
-class RequestExample extends StacheElement {
+class NestedRequestExample extends StacheElement {
   static view = `
-     <p id="request-example">
+     <p id="nested-request-example">
         {{# if(this.request.isPending) }}
             before request
         {{/ if }}
@@ -17,7 +17,7 @@ class RequestExample extends StacheElement {
     `
 
   get request() {
-    return xhrGet("http://0.0.0.0:8080/tests/app/assets/mock-response.json").then((res) => {
+    return xhrGet("http://0.0.0.0:8080/tests/app/assets/mock-nested-response.json").then((res) => {
       return res.data
     })
   }
@@ -42,4 +42,4 @@ function xhrGet(url) {
   })
 }
 
-ssgDefineElement("can-request-example", RequestExample)
+ssgDefineElement("can-nested-request-example", NestedRequestExample)

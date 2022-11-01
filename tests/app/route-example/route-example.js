@@ -4,11 +4,13 @@ import "can-stache-route-helpers"
 import { prepareRouting, ssgDefineElement } from "../../../client-helpers/ssg-helpers.js"
 import "../css-example/css-example"
 import "../not-found-example/not-found-example"
+import "../progressive-loading-example/progressive-loading-example"
 
 prepareRouting(route)
 
 route.register("{page}", { page: "home" })
 route.register("css-example", { page: "css-example" })
+route.register("progressive-loading/{nestedPage}", { page: "progressive-loading" })
 
 route.start()
 
@@ -18,7 +20,7 @@ class RouteExample extends StacheElement {
         <a id="home" href="{{ routeUrl(page='home') }}">Home</a>
         <a id="css" href="{{ routeUrl(page='css') }}">Css</a>
         <a id="not-found" href="{{ routeUrl(page='unknown') }}">404</a>
-        <!--<a id="home" href="{{ routeUrl(page='progressive-loading') }}">Progressive Loading</a>-->
+        <a id="progressive-loading" href="{{ routeUrl(page='progressive-loading') }}">Progressive Loading</a>
       </div>
       <p id="page-tracker">The current page is {{ this.routeData.page }}.</p>
       {{ this.componentToShow }}
@@ -33,8 +35,6 @@ class RouteExample extends StacheElement {
   }
 
   get componentToShow() {
-    console.log("route.data.page", this.routeData.page)
-
     switch (this.routeData.page) {
       case "home":
         const home = document.createElement("h3")
@@ -42,6 +42,8 @@ class RouteExample extends StacheElement {
         return home
       case "css":
         return document.createElement("can-css-example")
+      case "progressive-loading":
+        return document.createElement("can-progressive-loading-example")
       default:
         return document.createElement("can-not-found-example")
     }
