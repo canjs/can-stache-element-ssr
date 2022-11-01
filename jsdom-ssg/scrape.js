@@ -54,8 +54,20 @@ async function main() {
  * Populates `JSDOM` document with SPA application
  */
 async function populateDocument() {
-  // Run client-side code
-  await steal.startup() // loads canjs app
+  let main
+
+  if (envConfiguration.main) {
+    main = envConfiguration.main.split(".")[0]
+  }
+
+  // Run client-side code and load <can-app>
+  if (main) {
+    await steal.startup({
+      main,
+    })
+  } else {
+    await steal.startup()
+  }
   // TODO: disable jsdom script tags?
 
   console.log("steal - done")
@@ -78,6 +90,7 @@ async function scrapeDocument() {
   )
 
   const mainTag = envConfiguration.dist.mainTag || captureMain
+  console.log(captureMain)
   // Re-inject steal/main before closing of body tag
   // It's required that steal/main is injected at the end of body to avoid runtime errors involving `CustomElement`
   // source: https://stackoverflow.com/questions/43836886/failed-to-construct-customelement-error-when-javascript-file-is-placed-in-head

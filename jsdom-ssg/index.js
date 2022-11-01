@@ -1,16 +1,18 @@
 const { ensureDir, emptyDir, copy, writeFile } = require("fs-extra")
 const path = require("path")
 const spawnBuildProcess = require("./spawn-build-process")
-const { getEnvConfiguration, getSggConfiguration } = require("../client-helpers/environment-helpers")
+const { getEnvConfiguration, getSggConfiguration, getEnvRoutes } = require("../client-helpers/environment-helpers")
 const spawn = require("./util/spawn-promise")
 const getEnvironment = require("./flags/get-ssg-environment")
 const stripMainScript = require("./util/strip-main-script")
+
+const environment = getEnvironment()
 
 // Get general ssg configuration
 const ssgConfiguration = getSggConfiguration()
 
 // Get ssg configuration based on environment
-const envConfiguration = getEnvConfiguration(getEnvironment())
+const envConfiguration = getEnvConfiguration(environment)
 
 // Get root of dist based on environment
 const distDir = path.join("dist", envConfiguration.dist.basePath)
@@ -65,7 +67,7 @@ async function generateStaticPages() {
   await emptyDir(staticPath)
 
   // Read paths to generate static pages
-  const routes = ssgConfiguration.routes
+  const routes = getEnvRoutes(environment)
 
   // Generate static pages
   const promises = []

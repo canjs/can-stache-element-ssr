@@ -10,6 +10,7 @@
         "assets": "",
         "entryPoint": "index.html"
       },
+      "main": "main.js",
       "entryPoint": "index.html"
     },
     "prod": {
@@ -21,8 +22,20 @@
         "assets": "",
         "entryPoint": "index.html"
       },
+      "main": "main.js",
       "entryPoint": "production.html",
       "serveFromDist": true
+    },
+    "e2e": {
+      "dist": {
+        "basePath": "e2e",
+        "static": "e2e-static",
+        "assets": "",
+        "entryPoint": "e2e-index.html"
+      },
+      "main": "tests/app/e2e-main",
+      "entryPoint": "tests/app/e2e-index.html",
+      "routes": ["http://127.0.0.1:8080", "http://127.0.0.1:8080/404"]
     }
   },
   "routes": [

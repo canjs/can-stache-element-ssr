@@ -26,4 +26,18 @@ const getEnvConfiguration = (env) => {
  */
 const getEnvironments = () => Object.keys(ssgConfiguration.environments)
 
-module.exports = { getSggConfiguration, getEnvConfiguration, getEnvironments }
+/**
+ * Returns routes for a given environment. If the environment doesn't have any routes,
+ * it will return the general configuration's routes
+ */
+const getEnvRoutes = (env) => {
+  const envConfiguration = getEnvConfiguration(env)
+
+  if (envConfiguration.routes) {
+    return envConfiguration.routes
+  }
+
+  return ssgConfiguration.routes || []
+}
+
+module.exports = { getSggConfiguration, getEnvConfiguration, getEnvironments, getEnvRoutes }

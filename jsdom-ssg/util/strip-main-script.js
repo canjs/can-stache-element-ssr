@@ -22,7 +22,7 @@ module.exports = function (entryPointPath) {
   }
 
   rootCode = readFileSync(entryPointPath, { encoding: "utf8", flag: "r" }) // project"s index.html / production.html
-    .replace(mainRegex, (_, mainTag) => {
+    .replace(mainRegex, (mainTag) => {
       captureMain = mainTag
       return "" // remove steal/main script tag (re-injected before exit)
     })
