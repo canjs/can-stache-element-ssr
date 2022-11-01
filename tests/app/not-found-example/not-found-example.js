@@ -5,7 +5,7 @@ import "./not-found-example.css"
 class NotFoundExample extends StacheElement {
   static view = `
     <h3>Not Found Route</h3>
-    <img id="not-found-image" src="/tests/app/assets/not-found-image.png">
+    <img data-test-id="not-found-image" src="/tests/app/assets/not-found-image.png">
   `
 }
 

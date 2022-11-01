@@ -3,7 +3,7 @@ import { ssgDefineElement } from "../../../../client-helpers/ssg-helpers.js"
 
 class NestedRequestExample extends StacheElement {
   static view = `
-     <p id="nested-request-example">
+     <p data-test-id="nested-request-example">
         {{# if(this.request.isPending) }}
             before nested request
         {{/ if }}

@@ -1,6 +1,6 @@
-#css-test::after {
+.css-test::after {
   content: " - Yes!";
 }
-#css-test {
+.css-test {
   background-color: orange;
 }

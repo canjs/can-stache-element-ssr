@@ -3,7 +3,7 @@ import { ssgDefineElement } from "../../../client-helpers/ssg-helpers.js"
 
 class RequestExample extends StacheElement {
   static view = `
-     <p id="request-example">
+     <p data-test-id="request-example">
         {{# if(this.request.isPending) }}
             before request
         {{/ if }}

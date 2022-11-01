@@ -1,1 +1,1 @@
-<p id="stache-test">Using app.stache works!</p>
+<p data-test-id="stache-test">Using app.stache works!</p>

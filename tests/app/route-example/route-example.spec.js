@@ -9,7 +9,7 @@ test.describe("RouteExample", () => {
 
     await expect(header).toHaveText("Home Route")
 
-    const tracker = page.locator("#page-tracker")
+    const tracker = page.locator("data-test-id=page-tracker")
 
     await expect(tracker).toHaveText("The current page is home.")
   })
@@ -17,13 +17,13 @@ test.describe("RouteExample", () => {
   test("navigation to css example", async ({ page }) => {
     await page.goto("http://0.0.0.0:8080/")
 
-    await page.locator("#css").click()
+    await page.locator("data-test-id=css").click()
 
     const header = page.locator("h3")
 
     await expect(header).toHaveText("CSS Route")
 
-    const tracker = page.locator("#page-tracker")
+    const tracker = page.locator("data-test-id=page-tracker")
 
     await expect(tracker).toHaveText("The current page is css.")
   })
@@ -35,7 +35,7 @@ test.describe("RouteExample", () => {
 
     await expect(header).toHaveText("CSS Route")
 
-    const tracker = page.locator("#page-tracker")
+    const tracker = page.locator("data-test-id=page-tracker")
 
     await expect(tracker).toHaveText("The current page is css.")
   })
@@ -43,13 +43,13 @@ test.describe("RouteExample", () => {
   test("navigation to 404 example", async ({ page }) => {
     await page.goto("http://0.0.0.0:8080/")
 
-    await page.locator("#not-found").click()
+    await page.locator("data-test-id=not-found").click()
 
     const header = page.locator("h3")
 
     await expect(header).toHaveText("Not Found Route")
 
-    const tracker = page.locator("#page-tracker")
+    const tracker = page.locator("data-test-id=page-tracker")
 
     await expect(tracker).toHaveText("The current page is unknown.")
   })
@@ -61,7 +61,7 @@ test.describe("RouteExample", () => {
 
     await expect(header).toHaveText("Not Found Route")
 
-    const tracker = page.locator("#page-tracker")
+    const tracker = page.locator("data-test-id=page-tracker")
 
     await expect(tracker).toHaveText("The current page is asdfasdfasdf.")
   })
