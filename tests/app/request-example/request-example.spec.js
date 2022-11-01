@@ -3,7 +3,7 @@ const { test, expect } = require("@playwright/test")
 
 test.describe("RequestExample", () => {
   test("label should update", async ({ page }) => {
-    await page.goto("http://0.0.0.0:8080/")
+    await page.goto("/")
 
     await page.getByText("before request")
     const label = await page.getByText("brad is pretty dope")

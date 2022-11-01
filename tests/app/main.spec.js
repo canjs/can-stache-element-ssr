@@ -3,7 +3,7 @@ const { test, expect } = require("@playwright/test")
 
 test.describe("main", () => {
   test("homepage has `Playwright is awesome` in title", async ({ page }) => {
-    await page.goto("http://0.0.0.0:8080/")
+    await page.goto("/")
 
     await expect(page).toHaveTitle(/Playwright is awesome/)
 
@@ -13,7 +13,7 @@ test.describe("main", () => {
   })
 
   test("homepage has header `Hello Playwright`", async ({ page }) => {
-    await page.goto("http://0.0.0.0:8080/")
+    await page.goto("/")
 
     const header = page.locator("h1")
 

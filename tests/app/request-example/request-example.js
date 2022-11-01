@@ -3,7 +3,7 @@ import { ssgDefineElement } from "../../../client-helpers/ssg-helpers.js"
 
 class RequestExample extends StacheElement {
   static view = `
-     <p data-test-id="request-example">
+     <p data-testid="request-example">
         {{# if(this.request.isPending) }}
             before request
         {{/ if }}
@@ -17,7 +17,7 @@ class RequestExample extends StacheElement {
     `
 
   get request() {
-    return xhrGet("http://0.0.0.0:8080/tests/app/assets/mock-response.json").then((res) => {
+    return xhrGet("/tests/app/assets/mock-response.json").then((res) => {
       return res.data
     })
   }

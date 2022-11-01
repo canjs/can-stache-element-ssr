@@ -5,7 +5,7 @@ import { ssgDefineElement } from "../../../client-helpers/ssg-helpers.js"
 class CssExample extends StacheElement {
   static view = `
     <h3>CSS Route</h3>
-    <p data-test-id="css-test" class="css-test">Does css work?</p>
+    <p data-testid="css-test" class="css-test">Does css work?</p>
   `
 }
 

@@ -3,7 +3,7 @@ import { ssgDefineElement } from "../../../../client-helpers/ssg-helpers.js"
 
 class NestedRequestExample extends StacheElement {
   static view = `
-     <p data-test-id="nested-request-example">
+     <p data-testid="nested-request-example">
         {{# if(this.request.isPending) }}
             before nested request
         {{/ if }}
@@ -17,7 +17,7 @@ class NestedRequestExample extends StacheElement {
     `
 
   get request() {
-    return xhrGet("http://0.0.0.0:8080/tests/app/assets/mock-nested-response.json").then((res) => {
+    return xhrGet("/tests/app/assets/mock-nested-response.json").then((res) => {
       return res.data
     })
   }

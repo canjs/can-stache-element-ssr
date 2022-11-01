@@ -13,8 +13,8 @@
     "serve-prod": "node server.js --environment prod --port 8080",
     "serve-spa": "node server.js --environment dev --serverMode spa --port 8080",
     "serve-prod-spa": "node server.js --environment prod --serverMode spa --port 8080",
-    "serve-e2e": "node server.js --environment e2e --port 8080",
-    "serve-e2e-spa": "node server.js --environment e2e --serverMode spa --port 8080",
+    "serve-e2e": "node server.js --environment e2e --port 4201",
+    "serve-e2e-spa": "node server.js --environment e2e --serverMode spa --port 4200",
     "format": "prettier --write .",
     "e2e": "playwright test"
   },

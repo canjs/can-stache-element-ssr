@@ -6,11 +6,11 @@ class ProgressiveLoadingExample extends StacheElement {
   static view = `
     <h3>Progressive Loading Route</h3>
     <div>
-      <a data-test-id="nested-root" href="{{ routeUrl(nestedPage='root') }}">Root</a>
-      <a data-test-id="nested-timeout" href="{{ routeUrl(nestedPage='nested-timeout') }}">Nested Timeout</a>
-      <a data-test-id="nested-request" href="{{ routeUrl(nestedPage='nested-request') }}">Nested Request</a>
+      <a data-testid="nested-root" href="{{ routeUrl(nestedPage='root') }}">Root</a>
+      <a data-testid="nested-timeout" href="{{ routeUrl(nestedPage='nested-timeout') }}">Nested Timeout</a>
+      <a data-testid="nested-request" href="{{ routeUrl(nestedPage='nested-request') }}">Nested Request</a>
     </div>
-    <p data-test-id="nested-page-tracker">The current nestedPage is {{ this.nestedPage }}.</p>
+    <p data-testid="nested-page-tracker">The current nestedPage is {{ this.nestedPage }}.</p>
     {{# if(this.componentToShow.isPending) }}
         <h2>Nested Route Loading...</h2>
     {{/ if }}

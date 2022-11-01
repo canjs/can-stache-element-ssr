@@ -3,7 +3,7 @@ const { test, expect } = require("@playwright/test")
 
 test.describe("NotFoundExample", () => {
   test("load image from assets", async ({ page }) => {
-    await page.goto("http://0.0.0.0:8080/asdfasdfasdf")
-    await page.waitForResponse("http://0.0.0.0:8080/tests/app/assets/not-found-image.png")
+    await page.goto("/asdfasdfasdf")
+    await page.waitForResponse("/tests/app/assets/not-found-image.png")
   })
 })
