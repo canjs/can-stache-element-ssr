@@ -1,56 +1,63 @@
 const express = require("express")
 const path = require("path")
 const { existsSync } = require("fs-extra")
+const { getEnvironments, getEnvConfiguration } = require("./client-helpers/environment-helpers")
 const argv = require("optimist").argv
-
 const app = express()
+const defaultEnvironment = require("./jsdom-ssg/flags/get-ssg-environment")()
+const serverMode = require("./jsdom-ssg/flags/get-server-mode")()
 
-const ssgDist = "dist/ssg"
+// ssg configuration based on environment
+let staticDir = ""
+let entryPointDir = ""
+let envConfiguration = null
+
+setEnvDirs(defaultEnvironment)
 
 const sendFileOr404 = (req, res, reqPath) => {
-  // Fixes issues where when in a nested route,
-  // dist is expected to be relative to that path
-  // instead of the root of the project
-  // ex "/progressive-loading/dist/bundles/can-stache-element-ssr/main.css"
-  // Issue only affects prod
-  if (reqPath.includes("dist/bundles")) {
-    reqPath = /^.*(dist\/bundles.*)/.exec(reqPath)[1]
-  }
-
   const dest = path.join(__dirname, reqPath)
 
   if (existsSync(dest)) {
     res.sendFile(dest)
   } else {
     res.status(404)
-    res.sendFile(path.join(__dirname, ssgDist, "/404/index.html"))
+    res.sendFile(path.join(__dirname, staticDir, "/404/index.html"))
   }
 }
+
+const environments = getEnvironments()
 
 app.get("/*", function (req, res) {
   const reqPath = req.path
 
-  if (reqPath.indexOf(".") !== -1) {
-    // pointing straight to a file? Serve the file
-    if (reqPath.startsWith("/dev")) {
-      sendFileOr404(req, res, reqPath.replace("/dev", ""))
-    } else if (reqPath.startsWith("/prod")) {
-      sendFileOr404(req, res, reqPath.replace("/prod", ""))
-    } else {
-      sendFileOr404(req, res, reqPath)
-    }
-  } else if (reqPath.indexOf("/dev") === 0 || argv.dev) {
-    // it's not a file, it's a directory's index.html file to load
+  const overrideEnvironment = environments.find((env) => reqPath.startsWith(`/${env}`))
 
-    // If it's dev mode, Serve root index html file, can-route handles it from there
-    res.sendFile(path.join(__dirname, "/index.html"))
-  } else if (reqPath.indexOf("/prod") === 0 || argv.prod) {
-    // If it's prod mode, Serve root production html file, can-route handles it from there
-    // TODO: res.sendFile(path.join(__dirname, "/dist/index.html"))
-    res.sendFile(path.join(__dirname, "/production.html"))
-  } else {
-    // it's still a directory but it didn't start with /dev or /prod, so serve from the static dist/ssg folder
-    sendFileOr404(req, res, path.join(ssgDist, reqPath, "/index.html"))
+  if (overrideEnvironment) {
+    setEnvDirs(overrideEnvironment)
+    reqPath.replace(`/${overrideEnvironment}`, "")
+  }
+
+  // Handle files that are local (node_modules, etc) by checking for file extensions (".")
+  if (reqPath.indexOf(".") !== -1) {
+    if (envConfiguration.serveFromDist) {
+      // TODO: how do we go about handling "dist/prod/progressive-loading/dist/bundles/can-stache-element-ssr/main.css"
+      sendFileOr404(req, res, path.join("dist", envConfiguration.dist.basePath, reqPath.replace(/^.*\/dist\//, "")))
+      return
+    }
+
+    sendFileOr404(req, res, reqPath)
+
+    return
+  }
+
+  if (overrideEnvironment || serverMode === "spa") {
+    sendFileOr404(req, res, entryPointDir)
+    return
+  }
+
+  if (serverMode === "ssg") {
+    sendFileOr404(req, res, path.join(staticDir, reqPath, "index.html"))
+    return
   }
 })
 
@@ -63,3 +70,17 @@ app.use(function (req, res, next) {
 app.listen(argv.port || 8080, function () {
   console.log("Example app listening on port " + argv.port || 8080)
 })
+
+/**
+ * Gets environment configuration and overrides global configurations for server
+ */
+function setEnvDirs(environment) {
+  const configuration = getEnvConfiguration(environment)
+
+  console.log("server environment:", environment, "mode:", serverMode)
+  envConfiguration = configuration
+  staticDir = path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.static)
+  entryPointDir = envConfiguration.serveFromDist
+    ? path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.entryPoint)
+    : envConfiguration.entryPoint
+}

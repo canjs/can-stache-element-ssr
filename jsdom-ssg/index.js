@@ -1,45 +1,89 @@
+const { ensureDir, emptyDir, copy, writeFile } = require("fs-extra")
+const path = require("path")
 const spawnBuildProcess = require("./spawn-build-process")
-const { ensureDir, emptyDir, readJson, copy, readFile, writeFile, remove } = require("fs-extra")
-const stealTools = require("steal-tools")
-const argv = require("optimist").argv
+const { getEnvConfiguration, getSggConfiguration } = require("../client-helpers/environment-helpers")
+const spawn = require("./util/spawn-promise")
+const getEnvironment = require("./flags/get-ssg-environment")
+const stripMainScript = require("./util/strip-main-script")
+
+// Get general ssg configuration
+const ssgConfiguration = getSggConfiguration()
+
+// Get ssg configuration based on environment
+const envConfiguration = getEnvConfiguration(getEnvironment())
+
+// Get root of dist based on environment
+const distDir = path.join("dist", envConfiguration.dist.basePath)
 
 main()
 
+/**
+ * Builds static pages for application
+ */
 async function main() {
-  // Create production bundle as needed
-  // Development doesn't require a build for ssg
-  if (argv.prod) {
-    await stealTools.build(
-      {},
-      {
-        bundleSteal: true,
-      },
-    )
+  await clearDist()
+
+  // Do SPA build if there's a prebuild property for environment
+  if (envConfiguration.prebuild) {
+    await spawn("node", envConfiguration.prebuild.split(" "))
   }
 
-  // Create dist directory
-  await ensureDir("dist/ssg")
+  generateStaticPages()
+  copyAssets()
+  generateSpaEntryPoint()
+}
 
-  // Clear it
-  await emptyDir("dist/ssg")
+/**
+ * Create and clear dist directory
+ */
+async function clearDist() {
+  await ensureDir(distDir)
+  await emptyDir(distDir)
+}
+
+/**
+ * Copy assets to dist
+ */
+async function copyAssets() {
+  const baseAssetsDistPath = envConfiguration.dist.assets ? path.join(distDir, envConfiguration.dist.assets) : distDir
+
+  for (const assetPath of ssgConfiguration.assets) {
+    const assetsDistPathInDist = path.join(baseAssetsDistPath, assetPath)
+
+    await copy(assetPath, assetsDistPathInDist)
+  }
+}
+
+/**
+ * Generate static pages
+ */
+async function generateStaticPages() {
+  // Create and clear dist directory for static pages
+  const staticPath = path.join(distDir, envConfiguration.dist.static)
+
+  await ensureDir(staticPath)
+  await emptyDir(staticPath)
 
   // Read paths to generate static pages
-  const ssgSettings = await readJson("ssg.json")
+  const routes = ssgConfiguration.routes
 
-  const routes = ssgSettings.routes
+  // Generate static pages
+  const promises = []
 
   for (const route of routes) {
-    spawnBuildProcess(route, !!argv.prod)
+    promises.push(spawnBuildProcess(route))
   }
 
-  // Copy assets
-  await remove("dist/assets")
-  await copy("assets", "dist/assets")
+  await Promise.all(promises)
+}
 
-  // TODO: when SPA production, we should read only from dist for everything
-  // Copy production.html and rename to index.html
-  // if (argv.prod) {
-  //   const entryPoint = await readFile('production.html')
-  //   await writeFile('dist/index.html', entryPoint)
-  // }
+/**
+ * Generate SPA entry point, commonly an index.html
+ */
+async function generateSpaEntryPoint() {
+  const entryPointPath = path.join(distDir, envConfiguration.dist.entryPoint || "index.html")
+
+  const rootCode = stripMainScript(envConfiguration.entryPoint).rootCode.replace("</body>", envConfiguration.dist.mainTag + "</body>")
+
+  await writeFile(entryPointPath, rootCode)
 }

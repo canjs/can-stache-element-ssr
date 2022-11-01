@@ -1,9 +1,9 @@
 import StacheElement from "can-stache-element"
-import { ssgDefineElement } from "../../jsdom-ssg/ssg-helpers"
+import { ssgDefineElement } from "../../client-helpers/ssg-helpers"
 import route from "can-route"
 import "can-stache-route-helpers"
-// import "../moo/moo"
-// import "../cow/cow"
+// import "../moo/moo"// We shouldn't import these since they're progressively loaded
+// import "../cow/cow"// We shouldn't import these since they're progressively loaded
 import "./root.css"
 
 export class Root extends StacheElement {

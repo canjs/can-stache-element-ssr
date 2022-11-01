@@ -1,15 +1,18 @@
 const steal = require("steal")
 const setupGlobals = require("./setup-globals")
-const { outputFile, existsSync, readFileSync } = require("fs-extra")
-const getFilepath = require("../util/get-filepath")
+const { outputFile } = require("fs-extra")
+const getFilepath = require("./util/get-filepath")
 const argv = require("optimist").argv
+const path = require("path")
+const getEnvironment = require("./flags/get-ssg-environment")
+const { getEnvConfiguration } = require("../client-helpers/environment-helpers")
+const stripMainScript = require("./util/strip-main-script")
 
 // Get url from argv
 const url = argv.url || "http://127.0.0.1:8080"
-// Generate prod vs dev scapes
-const prod = argv.prod || false
-// Setup entry point based on prod
-const entryPoint = prod ? "production.html" : "index.html"
+
+// Get ssg configuration based on environment
+const envConfiguration = getEnvConfiguration(getEnvironment())
 
 // Throw if build takes too long
 const timeout = setTimeout(() => {
@@ -19,7 +22,7 @@ const timeout = setTimeout(() => {
 /**
  * Wait for process to become idle (no async tasks are pending)
  *
- * This is when it is safe to scrape document
+ * This is when it is safe to scrape `JSDOM` document
  */
 process.once("beforeExit", (code) => {
   clearTimeout(timeout)
@@ -29,48 +32,27 @@ process.once("beforeExit", (code) => {
 })
 
 // Strip steal / production bundle from entry point html file
-let captureSteal = ""
-let rootCode = ""
-let stealRegex = ""
+const { captureMain, rootCode } = stripMainScript(envConfiguration.entryPoint)
 
-if (existsSync(entryPoint)) {
-  if (prod) {
-    // TODO: Create a better regex for production script
-    stealRegex = /(<script[^>]*main\.js.*?>.*?<\/script>)/i
-  } else {
-    stealRegex = /(<script[^>]*steal\/steal.*?>.*?<\/script>)/i
-  }
+main()
 
-  rootCode = readFileSync(entryPoint, { encoding: "utf8", flag: "r" }) // project"s index.html / production.html
-    .replace(stealRegex, (_, stealTag) => {
-      captureSteal = stealTag
-      return "" // remove steal script tag (re-injected before exit)
-    })
+/**
+ * Strips main script from SPA application
+ *
+ * Gets up globals (`window`, `location`, etc) for `JSDOM` environment
+ *
+ * Then populates `JSDOM` document with SPA application
+ */
+async function main() {
+  // Setup JSDOM and global.window, global.document, global.location
+  setupGlobals(rootCode, url)
 
-  if (!/^<!doctype/i.test(rootCode)) {
-    rootCode = "<!doctype html>" + rootCode
-  }
-
-  if (rootCode.indexOf("<can-app") === -1) {
-    if (rootCode.indexOf("</body") !== -1) {
-      rootCode = rootCode.replace("</body", "<can-app></can-app></body")
-    } else {
-      rootCode += "<can-app></can-app>"
-    }
-  }
-} else {
-  rootCode = `<!doctype html><title>CanJS and StealJS</title><can-app></can-app>`
-
-  if (prod) {
-    captureSteal = `<script src="/dist/bundles/can-stache-element-ssr/main.js" main></script>`
-  } else {
-    captureSteal = `<script src="/node_modules/steal/steal.js" main></script>`
-  }
+  populateDocument()
 }
 
-// Setup JSDOM and global.window, global.document, global.location
-setupGlobals(rootCode, url)
-
+/**
+ * Populates `JSDOM` document with SPA application
+ */
 async function populateDocument() {
   // Run client-side code
   await steal.startup() // loads canjs app
@@ -78,8 +60,6 @@ async function populateDocument() {
 
   console.log("steal - done")
 }
-
-populateDocument()
 
 /**
  * Once async tasks are completed, scrap document into dist
@@ -97,13 +77,16 @@ async function scrapeDocument() {
   </script>`,
   )
 
-  // Re-inject steal before closing of body tag
-  // It's required that steal is injected at the end of body to avoid runtime errors involving `CustomElement`
+  const mainTag = envConfiguration.dist.mainTag || captureMain
+  // Re-inject steal/main before closing of body tag
+  // It's required that steal/main is injected at the end of body to avoid runtime errors involving `CustomElement`
   // source: https://stackoverflow.com/questions/43836886/failed-to-construct-customelement-error-when-javascript-file-is-placed-in-head
-  html = html.replace("</body>", captureSteal + "</body>")
+  html = html.replace("</body>", mainTag + "</body>")
 
+  // Append `data-canjs-static-render` attribute to determine which `can-app` contains the static rendered stache elements
   html = html.replace(/(<can-app[^>]*)>/, "$1 data-canjs-static-render>")
-  // html = html.replace("</body>", injectHydrateInZoneWithCache + "</body>")
 
-  await outputFile(`dist/ssg/${getFilepath(url, "index.html")}`, html)
+  const staticPath = path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.static)
+
+  await outputFile(path.join(staticPath, getFilepath(url, "index.html")), html)
 }
