@@ -40,4 +40,18 @@ const getEnvRoutes = (env) => {
   return ssgConfiguration.routes || []
 }
 
-module.exports = { getSggConfiguration, getEnvConfiguration, getEnvironments, getEnvRoutes }
+/**
+ * Returns assets for a given environment. If the environment doesn't have any assets,
+ * it will return the general configuration's assets
+ */
+const getEnvAssets = (env) => {
+  const envConfiguration = getEnvConfiguration(env)
+
+  if (envConfiguration.assets) {
+    return envConfiguration.assets
+  }
+
+  return ssgConfiguration.assets || []
+}
+
+module.exports = { getSggConfiguration, getEnvConfiguration, getEnvironments, getEnvRoutes, getEnvAssets }

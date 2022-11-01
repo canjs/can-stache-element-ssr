@@ -1,15 +1,12 @@
 const { ensureDir, emptyDir, copy, writeFile } = require("fs-extra")
 const path = require("path")
 const spawnBuildProcess = require("./spawn-build-process")
-const { getEnvConfiguration, getSggConfiguration, getEnvRoutes } = require("../client-helpers/environment-helpers")
+const { getEnvConfiguration, getSggConfiguration, getEnvRoutes, getEnvAssets } = require("../client-helpers/environment-helpers")
 const spawn = require("./util/spawn-promise")
 const getEnvironment = require("./flags/get-ssg-environment")
 const stripMainScript = require("./util/strip-main-script")
 
 const environment = getEnvironment()
-
-// Get general ssg configuration
-const ssgConfiguration = getSggConfiguration()
 
 // Get ssg configuration based on environment
 const envConfiguration = getEnvConfiguration(environment)
@@ -49,7 +46,9 @@ async function clearDist() {
 async function copyAssets() {
   const baseAssetsDistPath = envConfiguration.dist.assets ? path.join(distDir, envConfiguration.dist.assets) : distDir
 
-  for (const assetPath of ssgConfiguration.assets) {
+  const assets = getEnvAssets(environment)
+
+  for (const assetPath of assets) {
     const assetsDistPathInDist = path.join(baseAssetsDistPath, assetPath)
 
     await copy(assetPath, assetsDistPathInDist)

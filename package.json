@@ -16,7 +16,7 @@
     "serve-e2e": "node server.js --environment e2e --port 8080",
     "serve-e2e-spa": "node server.js --environment e2e --serverMode spa --port 8080",
     "format": "prettier --write .",
-    "e2e": "playwright test"
+    "e2e": "playwright test --retries=1"
   },
   "steal": {
     "babelOptions": {

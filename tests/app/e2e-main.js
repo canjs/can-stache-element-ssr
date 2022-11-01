@@ -1,13 +1,17 @@
 // import type from "can-type"
 import StacheElement from "can-stache-element"
-// import route from "can-route"
-// import "can-stache-route-helpers"
-// import view from "./app.stache"
-import { ssgDefineElement, ssgEnd, prepareRouting } from "../../../client-helpers/ssg-helpers.js"
+
+import { ssgDefineElement, ssgEnd } from "../../../client-helpers/ssg-helpers.js"
+
+import "./stache-example/stache-example"
+import "./route-example/route-example"
 
 class MyApp extends StacheElement {
   static view = `
       <h1>Hello {{ this.name }}</h1>
+
+      <can-stache-example></can-stache-example>
+      <can-route-example></can-route-example>
     `
 
   static props = {
@@ -20,5 +24,3 @@ class MyApp extends StacheElement {
 ssgDefineElement("can-app", MyApp)
 
 ssgEnd()
-
-console.log("e2e-main.js")
