@@ -7,6 +7,7 @@ import "./stache-example/stache-example"
 import "./route-example/route-example"
 import "./counter-example/counter-example"
 import "./timeout-example/timeout-example"
+import "./request-example/request-example"
 
 class MyApp extends StacheElement {
   static view = `
@@ -16,6 +17,7 @@ class MyApp extends StacheElement {
       <can-stache-example></can-stache-example>
       <can-counter-example></can-counter-example>
       <can-timeout-example></can-timeout-example>
+      <can-request-example></can-request-example>
     `
 
   static props = {
