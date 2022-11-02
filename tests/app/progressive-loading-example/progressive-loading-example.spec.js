@@ -3,12 +3,10 @@ const { test, expect } = require("@playwright/test")
 const waitForHydration = require("../../helpers/wait-for-hydration")
 
 test.describe("ProgressiveLoadingExample", () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForHydration(page)
-  })
-
   test("navigation nested root route example", async ({ page }) => {
     await page.goto("/")
+
+    await waitForHydration(page)
 
     await page.getByTestId("progressive-loading").click()
 
@@ -31,6 +29,8 @@ test.describe("ProgressiveLoadingExample", () => {
 
   test("refresh to nested root route example", async ({ page }) => {
     await page.goto("/progressive-loading")
+
+    await waitForHydration(page)
 
     const header = page.locator("h3")
 

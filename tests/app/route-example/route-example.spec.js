@@ -22,7 +22,7 @@ test.describe("RouteExample", () => {
 
     await waitForHydration(page)
 
-    await page.getByTestId("css").click()
+    await page.getByTestId("css").click() // TODO: This shouldn't navigate D:
 
     const header = page.locator("h3")
 

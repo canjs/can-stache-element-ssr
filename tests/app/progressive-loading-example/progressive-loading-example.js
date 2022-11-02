@@ -41,17 +41,13 @@ class ProgressiveLoadingExample extends StacheElement {
         root.innerHTML = "Nested Root Route"
         return Promise.resolve(root)
       case "nested-request":
-        return steal
-          .import(`can-stache-element-ssr/tests/app/progressive-loading-example/nested-request-example/nested-request-example`)
-          .then(() => {
-            return document.createElement("can-nested-request-example")
-          })
+        return steal.import(`tests/app/progressive-loading-example/nested-request-example/nested-request-example`).then(() => {
+          return document.createElement("can-nested-request-example")
+        })
       case "nested-timeout":
-        return steal
-          .import(`can-stache-element-ssr/tests/app/progressive-loading-example/nested-timeout-example/nested-timeout-example`)
-          .then(() => {
-            return document.createElement("can-nested-timeout-example")
-          })
+        return steal.import(`tests/app/progressive-loading-example/nested-timeout-example/nested-timeout-example`).then(() => {
+          return document.createElement("can-nested-timeout-example")
+        })
       default:
         const unknown = document.createElement("h4")
         unknown.innerHTML = "Nested Unknown Route"

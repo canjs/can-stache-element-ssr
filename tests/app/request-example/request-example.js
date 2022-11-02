@@ -5,13 +5,13 @@ class RequestExample extends StacheElement {
   static view = `
     <p data-testid="request-example">
       {{# if(this.request.isPending) }}
-          before request
+        before request
       {{/ if }}
       {{# if(this.request.isRejected) }}
-          Rejected {{ this.request.reason }}
+        Rejected {{ this.request.reason }}
       {{/ if }}
       {{# if(this.request.isResolved) }}
-          {{ this.request.value }}
+        {{ this.request.value }}
       {{/ if }}
     </p>
   `

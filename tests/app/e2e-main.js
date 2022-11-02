@@ -10,14 +10,14 @@ import "./request-example/request-example"
 
 class MyApp extends StacheElement {
   static view = `
-      <h1>Hello {{ this.name }}</h1>
+    <h1>Hello {{ this.name }}</h1>
 
-      <can-route-example></can-route-example>
-      <can-stache-example></can-stache-example>
-      <can-counter-example></can-counter-example>
-      <can-timeout-example></can-timeout-example>
-      <can-request-example></can-request-example>
-    `
+    <can-route-example></can-route-example>
+    <can-stache-example></can-stache-example>
+    <can-counter-example></can-counter-example>
+    <can-timeout-example></can-timeout-example>
+    <can-request-example></can-request-example>
+  `
 
   static props = {
     name: "Playwright",

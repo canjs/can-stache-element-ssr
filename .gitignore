@@ -3,6 +3,9 @@ logs
 *.log
 .DS_Store
 
+# Temp directory for e2e production build
+e2e-app
+
 # Runtime data
 pids
 *.pid

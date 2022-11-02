@@ -1,6 +1,6 @@
 const steal = require("steal")
 const setupGlobals = require("./setup-globals")
-const { outputFile } = require("fs-extra")
+const { outputFile, readJson } = require("fs-extra")
 const getFilepath = require("./util/get-filepath")
 const argv = require("optimist").argv
 const path = require("path")
@@ -54,20 +54,15 @@ async function main() {
  * Populates `JSDOM` document with SPA application
  */
 async function populateDocument() {
-  let main
-
-  if (envConfiguration.main) {
-    main = envConfiguration.main.split(".")[0]
+  // The module with address http://0.0.0.0:4202/client-helpers/environment-helpers.js is being instantiated twice.
+  // This happens when module identifiers normalize to different module names.
+  if (envConfiguration.stealConfig) {
+    const config = await readJson(envConfiguration.stealConfig)
+    steal.config(config)
   }
 
   // Run client-side code and load <can-app>
-  if (main) {
-    await steal.startup({
-      main,
-    })
-  } else {
-    await steal.startup()
-  }
+  await steal.startup()
   // TODO: disable jsdom script tags?
 
   console.log("steal - done")

@@ -16,15 +16,15 @@ route.start()
 
 class RouteExample extends StacheElement {
   static view = `
-      <div>
-        <a data-testid="home" href="{{ routeUrl(page='home') }}">Home</a>
-        <a data-testid="css" href="{{ routeUrl(page='css') }}">Css</a>
-        <a data-testid="not-found" href="{{ routeUrl(page='unknown') }}">404</a>
-        <a data-testid="progressive-loading" href="{{ routeUrl(page='progressive-loading') }}">Progressive Loading</a>
-      </div>
-      <p data-testid="page-tracker">The current page is {{ this.routeData.page }}.</p>
-      {{ this.componentToShow }}
-    `
+    <div>
+      <a data-testid="home" href="{{ routeUrl(page='home') }}">Home</a>
+      <a data-testid="css" href="{{ routeUrl(page='css') }}">Css</a>
+      <a data-testid="not-found" href="{{ routeUrl(page='unknown') }}">404</a>
+      <a data-testid="progressive-loading" href="{{ routeUrl(page='progressive-loading') }}">Progressive Loading</a>
+    </div>
+    <p data-testid="page-tracker">The current page is {{ this.routeData.page }}.</p>
+    {{ this.componentToShow }}
+  `
 
   static props = {
     routeData: {

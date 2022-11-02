@@ -16,6 +16,8 @@ setEnvDirs(defaultEnvironment)
 
 const sendFileOr404 = (req, res, reqPath) => {
   const dest = path.join(__dirname, reqPath)
+  console.log(reqPath)
+  console.log(dest)
 
   if (existsSync(dest)) {
     res.sendFile(dest)
@@ -29,6 +31,7 @@ const environments = getEnvironments()
 
 app.get("/*", function (req, res) {
   const reqPath = req.path
+  console.log(req.path)
 
   const overrideEnvironment = environments.find((env) => reqPath.startsWith(`/${env}`))
 

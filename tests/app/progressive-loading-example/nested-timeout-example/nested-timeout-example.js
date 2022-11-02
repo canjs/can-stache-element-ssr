@@ -3,8 +3,8 @@ import { ssgDefineElement } from "../../../../client-helpers/ssg-helpers.js"
 
 class NestedTimeoutExample extends StacheElement {
   static view = `
-        <p data-testid="nested-timeout-example">{{ this.label }}</p>
-    `
+    <p data-testid="nested-timeout-example">{{ this.label }}</p>
+  `
 
   static props = {
     label: "before nested timeout",

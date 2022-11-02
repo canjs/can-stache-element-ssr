@@ -3,18 +3,18 @@ import { ssgDefineElement } from "../../../../client-helpers/ssg-helpers.js"
 
 class NestedRequestExample extends StacheElement {
   static view = `
-     <p data-testid="nested-request-example">
-        {{# if(this.request.isPending) }}
-            before nested request
-        {{/ if }}
-        {{# if(this.request.isRejected) }}
-            Rejected {{ this.request.reason }}
-        {{/ if }}
-        {{# if(this.request.isResolved) }}
-            {{ this.request.value }}
-        {{/ if }}
+    <p data-testid="nested-request-example">
+      {{# if(this.request.isPending) }}
+        before nested request
+      {{/ if }}
+      {{# if(this.request.isRejected) }}
+        Rejected {{ this.request.reason }}
+      {{/ if }}
+      {{# if(this.request.isResolved) }}
+        {{ this.request.value }}
+      {{/ if }}
     </p>
-    `
+  `
 
   get request() {
     return xhrGet("https://dummyjson.com/products/2").then((res) => {
