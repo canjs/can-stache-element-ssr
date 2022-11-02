@@ -1,12 +1,18 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
-const waitForHydration = require("../../helpers/wait-for-hydration")
+const verifyStillPrerendered = require("../../helpers/verify-still-prerendered")
 
 test.describe("RouteExample", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript({ path: "tests/helpers/prevent-hydration.js" })
+  })
+
+  test.afterEach(async ({ page }) => {
+    expect(await verifyStillPrerendered(page)).toBe(true)
+  })
+
   test("home route loads", async ({ page }) => {
     await page.goto("/")
-
-    await waitForHydration(page)
 
     const header = page.locator("h3")
 
@@ -19,8 +25,6 @@ test.describe("RouteExample", () => {
 
   test("navigation to css example", async ({ page }) => {
     await page.goto("/")
-
-    await waitForHydration(page)
 
     await page.getByTestId("css").click()
 
@@ -36,8 +40,6 @@ test.describe("RouteExample", () => {
   test("refresh to css example", async ({ page }) => {
     await page.goto("/css")
 
-    await waitForHydration(page)
-
     const header = page.locator("h3")
 
     await expect(header).toHaveText("CSS Route")
@@ -49,8 +51,6 @@ test.describe("RouteExample", () => {
 
   test("navigation to 404 example", async ({ page }) => {
     await page.goto("/")
-
-    await waitForHydration(page)
 
     await page.getByTestId("not-found").click()
 
@@ -65,8 +65,6 @@ test.describe("RouteExample", () => {
 
   test("refresh to 404 example", async ({ page }) => {
     await page.goto("/not-a-route")
-
-    await waitForHydration(page)
 
     const header = page.locator("h3")
 

@@ -17,8 +17,8 @@ class NestedRequestExample extends StacheElement {
     `
 
   get request() {
-    return xhrGet("/tests/app/assets/mock-nested-response.json").then((res) => {
-      return res.data
+    return xhrGet("https://dummyjson.com/products/2").then((res) => {
+      return res.title
     })
   }
 }
@@ -29,11 +29,7 @@ function xhrGet(url) {
     req.onload = () => {
       if (req.readyState === req.DONE) {
         if (req.status === 200) {
-          // TODO: response comes in too fast for playwright without a delay,
-          // it can't detect the label's original text
-          setTimeout(() => {
-            res(JSON.parse(req.responseText))
-          }, 500)
+          res(JSON.parse(req.responseText))
         }
       }
     }

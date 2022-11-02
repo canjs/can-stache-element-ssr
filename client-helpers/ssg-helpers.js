@@ -42,7 +42,7 @@ export const ssgEnd = () => {
       }
     })
 
-  if (globalThis.canStacheElementInertPrerendered) {
+  if (globalThis.canStacheElementInertPrerendered && !globalThis.skipHydrationCanStacheElement) {
     new Zone({
       plugins: [xhrZone],
     })

@@ -1,12 +1,16 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
-const waitForHydration = require("../../../helpers/wait-for-hydration")
+const verifyStillPrerendered = require("../../../helpers/verify-still-prerendered")
 
 test.describe("NestedRequestExample", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/progressive-loading/nested-request")
+    await page.addInitScript({ path: "tests/helpers/prevent-hydration.js" })
 
-    await waitForHydration(page)
+    await page.goto("/progressive-loading/nested-request")
+  })
+
+  test.afterEach(async ({ page }) => {
+    expect(await verifyStillPrerendered(page)).toBe(true)
   })
 
   test("label should update", async ({ page }) => {

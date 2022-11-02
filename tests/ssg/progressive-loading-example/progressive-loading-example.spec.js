@@ -1,10 +1,14 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
-const waitForHydration = require("../../helpers/wait-for-hydration")
+const verifyStillPrerendered = require("../../helpers/verify-still-prerendered")
 
 test.describe("ProgressiveLoadingExample", () => {
   test.beforeEach(async ({ page }) => {
-    await waitForHydration(page)
+    await page.addInitScript({ path: "tests/helpers/prevent-hydration.js" })
+  })
+
+  test.afterEach(async ({ page }) => {
+    expect(await verifyStillPrerendered(page)).toBe(true)
   })
 
   test("navigation nested root route example", async ({ page }) => {

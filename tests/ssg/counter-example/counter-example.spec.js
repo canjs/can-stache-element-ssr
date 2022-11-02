@@ -1,12 +1,16 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
-const waitForHydration = require("../../helpers/wait-for-hydration")
+const verifyStillPrerendered = require("../../helpers/verify-still-prerendered")
 
 test.describe("CounterExample", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/")
+    await page.addInitScript({ path: "tests/helpers/prevent-hydration.js" })
 
-    await waitForHydration(page)
+    await page.goto("/")
+  })
+
+  test.afterEach(async ({ page }) => {
+    expect(await verifyStillPrerendered(page)).toBe(true)
   })
 
   test("clicking increment button", async ({ page }) => {
@@ -18,10 +22,6 @@ test.describe("CounterExample", () => {
 
     await button.click()
 
-    await expect(label).toHaveText("1")
-
-    await button.click()
-
-    await expect(label).toHaveText("2")
+    await expect(label).toHaveText("0")
   })
 })

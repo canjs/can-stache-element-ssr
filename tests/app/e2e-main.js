@@ -1,4 +1,3 @@
-// import type from "can-type"
 import StacheElement from "can-stache-element"
 
 import { ssgDefineElement, ssgEnd } from "../../../client-helpers/ssg-helpers.js"
@@ -23,8 +22,6 @@ class MyApp extends StacheElement {
   static props = {
     name: "Playwright",
   }
-
-  connected() {}
 }
 
 ssgDefineElement("can-app", MyApp)

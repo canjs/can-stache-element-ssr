@@ -30,13 +30,11 @@ const preset = {
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 3,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: [["html", { outputFolder: "playwright-report" }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "http://localhost:4200",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: process.env.CI
@@ -99,16 +97,6 @@ const preset = {
     //   },
     // },
   ],
-
-  /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  outputDir: "test-results/",
-
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: "node server.js --environment e2e --serverMode spa --port 4200",
-    port: 4200,
-    reuseExistingServer: !process.env.CI,
-  },
 }
 
 module.exports = preset
