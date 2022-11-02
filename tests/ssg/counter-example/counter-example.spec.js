@@ -22,6 +22,7 @@ test.describe("CounterExample", () => {
 
     await button.click()
 
+    // Counter shouldn't change since this is still prerendered
     await expect(label).toHaveText("0")
   })
 })
