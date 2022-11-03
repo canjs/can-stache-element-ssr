@@ -10,6 +10,8 @@ test.describe("ssg helpers", () => {
 
     await page.goto("/")
 
+    //
+
     const getGlobalFlagsScript = await page.evaluate(() => {
       // assuming that the scripts to set global flags are at the top of the html inside of head
       return document.getElementsByTagName("script")[0].innerHTML.replace(/\s|\t|\n/g, "")

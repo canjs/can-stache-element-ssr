@@ -14,6 +14,11 @@ test.describe("ProgressiveLoadingExample", () => {
   test("navigation nested root route example", async ({ page }) => {
     await page.goto("/")
 
+    await page.evaluate(() => {
+      // if this doesn't work, you can try to increase 0 to a higher number (i.e. 100)
+      return new Promise((resolve) => setTimeout(resolve, 0))
+    })
+
     await page.getByTestId("progressive-loading").click()
 
     const header = page.locator("h3")

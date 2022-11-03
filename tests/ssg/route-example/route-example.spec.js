@@ -24,7 +24,31 @@ test.describe("RouteExample", () => {
   })
 
   test("navigation to css example", async ({ page }) => {
+    await page.addInitScript({ path: "tests/helpers/moo-cow.js" })
+
     await page.goto("/")
+
+    await page.evaluate(() => {
+      return moo()
+      function moo() {
+        if (globalThis.skippedHydrationCanStacheElement) {
+          console.log("globalThis.skippedHydrationCanStacheElement = true")
+          return Promise.resolve()
+        }
+
+        console.log("globalThis.skippedHydrationCanStacheElement = false")
+
+        return new Promise((resolve) => setTimeout(resolve, 100)).then(() => {
+          return moo()
+        })
+      }
+
+      // if (globalThis.skippedHydrationCanStacheElement) {
+      //   return
+      // }
+      // // if this doesn't work, you can try to increase 0 to a higher number (i.e. 100)
+      // return new Promise((resolve) => setTimeout(resolve, 1000));
+    })
 
     await page.getByTestId("css").click()
 
@@ -53,6 +77,11 @@ test.describe("RouteExample", () => {
 
   test("navigation to 404 example", async ({ page }) => {
     await page.goto("/")
+
+    await page.evaluate(() => {
+      // if this doesn't work, you can try to increase 0 to a higher number (i.e. 100)
+      return new Promise((resolve) => setTimeout(resolve, 0))
+    })
 
     await page.getByTestId("not-found").click()
 

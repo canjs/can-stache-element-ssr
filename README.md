@@ -29,7 +29,7 @@ ssg solution for CanJS 6 custom stache elements
     // Environment name (can be whatever you want)
     "prod": {
       // prebuild (optional) - prebuild script (allows you to run steal-tools)
-      "prebuild": "build.js",
+      "prebuild": "prebuild.js",
       // dist - All builds will be generated in the /dist/ directory
       "dist": {
         // mainTag (optional) - steal/main tag specific to builds
@@ -300,12 +300,15 @@ $ node --inspect-brk jsdom-ssg/scrape.js http://127.0.0.1:8080/index.html
 2. We will have to reinitialize CanJS application and use a new `JSDOM` instance for each page. See challenges above `Challenges #2 and #3` (listed above)
 
 3. To avoid having to use zones, we will initialize CanJS application and render each page and rely on:
+
    ```javascript
    process.once("beforeExit", (code) => {
      // TODO: scape document
    })
    ```
+
    to know when application is stable and can be scraped
+
 4. When injecting steal or production bundle into index.html, the script tag must be injected at the end of the body tag:
 
    ```html

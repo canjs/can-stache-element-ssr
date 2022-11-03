@@ -42,11 +42,15 @@ export const ssgEnd = () => {
       }
     })
 
-  if (globalThis.canStacheElementInertPrerendered && !globalThis.skipHydrationCanStacheElement) {
+  if (globalThis.canStacheElementInertPrerendered) {
     new Zone({
       plugins: [xhrZone],
     })
       .run(function () {
+        if (globalThis.skipHydrationCanStacheElement) {
+          return
+        }
+
         delete globalThis.canStacheElementInertPrerendered
         const staticapp = document.querySelector("can-app")
         const temp = document.createElement("div")
@@ -57,6 +61,13 @@ export const ssgEnd = () => {
         return { staticapp, liveapp }
       })
       .then(function (data) {
+        console.log(data.result)
+        if (!data.result) {
+          console.log("moo :D")
+          globalThis.skippedHydrationCanStacheElement = true
+          return
+        }
+
         delete globalThis.canMooStache
         const { staticapp, liveapp } = data.result
         staticapp.remove()

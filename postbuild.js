@@ -1,7 +1,7 @@
 const path = require("path")
 const { getEnvConfiguration, getSggConfiguration, getEnvAssets } = require("./client-helpers/environment-helpers")
 const { copy } = require("fs-extra")
-const getEnvironment = require("./flags/get-ssg-environment")
+const getEnvironment = require("./jsdom-ssg/flags/get-ssg-environment")
 
 const environment = getEnvironment()
 const ssgConfiguration = getSggConfiguration()
