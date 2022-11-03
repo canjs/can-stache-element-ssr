@@ -15,9 +15,7 @@ let envConfiguration = null
 setEnvDirs(defaultEnvironment)
 
 const sendFileOr404 = (req, res, reqPath) => {
-  console.log(reqPath)
   const dest = path.join(__dirname, reqPath)
-  console.log(dest)
 
   if (existsSync(dest)) {
     res.sendFile(dest)
