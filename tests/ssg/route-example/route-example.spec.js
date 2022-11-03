@@ -1,6 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 const verifyStillPrerendered = require("../../helpers/verify-still-prerendered")
+const waitForHydrationToBeSkipped = require("../../helpers/wait-for-hydration-to-be-skipped")
 
 test.describe("RouteExample", () => {
   test.beforeEach(async ({ page }) => {
@@ -14,6 +15,8 @@ test.describe("RouteExample", () => {
   test("home route loads", async ({ page }) => {
     await page.goto("/")
 
+    await waitForHydrationToBeSkipped(page)
+
     const header = page.locator("h3")
 
     await expect(header).toHaveText("Home Route")
@@ -24,31 +27,9 @@ test.describe("RouteExample", () => {
   })
 
   test("navigation to css example", async ({ page }) => {
-    await page.addInitScript({ path: "tests/helpers/moo-cow.js" })
-
     await page.goto("/")
 
-    await page.evaluate(() => {
-      return moo()
-      function moo() {
-        if (globalThis.skippedHydrationCanStacheElement) {
-          console.log("globalThis.skippedHydrationCanStacheElement = true")
-          return Promise.resolve()
-        }
-
-        console.log("globalThis.skippedHydrationCanStacheElement = false")
-
-        return new Promise((resolve) => setTimeout(resolve, 100)).then(() => {
-          return moo()
-        })
-      }
-
-      // if (globalThis.skippedHydrationCanStacheElement) {
-      //   return
-      // }
-      // // if this doesn't work, you can try to increase 0 to a higher number (i.e. 100)
-      // return new Promise((resolve) => setTimeout(resolve, 1000));
-    })
+    await waitForHydrationToBeSkipped(page)
 
     await page.getByTestId("css").click()
 
@@ -65,6 +46,8 @@ test.describe("RouteExample", () => {
   test("refresh to css example", async ({ page }) => {
     await page.goto("/css")
 
+    await waitForHydrationToBeSkipped(page)
+
     const header = page.locator("h3")
 
     // Refresh only works because refreshing to the css page would have a prerendered css page
@@ -77,6 +60,8 @@ test.describe("RouteExample", () => {
 
   test("navigation to 404 example", async ({ page }) => {
     await page.goto("/")
+
+    await waitForHydrationToBeSkipped(page)
 
     await page.evaluate(() => {
       // if this doesn't work, you can try to increase 0 to a higher number (i.e. 100)
@@ -97,6 +82,8 @@ test.describe("RouteExample", () => {
 
   test("refresh to 404 example", async ({ page }) => {
     await page.goto("/not-a-route")
+
+    await waitForHydrationToBeSkipped(page)
 
     const header = page.locator("h3")
 

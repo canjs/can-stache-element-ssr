@@ -61,9 +61,7 @@ export const ssgEnd = () => {
         return { staticapp, liveapp }
       })
       .then(function (data) {
-        console.log(data.result)
         if (!data.result) {
-          console.log("moo :D")
           globalThis.skippedHydrationCanStacheElement = true
           return
         }

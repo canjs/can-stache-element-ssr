@@ -9,8 +9,17 @@ import "../progressive-loading-example/progressive-loading-example"
 prepareRouting(route)
 
 route.register("{page}", { page: "home" })
+route.register("{page}/", { page: "home" })
 route.register("css-example", { page: "css-example" })
 route.register("progressive-loading/{nestedPage}", { page: "progressive-loading" })
+route.register("progressive-loading/{nestedPage}/", { page: "progressive-loading" })
+
+/*
+
+/progressive-loading/timeout <-- works page: "progressive-loading", nestedPage: "timeout"
+/progressive-loading/timeout/ <-- works page: undefined, nestedPage: undefined
+
+*/
 
 route.start()
 

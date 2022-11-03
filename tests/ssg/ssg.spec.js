@@ -3,6 +3,7 @@ const { test, expect } = require("@playwright/test")
 const verifyStillPrerendered = require("../helpers/verify-still-prerendered")
 const verifyIfHydrated = require("../helpers/verify-if-hydrated")
 const waitForHydration = require("../helpers/wait-for-hydration")
+const waitForHydrationToBeSkipped = require("../helpers/wait-for-hydration-to-be-skipped")
 
 test.describe("ssg helpers", () => {
   test("verify hydration prevention", async ({ page }) => {
@@ -10,7 +11,7 @@ test.describe("ssg helpers", () => {
 
     await page.goto("/")
 
-    //
+    await waitForHydrationToBeSkipped(page)
 
     const getGlobalFlagsScript = await page.evaluate(() => {
       // assuming that the scripts to set global flags are at the top of the html inside of head

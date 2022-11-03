@@ -1,6 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 const verifyStillPrerendered = require("../../helpers/verify-still-prerendered")
+const waitForHydrationToBeSkipped = require("../../helpers/wait-for-hydration-to-be-skipped")
 
 test.describe("CssExample", () => {
   test.beforeEach(async ({ page }) => {
@@ -14,6 +15,8 @@ test.describe("CssExample", () => {
   test("css affects page", async ({ page }) => {
     // Avoid race conditions by using Promise.all
     await Promise.all([page.waitForResponse("/tests/app/css-example/css-example.css"), page.goto("/css")])
+
+    await waitForHydrationToBeSkipped(page)
 
     const header = page.getByTestId("css-test")
 

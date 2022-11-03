@@ -10,7 +10,7 @@ const preset = require("./playwright.preset")
 const PORT = 4200
 
 const WEB_SERVER_COMMANDS = [
-  `node jsdom-ssg/index.js --environment e2e`,
+  // `node jsdom-ssg/index.js --environment e2e`,
   `node server.js --environment e2e --serverMode ssg --port ${PORT}`,
 ]
 

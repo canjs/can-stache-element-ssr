@@ -1,6 +1,7 @@
 // @ts-check
 const { test, expect } = require("@playwright/test")
 const verifyStillPrerendered = require("../../helpers/verify-still-prerendered")
+const waitForHydrationToBeSkipped = require("../../helpers/wait-for-hydration-to-be-skipped")
 
 test.describe("ProgressiveLoadingExample", () => {
   test.beforeEach(async ({ page }) => {
@@ -14,10 +15,7 @@ test.describe("ProgressiveLoadingExample", () => {
   test("navigation nested root route example", async ({ page }) => {
     await page.goto("/")
 
-    await page.evaluate(() => {
-      // if this doesn't work, you can try to increase 0 to a higher number (i.e. 100)
-      return new Promise((resolve) => setTimeout(resolve, 0))
-    })
+    await waitForHydrationToBeSkipped(page)
 
     await page.getByTestId("progressive-loading").click()
 
@@ -33,6 +31,8 @@ test.describe("ProgressiveLoadingExample", () => {
 
   test("refresh to nested root route example", async ({ page }) => {
     await page.goto("/progressive-loading")
+
+    await waitForHydrationToBeSkipped(page)
 
     const header = page.locator("h3")
 

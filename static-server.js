@@ -26,6 +26,15 @@ const basePath = path.join("dist", envConfiguration.dist.basePath)
   Don't forget to rebuild after you make change in `node_modules`
  */
 
+// app.use(function (req, res, next) {
+//   if (req.path.substr(-1) == '/' && req.path.length > 1) {
+//     let query = req.url.slice(req.path.length)
+//     res.redirect(301, req.path.slice(0, -1) + query)
+//   } else {
+//     next()
+//   }
+// })
+
 app.use(express.static(path.join(__dirname, basePath, envConfiguration.dist.static)))
 app.use("*", express.static(path.join(__dirname, basePath, envConfiguration.dist.static, "404")))
 
