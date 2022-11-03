@@ -18,12 +18,13 @@
     "serve-e2e-prod": "node server.js --environment e2e-prod --port 4203",
     "serve-e2e-spa": "node server.js --environment e2e --serverMode spa --port 4201",
     "serve-e2e-prod-spa": "node server.js --environment e2e-prod --serverMode spa --port 4202",
-    "format": "prettier --write .",
     "e2e-ssg-dev": "playwright test --config playwright-ssg-dev.config.js",
     "e2e-spa-dev": "playwright test --config playwright-spa-dev.config.js",
     "e2e-spa-prod": "playwright test --config playwright-spa-prod.config.js",
     "e2e-ssg-prod": "playwright test --config playwright-ssg-prod.config.js",
-    "e2e": "npm run e2e-spa-dev && npm run e2e-ssg-dev && npm run e2e-spa-prod && npm run e2e-ssg-prod"
+    "e2e": "npm run e2e-spa-dev && npm run e2e-ssg-dev && npm run e2e-spa-prod && npm run e2e-ssg-prod",
+    "format": "prettier --write .",
+    "static-server": "node static-server.js --environment prod"
   },
   "steal": {
     "babelOptions": {

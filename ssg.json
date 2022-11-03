@@ -13,9 +13,10 @@
       "entryPoint": "index.html"
     },
     "prod": {
-      "prebuild": "build.js",
+      "prebuild": "prebuild.js",
+      "postbuild": "postbuild.js",
       "dist": {
-        "mainTag": "<script src=\"/bundles/can-stache-element-ssr/main.js\" main></script>",
+        "mainTag": "<script src=\"/dist/bundles/can-stache-element-ssr/main.js\" main></script>",
         "basePath": "prod",
         "static": "static",
         "assets": "",
@@ -35,16 +36,16 @@
       "entryPoint": "tests/app/e2e-index.html",
       "assets": ["tests/app/assets"],
       "routes": [
-        "http://127.0.0.1:8080",
-        "http://127.0.0.1:8080/css",
-        "http://127.0.0.1:8080/404",
-        "http://127.0.0.1:8080/timeout",
-        "http://127.0.0.1:8080/request",
-        "http://127.0.0.1:8080/progressive-loading",
-        "http://127.0.0.1:8080/progressive-loading/nested-timeout",
-        "http://127.0.0.1:8080/progressive-loading/nested-request",
-        "http://127.0.0.1:8080/unknown",
-        "http://127.0.0.1:8080/not-a-route"
+        "/",
+        "/css",
+        "/404",
+        "/timeout",
+        "/request",
+        "/progressive-loading",
+        "/progressive-loading/nested-timeout",
+        "/progressive-loading/nested-request",
+        "/unknown",
+        "/not-a-route"
       ]
     },
     "e2e-prod": {
@@ -75,12 +76,12 @@
     }
   },
   "routes": [
-    "http://127.0.0.1:8080",
-    "http://127.0.0.1:8080/tasks",
-    "http://127.0.0.1:8080/progressive-loading",
-    "http://127.0.0.1:8080/progressive-loading/root",
-    "http://127.0.0.1:8080/progressive-loading/moo",
-    "http://127.0.0.1:8080/progressive-loading/cow",
-    "http://127.0.0.1:8080/404"
+    "/",
+    "/tasks",
+    "/progressive-loading",
+    "/progressive-loading/root",
+    "/progressive-loading/moo",
+    "/progressive-loading/cow",
+    "/404"
   ]
 }

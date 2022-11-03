@@ -2,8 +2,6 @@
 
 ssg solution for CanJS 6 custom stache elements
 
-
-
 ```
 /client-helpers - functions that are safe to use in a browser (and can be imported using node)
 /dist - ssg and production spa build
@@ -14,6 +12,7 @@ ssg solution for CanJS 6 custom stache elements
 /main.js - client side code that generates CanJS 6 components
 /production.html - dev SPA
 /ssg.json - general ssg configuration (includes routes and default settings) and defines environments
+/static-server.js - simple static server to test if ssg, assets, bundles can all be hosted in one spot
 ```
 
 ### ssg.json
@@ -33,7 +32,7 @@ ssg solution for CanJS 6 custom stache elements
       "prebuild": "build.js",
       // dist - All builds will be generated in the /dist/ directory
       "dist": {
-        // mainTag (optional) - steal/main tag specific to builds 
+        // mainTag (optional) - steal/main tag specific to builds
         "mainTag": "<script src=\"/bundles/can-stache-element-ssr/main.js\" main></script>",
         //basePath - sub-directory in /dist/ where all generated build files will go
         // /dist/prod
@@ -129,6 +128,14 @@ $ node jsdom-ssg/index.js --environment prod # Generates prod static pages
 
 generates `dist/prod` <-- specific to prod environment and is configurable in `ssg.json`
 
+### Purely Static Serve
+
+Since there's a lot of logic in `server.js`, it's hard to trust whether or not it's possible to truly serve all the static pages, assets, bundles from a single directory.
+
+```bash
+$ npm run static-server # Runs simple static server
+```
+
 ### Serve
 
 To serve in ssg (static) mode where built files from /dist are used by default
@@ -197,7 +204,7 @@ Functions like `npm run serve-dev` mode with changes which are configurable thro
 
 #### In static `npm run serve` mode
 
-If the request points at a directory, it will prepend "/dist/dev/static-dev/*" to the request path and serve the index.html in that folder. If the path or its index.html file doesn't exist, it serves dist/404/index.html
+If the request points at a directory, it will prepend "/dist/dev/static-dev/\*" to the request path and serve the index.html in that folder. If the path or its index.html file doesn't exist, it serves dist/404/index.html
 
 can-route data "page" is set to the first /slug/ or to "home" if on the root
 

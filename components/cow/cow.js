@@ -5,7 +5,7 @@ import "./cow.css"
 class Cow extends StacheElement {
   static view = `
     <h3>Cow</h3>
-    <img class="cow-image" src="../assets/cow-strawberry.webp">
+    <img class="cow-image" src="../../assets/cow-strawberry.webp">
     <p>Top 5 animal in the world is Cow</p>
     <p>First: {{ first }}</p>
     <p>Second: {{ second }}</p>
