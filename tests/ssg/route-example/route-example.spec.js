@@ -30,11 +30,12 @@ test.describe("RouteExample", () => {
 
     const header = page.locator("h3")
 
-    await expect(header).toHaveText("CSS Route")
+    // Because the page isn't hydrated, navigation shouldn't work
+    await expect(header).toHaveText("Home Route")
 
     const tracker = page.getByTestId("page-tracker")
 
-    await expect(tracker).toHaveText("The current page is css.")
+    await expect(tracker).toHaveText("The current page is home.")
   })
 
   test("refresh to css example", async ({ page }) => {
@@ -42,6 +43,7 @@ test.describe("RouteExample", () => {
 
     const header = page.locator("h3")
 
+    // Refresh only works because refreshing to the css page would have a prerendered css page
     await expect(header).toHaveText("CSS Route")
 
     const tracker = page.getByTestId("page-tracker")
@@ -56,11 +58,12 @@ test.describe("RouteExample", () => {
 
     const header = page.locator("h3")
 
-    await expect(header).toHaveText("Not Found Route")
+    // Because the page isn't hydrated, navigation shouldn't work
+    await expect(header).toHaveText("Home Route")
 
     const tracker = page.getByTestId("page-tracker")
 
-    await expect(tracker).toHaveText("The current page is unknown.")
+    await expect(tracker).toHaveText("The current page is home.")
   })
 
   test("refresh to 404 example", async ({ page }) => {
@@ -68,6 +71,7 @@ test.describe("RouteExample", () => {
 
     const header = page.locator("h3")
 
+    // Refresh only works because refreshing to the 404 page would have a prerendered 404 page
     await expect(header).toHaveText("Not Found Route")
 
     const tracker = page.getByTestId("page-tracker")

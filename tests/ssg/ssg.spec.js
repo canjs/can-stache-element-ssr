@@ -10,11 +10,12 @@ test.describe("ssg helpers", () => {
 
     await page.goto("/")
 
-    const hydrateGlobalFlags = await page.evaluate(() => {
-      return globalThis.canStacheElementInertPrerendered && globalThis.canMooStache
+    const getGlobalFlagsScript = await page.evaluate(() => {
+      // assuming that the scripts to set global flags are at the top of the html inside of head
+      return document.getElementsByTagName("script")[0].innerHTML.replace(/\s|\t|\n/g, "")
     })
 
-    expect(hydrateGlobalFlags).toBe(true)
+    expect(getGlobalFlagsScript).toBe("globalThis.canStacheElementInertPrerendered=true;globalThis.canMooStache=true;")
 
     const app = page.locator("can-app")
 
@@ -22,31 +23,32 @@ test.describe("ssg helpers", () => {
 
     expect(await verifyStillPrerendered(page)).toBe(true)
 
-    const hydrateGlobalFlagsAfter = await page.evaluate(() => {
+    const currentStateOfGlobalFlags = await page.evaluate(() => {
       return globalThis.canStacheElementInertPrerendered && globalThis.canMooStache
     })
 
-    expect(hydrateGlobalFlagsAfter).toBe(true)
+    expect(currentStateOfGlobalFlags).toBe(true)
   })
 
   test("verify detecting hydration", async ({ page }) => {
     await page.goto("/")
 
-    const hydrateGlobalFlags = await page.evaluate(() => {
-      return globalThis.canStacheElementInertPrerendered && globalThis.canMooStache
+    const getGlobalFlagsScript = await page.evaluate(() => {
+      // assuming that the scripts to set global flags are at the top of the html inside of head
+      return document.getElementsByTagName("script")[0].innerHTML.replace(/\s|\t|\n/g, "")
     })
 
-    expect(hydrateGlobalFlags).toBe(true)
+    expect(getGlobalFlagsScript).toBe("globalThis.canStacheElementInertPrerendered=true;globalThis.canMooStache=true;")
 
     await waitForHydration(page)
 
     expect(await verifyIfHydrated(page)).toBe(true)
 
-    const hydrateGlobalFlagsAfter = await page.evaluate(() => {
+    const currentStateOfGlobalFlags = await page.evaluate(() => {
       return globalThis.canStacheElementInertPrerendered && globalThis.canMooStache
     })
 
-    // flags should be undefined and not false since they are removed from globalThis
-    expect(hydrateGlobalFlagsAfter).toBeUndefined()
+    // flags should be undefined and not false since they are removed from window
+    expect(currentStateOfGlobalFlags).toBeUndefined()
   })
 })

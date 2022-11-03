@@ -18,19 +18,12 @@ test.describe("ProgressiveLoadingExample", () => {
 
     const header = page.locator("h3")
 
-    await expect(header).toHaveText("Progressive Loading Route")
+    // Because the page isn't hydrated, navigation shouldn't work
+    await expect(header).toHaveText("Home Route")
 
     const tracker = page.getByTestId("page-tracker")
 
-    await expect(tracker).toHaveText("The current page is progressive-loading.")
-
-    const nestedHeader = page.locator("h4")
-
-    await expect(nestedHeader).toHaveText("Nested Root Route")
-
-    const nestedTracker = page.getByTestId("nested-page-tracker")
-
-    await expect(nestedTracker).toHaveText("The current nestedPage is root.")
+    await expect(tracker).toHaveText("The current page is home.")
   })
 
   test("refresh to nested root route example", async ({ page }) => {
@@ -38,6 +31,7 @@ test.describe("ProgressiveLoadingExample", () => {
 
     const header = page.locator("h3")
 
+    // Refresh only works because refreshing to the nested root page would have a prerendered nested root page
     await expect(header).toHaveText("Progressive Loading Route")
 
     const tracker = page.getByTestId("page-tracker")

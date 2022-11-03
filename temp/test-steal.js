@@ -10,6 +10,8 @@ const html = `<!doctype html>
 
 const dom = new JSDOM(html)
 
+// This is a bad idea, JSDOM offers options
+// in its constructor to navigate "naturally" to a page
 delete dom.window.location
 dom.window.location = url.parse("http://localhost:4200", true)
 

@@ -5,14 +5,16 @@ const { getEnvConfiguration } = require("../client-helpers/environment-helpers")
 
 const envConfiguration = getEnvConfiguration("e2e-prod")
 
+const distDir = path.join("dist", envConfiguration.dist.basePath)
+
 let config = {}
 
 if (envConfiguration.stealConfig) {
   config = readJsonSync(envConfiguration.stealConfig)
 }
 
-// TODO: switch bundle to e2e bundles instead of temp app's
+// TODO: switch bundle to e2e bundles instead of temp app's (maybe?)
 stealTools.build(config, {
   bundleSteal: true,
-  dest: path.join("dist", envConfiguration.dist.basePath),
+  dest: path.join(distDir, "dist"),
 })

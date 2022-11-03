@@ -7,3 +7,4 @@
  * ```
  */
 globalThis.skipHydrationCanStacheElement = true
+console.log("globalThis.skipHydrationCanStacheElement = true")

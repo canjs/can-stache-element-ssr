@@ -1,11 +1,11 @@
 const path = require("path")
-const { getEnvConfiguration, getSggConfiguration, getEnvAssets } = require("./client-helpers/environment-helpers")
+const { getEnvConfiguration, getSggConfiguration, getEnvAssets } = require("../client-helpers/environment-helpers")
 const { copy } = require("fs-extra")
-const getEnvironment = require("./flags/get-ssg-environment")
+const getEnvironment = require("../jsdom-ssg/flags/get-ssg-environment.js")
 
 const environment = getEnvironment()
 const ssgConfiguration = getSggConfiguration()
-const envConfiguration = getEnvConfiguration("prod")
+const envConfiguration = getEnvConfiguration("e2e-prod")
 
 const distDir = path.join("dist", envConfiguration.dist.basePath)
 
