@@ -14,9 +14,10 @@
       "entryPoint": "index.html"
     },
     "prod": {
-      "prebuild": "build.js",
+      "prebuild": "prebuild.js",
+      "postbuild": "postbuild.js",
       "dist": {
-        "mainTag": "<script src=\"/bundles/can-stache-element-ssr/main.js\" main></script>",
+        "mainTag": "<script src=\"/dist/bundles/can-stache-element-ssr/main.js\" main></script>",
         "basePath": "prod",
         "static": "static",
         "assets": "",
@@ -51,12 +52,12 @@
     }
   },
   "routes": [
-    "http://127.0.0.1:8080",
-    "http://127.0.0.1:8080/tasks",
-    "http://127.0.0.1:8080/progressive-loading",
-    "http://127.0.0.1:8080/progressive-loading/root",
-    "http://127.0.0.1:8080/progressive-loading/moo",
-    "http://127.0.0.1:8080/progressive-loading/cow",
-    "http://127.0.0.1:8080/404"
+    "/",
+    "/tasks",
+    "/progressive-loading",
+    "/progressive-loading/root",
+    "/progressive-loading/moo",
+    "/progressive-loading/cow",
+    "/404"
   ]
 }

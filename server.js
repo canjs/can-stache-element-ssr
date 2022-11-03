@@ -15,7 +15,9 @@ let envConfiguration = null
 setEnvDirs(defaultEnvironment)
 
 const sendFileOr404 = (req, res, reqPath) => {
+  console.log(reqPath)
   const dest = path.join(__dirname, reqPath)
+  console.log(dest)
 
   if (existsSync(dest)) {
     res.sendFile(dest)
@@ -39,12 +41,13 @@ app.get("/*", function (req, res) {
 
   // Handle files that are local (node_modules, etc) by checking for file extensions (".")
   if (reqPath.indexOf(".") !== -1) {
+    // Simulate hosting all assets, bundles at one directory inside the dist directory
     if (envConfiguration.serveFromDist) {
-      // TODO: how do we go about handling "dist/prod/progressive-loading/dist/bundles/can-stache-element-ssr/main.css"
-      sendFileOr404(req, res, path.join("dist", envConfiguration.dist.basePath, reqPath.replace(/^.*\/dist\//, "")))
+      sendFileOr404(req, res, path.join(staticDir, reqPath))
       return
     }
 
+    // Serve static files from dist, but assets, node_modules/bundles are loaded outside of dist
     sendFileOr404(req, res, reqPath)
 
     return
@@ -55,6 +58,7 @@ app.get("/*", function (req, res) {
     return
   }
 
+  // Host static files
   if (serverMode === "ssg") {
     sendFileOr404(req, res, path.join(staticDir, reqPath, "index.html"))
     return
@@ -76,11 +80,12 @@ app.listen(argv.port || 8080, function () {
  */
 function setEnvDirs(environment) {
   const configuration = getEnvConfiguration(environment)
+  envConfiguration = configuration
+
+  const basePath = path.join("dist", configuration.dist.basePath)
+
+  staticDir = path.join(basePath, envConfiguration.dist.static)
+  entryPointDir = envConfiguration.serveFromDist ? path.join(basePath, envConfiguration.dist.entryPoint) : envConfiguration.entryPoint
 
   console.log("server environment:", environment, "mode:", serverMode)
-  envConfiguration = configuration
-  staticDir = path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.static)
-  entryPointDir = envConfiguration.serveFromDist
-    ? path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.entryPoint)
-    : envConfiguration.entryPoint
 }
