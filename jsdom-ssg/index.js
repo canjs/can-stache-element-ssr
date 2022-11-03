@@ -23,14 +23,24 @@ main()
 async function main() {
   await clearDist()
 
+  const promises = []
+
+  promises.push(generateSpaEntryPoint())
+  promises.push(copyAssets())
+
+  await Promise.all(promises)
+
   // Do SPA build if there's a prebuild property for environment
   if (envConfiguration.prebuild) {
     await spawn("node", envConfiguration.prebuild.split(" "))
   }
 
-  generateStaticPages()
-  copyAssets()
-  generateSpaEntryPoint()
+  await generateStaticPages()
+
+  // Do SPA build if there's a postbuild property for environment
+  if (envConfiguration.postbuild) {
+    await spawn("node", envConfiguration.postbuild.split(" "))
+  }
 }
 
 /**
@@ -46,24 +56,21 @@ async function clearDist() {
  */
 async function copyAssets() {
   const baseAssetsDistPath = envConfiguration.dist.assets ? path.join(distDir, envConfiguration.dist.assets) : distDir
+  const promises = []
 
   for (const assetPath of ssgConfiguration.assets) {
     const assetsDistPathInDist = path.join(baseAssetsDistPath, assetPath)
 
-    await copy(assetPath, assetsDistPathInDist)
+    promises.push(copy(assetPath, assetsDistPathInDist))
   }
+
+  await Promise.all(promises)
 }
 
 /**
  * Generate static pages
  */
 async function generateStaticPages() {
-  // Create and clear dist directory for static pages
-  const staticPath = path.join(distDir, envConfiguration.dist.static)
-
-  await ensureDir(staticPath)
-  await emptyDir(staticPath)
-
   // Read paths to generate static pages
   const routes = ssgConfiguration.routes
 
@@ -71,7 +78,7 @@ async function generateStaticPages() {
   const promises = []
 
   for (const route of routes) {
-    promises.push(spawnBuildProcess(route))
+    promises.push(spawnBuildProcess(`http://localhost:8080${path.join("/", route)}`))
   }
 
   await Promise.all(promises)
