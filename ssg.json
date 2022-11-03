@@ -38,16 +38,16 @@
       "entryPoint": "tests/app/e2e-index.html",
       "assets": ["tests/app/assets"],
       "routes": [
-        "http://127.0.0.1:8080",
-        "http://127.0.0.1:8080/css",
-        "http://127.0.0.1:8080/404",
-        "http://127.0.0.1:8080/timeout",
-        "http://127.0.0.1:8080/request",
-        "http://127.0.0.1:8080/progressive-loading",
-        "http://127.0.0.1:8080/progressive-loading/nested-timeout",
-        "http://127.0.0.1:8080/progressive-loading/nested-request",
-        "http://127.0.0.1:8080/unknown",
-        "http://127.0.0.1:8080/not-a-route"
+        "/",
+        "/css",
+        "/404",
+        "/timeout",
+        "/request",
+        "/progressive-loading",
+        "/progressive-loading/nested-timeout",
+        "/progressive-loading/nested-request",
+        "/unknown",
+        "/not-a-route"
       ]
     }
   },
