@@ -1,4 +1,4 @@
-const { ensureDir, emptyDir, copy, writeFile } = require("fs-extra")
+const { ensureDir, emptyDir, copy, writeFile, readFile } = require("fs-extra")
 const path = require("path")
 const spawnBuildProcess = require("./spawn-build-process")
 const { getEnvConfiguration, getSggConfiguration } = require("../client-helpers/environment-helpers")
@@ -90,7 +90,15 @@ async function generateStaticPages() {
 async function generateSpaEntryPoint() {
   const entryPointPath = path.join(distDir, envConfiguration.dist.entryPoint || "index.html")
 
-  const rootCode = stripMainScript(envConfiguration.entryPoint).rootCode.replace("</body>", envConfiguration.dist.mainTag + "</body>")
+  // If there is a mainTag defined, override steal/main script from original entryPoint
+  if (envConfiguration.dist.mainTag) {
+    const rootCode = stripMainScript(envConfiguration.entryPoint).rootCode
+
+    await writeFile(entryPointPath, rootCode.replace("</body>", envConfiguration.dist.mainTag + "</body>"))
+    return
+  }
+
+  const rootCode = await readFile(envConfiguration.entryPoint)
 
   await writeFile(entryPointPath, rootCode)
 }

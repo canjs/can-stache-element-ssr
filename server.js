@@ -41,11 +41,13 @@ app.get("/*", function (req, res) {
 
   // Handle files that are local (node_modules, etc) by checking for file extensions (".")
   if (reqPath.indexOf(".") !== -1) {
+    // Simulate hosting all assets, bundles at one directory inside the dist directory
     if (envConfiguration.serveFromDist) {
-      sendFileOr404(req, res, path.join("dist", envConfiguration.dist.basePath, envConfiguration.dist.static, reqPath))
+      sendFileOr404(req, res, path.join(staticDir, reqPath))
       return
     }
 
+    // Serve static files from dist, but assets, node_modules/bundles are loaded outside of dist
     sendFileOr404(req, res, reqPath)
 
     return
@@ -56,6 +58,7 @@ app.get("/*", function (req, res) {
     return
   }
 
+  // Host static files
   if (serverMode === "ssg") {
     sendFileOr404(req, res, path.join(staticDir, reqPath, "index.html"))
     return
