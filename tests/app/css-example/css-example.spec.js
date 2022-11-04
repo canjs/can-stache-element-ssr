@@ -4,7 +4,6 @@ const waitForHydration = require("../../helpers/wait-for-hydration")
 
 test.describe("CssExample", () => {
   test("css affects page", async ({ page }) => {
-    // Avoid race conditions by using Promise.all
     await page.goto("/css")
 
     await waitForHydration(page)

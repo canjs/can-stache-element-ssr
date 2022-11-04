@@ -29,14 +29,17 @@ async function main() {
 
   await Promise.all(promises)
 
-  // Do SPA build if there's a prebuild property for environment
+  // Check for prebuild property for environment to prepare static pages
+  // Useful for preparing production bundles with `steal-tools`
   if (envConfiguration.prebuild) {
     await spawn("node", envConfiguration.prebuild.split(" "))
   }
 
   await generateStaticPages()
 
-  // Do SPA build if there's a postbuild property for environment
+  // Check for postbuild property for environment to finalize static pages
+  // Useful for copying assets / bundles to each static page directory
+  // Also can be used to inject code into each index.html file
   if (envConfiguration.postbuild) {
     await spawn("node", envConfiguration.postbuild.split(" "))
   }
@@ -78,8 +81,10 @@ async function generateStaticPages() {
   // Generate static pages
   const promises = []
 
+  const baseUrl = envConfiguration.staticBaseUrl
+
   for (const route of routes) {
-    promises.push(spawnBuildProcess(`http://localhost:8080${path.join("/", route)}`))
+    promises.push(spawnBuildProcess(`${baseUrl}${path.join("/", route)}`))
   }
 
   await Promise.all(promises)

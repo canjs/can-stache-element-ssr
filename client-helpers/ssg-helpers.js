@@ -47,6 +47,8 @@ export const ssgEnd = () => {
       plugins: [xhrZone],
     })
       .run(function () {
+        // Check if global flag is set to skip hydration
+        // This is required for testing static pages before hydration during e2e
         if (globalThis.skipHydrationCanStacheElement) {
           return
         }
@@ -61,6 +63,8 @@ export const ssgEnd = () => {
         return { staticapp, liveapp }
       })
       .then(function (data) {
+        // Sets global flag that indicates that hydration has successfully been skipped
+        // This is required for testing static pages before hydration during e2e
         if (!data.result) {
           globalThis.skippedHydrationCanStacheElement = true
           return

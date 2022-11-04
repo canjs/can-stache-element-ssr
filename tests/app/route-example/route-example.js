@@ -8,17 +8,11 @@ import "../progressive-loading-example/progressive-loading-example"
 
 prepareRouting(route)
 
+// To support express.static, support for trailing `/` must exist
 route.register("{page}", { page: "home" })
-route.register("{page}/", { page: "home" })
+route.register("{page}/", { page: "home" }) // To support trailing `/`
 route.register("progressive-loading/{nestedPage}", { page: "progressive-loading" })
-route.register("progressive-loading/{nestedPage}/", { page: "progressive-loading" })
-
-/*
-
-/progressive-loading/timeout <-- works page: "progressive-loading", nestedPage: "timeout"
-/progressive-loading/timeout/ <-- works page: undefined, nestedPage: undefined
-
-*/
+route.register("progressive-loading/{nestedPage}/", { page: "progressive-loading" }) // To support trailing `/`
 
 route.start()
 
