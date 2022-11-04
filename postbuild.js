@@ -1,10 +1,9 @@
 const path = require("path")
-const { getEnvConfiguration, getSggConfiguration, getEnvAssets } = require("./client-helpers/environment-helpers")
+const { getEnvConfiguration, getEnvAssets, getEnvRoutes } = require("./client-helpers/environment-helpers")
 const { copy } = require("fs-extra")
 const getEnvironment = require("./jsdom-ssg/flags/get-ssg-environment")
 
 const environment = getEnvironment()
-const ssgConfiguration = getSggConfiguration()
 const envConfiguration = getEnvConfiguration("prod")
 
 const distDir = path.join("dist", envConfiguration.dist.basePath)
@@ -14,7 +13,8 @@ main()
 async function main() {
   const promises = []
 
-  const routes = ssgConfiguration.routes
+  // Read paths to generate static pages
+  const routes = getEnvRoutes(environment)
 
   const staticPath = path.join(distDir, envConfiguration.dist.static)
   const bundlePath = path.join(distDir, "dist/bundles")

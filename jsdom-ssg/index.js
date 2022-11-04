@@ -1,7 +1,7 @@
 const { ensureDir, emptyDir, copy, writeFile, readFile } = require("fs-extra")
 const path = require("path")
 const spawnBuildProcess = require("./spawn-build-process")
-const { getEnvConfiguration, getSggConfiguration, getEnvRoutes, getEnvAssets } = require("../client-helpers/environment-helpers")
+const { getEnvConfiguration, getSsgConfiguration, getEnvRoutes, getEnvAssets } = require("../client-helpers/environment-helpers")
 const spawn = require("./util/spawn-promise")
 const getEnvironment = require("./flags/get-ssg-environment")
 const stripMainScript = require("./util/strip-main-script")

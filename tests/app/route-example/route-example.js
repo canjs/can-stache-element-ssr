@@ -10,7 +10,6 @@ prepareRouting(route)
 
 route.register("{page}", { page: "home" })
 route.register("{page}/", { page: "home" })
-route.register("css-example", { page: "css-example" })
 route.register("progressive-loading/{nestedPage}", { page: "progressive-loading" })
 route.register("progressive-loading/{nestedPage}/", { page: "progressive-loading" })
 

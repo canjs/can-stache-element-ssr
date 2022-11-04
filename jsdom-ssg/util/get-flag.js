@@ -1,4 +1,4 @@
-const { getSggConfiguration } = require("../../client-helpers/environment-helpers")
+const { getSsgConfiguration } = require("../../client-helpers/environment-helpers")
 const argv = require("optimist").argv
 
 /**
@@ -22,7 +22,7 @@ const argv = require("optimist").argv
  * ```
  */
 module.exports = function (processEnv, argument, ssgConfigurationProp) {
-  const value = getProcessEnvValue(processEnv) || getArgumentValue(argument) || getSggConfigurationDefault(ssgConfigurationProp)
+  const value = getProcessEnvValue(processEnv) || getArgumentValue(argument) || getSsgConfigurationDefault(ssgConfigurationProp)
 
   if (!value) {
     throw new Error(`Unexpected missing flag value: ${value}`)
@@ -58,10 +58,10 @@ function getArgumentValue(argument) {
 /**
  * Get flag value by checking SSG configuration
  */
-function getSggConfigurationDefault(prop) {
+function getSsgConfigurationDefault(prop) {
   if (!prop) {
     return
   }
 
-  return getSggConfiguration()[prop]
+  return getSsgConfiguration()[prop]
 }

@@ -29,7 +29,6 @@ const environments = getEnvironments()
 
 app.get("/*", function (req, res) {
   const reqPath = req.path
-  console.log(req.path)
 
   const overrideEnvironment = environments.find((env) => reqPath.startsWith(`/${env}`))
 

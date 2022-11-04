@@ -6,13 +6,13 @@ Object.freeze(ssgConfiguration)
 /**
  * Returns SSG configuration
  */
-const getSggConfiguration = () => ssgConfiguration
+const getSsgConfiguration = () => ssgConfiguration
 
 /**
  * Returns environment configuration
  */
 const getEnvConfiguration = (env) => {
-  const configuration = getSggConfiguration().environments[env]
+  const configuration = getSsgConfiguration().environments[env]
 
   if (!configuration) {
     throw new Error("Unexpected missing environment configuration")
@@ -54,4 +54,4 @@ const getEnvAssets = (env) => {
   return ssgConfiguration.assets || []
 }
 
-module.exports = { getSggConfiguration, getEnvConfiguration, getEnvironments, getEnvRoutes, getEnvAssets }
+module.exports = { getSsgConfiguration, getEnvConfiguration, getEnvironments, getEnvRoutes, getEnvAssets }
