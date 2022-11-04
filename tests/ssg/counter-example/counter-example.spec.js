@@ -16,7 +16,7 @@ test.describe("CounterExample", () => {
     expect(await verifyStillPrerendered(page)).toBe(true)
   })
 
-  test("clicking increment button", async ({ page }) => {
+  test("prerendered increment button doesn't increment since it's not hydrated", async ({ page }) => {
     const label = await page.getByTestId("counter")
 
     await expect(label).toHaveText("0")

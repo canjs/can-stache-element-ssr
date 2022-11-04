@@ -355,6 +355,7 @@ There is a lot of overlap of tests for the combination of envirionments / serve 
 /tests/ssg-dev // <-- only ssg mode and dev environment
 /tests/ssg-prod // <-- only ssg mode and prod environment
 ```
+
 ### Challenges
 
 1. `can-zone-jsdom` currently uses `JSDOM@^11` and custom elements aren't supported until `JSDOM@^16`. And because `can-zone-jsdom` gets warnings for `node@^14`, the latest supported version of `JSDOM` we can use with `can-zone-jsdom` is `JSDOM@^19`.
@@ -388,10 +389,10 @@ There is a lot of overlap of tests for the combination of envirionments / serve 
 4. `steal-tools` doesn't support Node v18, the highest version of Node we can use is Node v14. This is the minimum version to use the latest version of `JSDOM`.
 
 5. Currently we use `express.static` middleware for verifying if build can be hosted from a specific directory without any special javascript to make it possible. There is a possiblility that when serving, there's a misleading error: `SyntaxError: Unexpected token '<'`
-  
-  This results from `express.static` falsly assuming that a javascript file is actually an html file and it will add a trailing slash (`/`) to the request path: `dist/bundles/my-component/my-component.js/`
-  
-  To work around this issue, you can clear your browser cache
+
+This results from `express.static` falsly assuming that a javascript file is actually an html file and it will add a trailing slash (`/`) to the request path: `dist/bundles/my-component/my-component.js/`
+
+To work around this issue, you can clear your browser cache
 
 ### Technical Decisions
 
@@ -434,82 +435,103 @@ There is a lot of overlap of tests for the combination of envirionments / serve 
 
 5. When using `express.static` middleware to host static sites, the url paths require ending with a trailing slash (`/`). This isn't something that `can-route` supports out of the box. The workaround to support this is to register every route twice. Register one with a trailing slash (`/`) and one without:
 
-  ```javascript
-  // To support express.static, support for trailing `/` must exist
-  route.register("{page}", { page: "home" })
-  route.register("{page}/", { page: "home" }) // To support trailing `/`
-  route.register("progressive-loading/{nestedPage}", { page: "progressive-loading" })
-  route.register("progressive-loading/{nestedPage}/", { page: "progressive-loading" }) // To support trailing `/`
-  ```
+```javascript
+// To support express.static, support for trailing `/` must exist
+route.register("{page}", { page: "home" })
+route.register("{page}/", { page: "home" }) // To support trailing `/`
+route.register("progressive-loading/{nestedPage}", { page: "progressive-loading" })
+route.register("progressive-loading/{nestedPage}/", { page: "progressive-loading" }) // To support trailing `/`
+```
 
 ### Roadmap
 
 List of tasks in order of most important to least important
 
-1. When need to rework `ssg.json` to be a js export
-  - It is likely that information about routes will come from an endpoint
-  - Making `ssg.json` a js file that exports some async logic will make this more plausable for us to consume endpoints for configuration
+1. Create a repo that will have all this ssg / server stuff
 
-2. Ability to inject frontend "environment" values ssg static index.html files post build
-  - After all the ssg static index.html files are generated, there should be a script that goes through all of them and injects some `<script>` tags in them.
-  - This would be a way to expose frontend urls (such as cms base url, etc)
+- name should be `can-ssg`
+- Should allow for quickly servering can stache applications
+- Should provide builds for spa and ssg
 
-3. ssg.json responsibilies need to be separated
-  - env -> rename to something like build
-  - a consideration of build <> deploy needs to be separate ideas
-  - all of the build / deploy settings should instead be fully setup using process env variables
+2. We need to target a specific hosting for static files and update our generated static files paths:
 
-4. Code changes done in `can-stache-element` shouldn't be required for `can-ssg` to work
-  - Some kind of workaround should be provided by using `can-ssg` directly
+- Currently we are building like this "/moo/cow/index.html" where each page is a directory and inside is an index.html file
+- This might not be suitable for all hosting options so we might need to adjust:
+  /moo/cow/index.html vs /moo/cow.html
 
-5. `ssgDefineElement` and `ssgEnd` shouldn't be required in the `main.js` file
+3. When need to rework `ssg.json` to be a js export
 
-6. Create a repo that will have all this ssg / server stuff
-  - name should be can-ssg
-  - Should allow for quickly servering can stache applications
-  - Should provide builds for spa and ssg
+- It is likely that information about routes will come from an endpoint
+- Making `ssg.json` a js file that exports some async logic will make this more plausable for us to consume endpoints for configuration
+- Possibly avoidable and should just be a process env variable
 
-7. Replace spawning processes with worker threads
-  - Update worker threads to not close but instead communicate with master
-  - how to go forward with this?
-  - spawn `x` child processes > each process will use `y` thread workers (?)
+4. Ability to inject frontend "environment" values ssg static index.html files post build
 
-8. Verify setting title of document works with `JSDOM`
+- After all the ssg static index.html files are generated, there should be a script that goes through all of them and injects some `<script>` tags in them.
+- This would be a way to expose frontend urls (such as cms base url, etc)
 
-11. Weird margin thing happening =/ for prod vs static
-   - When you have a h1 tag (that has margin-top), it doesn't properly push the body down like it does outside of prod
+5. ssg.json responsibilies need to be separated
 
-12. Review route wrapper function
-  - checks existing root and adds dev/prod to it
-  - TODO: add check on ssgEnd() to verify and console.warn if not
+- env -> rename to something like build
+- a consideration of build <> deploy needs to be separate ideas
+- all of the build / deploy settings should instead be fully setup using process env variables
 
-13. Using express.static doesn't work with `can-route`
-  - Because of the trailing "/", routeData always doesn't get any variables
-    node_modules/can-route/src/deparam.js
-    ```javascript
-    function canRoute_deparam(url) {
-      url = toURLFragment(url);
-      console.log('canRoute_deparam', url)// progressive-loading/moo/
-      if (url.charAt(url.length - 1) === '/') {
-        url = url.slice(0, -1)// Temp fix, remove trailing "/"
-      }
-      console.log('canRoute_deparam', url)// progressive-loading/moo
-    }
-    ```
-  - Alternative is to provide doubles of all the routes: 1 with trailing `/` and one without
-  - PR: https://github.com/canjs/can-route/pull/259
+6. Code changes done in `can-stache-element` shouldn't be required for `can-ssg` to work
 
-14. Build a more robust application
-   - We currently have very minimal applications to test `can-ssg`, it would be good to test again a large application.
+- Some kind of workaround should be provided by using `can-ssg` directly
 
-15. Launch built versions of the files
-  - ?
+7. `ssgDefineElement` and `ssgEnd` shouldn't be required in the `main.js` file
 
-16. Replace `JSDOM` with `can-simple-dom` (optional)
-  - `JSDOM` seems to be working, but it's doing a lot of extra work that might not be needed for `can-ssg` to work.
-  - `can-simple-dom` doesn't support Custom Elements currently and cannot support `can-stache-element` yet, but we could improve `can-simple-dom` so we can replace `JSDOM` for performance and to allow for more features.
+8. Replace spawning processes with worker threads (Optional)
 
-17. We need to target a specific hosting for static files and update our generated static files paths:
-  - Currently we are building like this "/moo/cow/index.html" where each page is a directory and inside is an index.html file
-  - This might not be suitable for all hosting options so we might need to adjust:
-    /moo/cow/index.html vs /moo/cow.html
+- Update worker threads to not close but instead communicate with master
+- how to go forward with this?
+- spawn `x` child processes > each process will use `y` thread workers (?)
+
+9. Verify setting title of document works with `JSDOM`
+
+10. Weird margin thing happening =/ for prod vs static
+
+- When you have a h1 tag (that has margin-top), it doesn't properly push the body down like it does outside of prod
+
+11. Review route wrapper function
+
+- checks existing root and adds dev/prod to it
+- TODO: add check on ssgEnd() to verify and console.warn if not
+
+12. Using express.static doesn't work with `can-route`
+
+- Because of the trailing "/", routeData always doesn't get any variables
+  node_modules/can-route/src/deparam.js
+
+```javascript
+function canRoute_deparam(url) {
+  url = toURLFragment(url)
+  console.log("canRoute_deparam", url) // progressive-loading/moo/
+  if (url.charAt(url.length - 1) === "/") {
+    url = url.slice(0, -1) // Temp fix, remove trailing "/"
+  }
+  console.log("canRoute_deparam", url) // progressive-loading/moo
+}
+```
+
+- Alternative is to provide doubles of all the routes: 1 with trailing `/` and one without
+- PR: https://github.com/canjs/can-route/pull/259
+
+13. Build a more robust application
+
+- We currently have very minimal applications to test `can-ssg`, it would be good to test again a large application.
+
+14. Launch built versions of the files
+
+- We need to be able to publish these files somewhere. Likely github for now
+
+15. Replace `JSDOM` with `can-simple-dom` (optional)
+
+- `JSDOM` seems to be working, but it's doing a lot of extra work that might not be needed for `can-ssg` to work.
+- `can-simple-dom` doesn't support Custom Elements currently and cannot support `can-stache-element` yet, but we could improve `can-simple-dom` so we can replace `JSDOM` for performance and to allow for more features.
+
+16. Run `playwright` directly through node (optional?)
+
+- There's a lot of flexibility to be able to run `playwright` directly
+- This would allow for us to be able to test components as standalone, etc
