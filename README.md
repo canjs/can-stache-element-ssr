@@ -508,3 +508,8 @@ List of tasks in order of most important to least important
 16. Replace `JSDOM` with `can-simple-dom` (optional)
   - `JSDOM` seems to be working, but it's doing a lot of extra work that might not be needed for `can-ssg` to work.
   - `can-simple-dom` doesn't support Custom Elements currently and cannot support `can-stache-element` yet, but we could improve `can-simple-dom` so we can replace `JSDOM` for performance and to allow for more features.
+
+17. We need to target a specific hosting for static files and update our generated static files paths:
+  - Currently we are building like this "/moo/cow/index.html" where each page is a directory and inside is an index.html file
+  - This might not be suitable for all hosting options so we might need to adjust:
+    /moo/cow/index.html vs /moo/cow.html
