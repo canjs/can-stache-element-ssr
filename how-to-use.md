@@ -10,6 +10,12 @@ it has been migrated to its own npm library called `can-ssg`
 $ npm i -D can-ssg # Installs can-ssg
 ```
 
+When using `can-ssg`, you'll have to use a specific version of `can-stache-element` (for now):
+
+```bash
+$ npm i can-stache-element@git+ssh://git@github.com/canjs/can-stache-element#allow-static-inert-extended
+```
+
 ### Setup Workspace
 
 File summary
