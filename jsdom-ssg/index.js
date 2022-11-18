@@ -1,16 +1,15 @@
 const { ensureDir, emptyDir, copy, writeFile, readFile } = require("fs-extra")
 const path = require("path")
 const spawnBuildProcess = require("./spawn-build-process")
-const { getEnvConfiguration, getSggConfiguration } = require("../client-helpers/environment-helpers")
+const { getEnvConfiguration, getEnvRoutes, getEnvAssets } = require("../client-helpers/environment-helpers")
 const spawn = require("./util/spawn-promise")
 const getEnvironment = require("./flags/get-ssg-environment")
 const stripMainScript = require("./util/strip-main-script")
 
-// Get general ssg configuration
-const ssgConfiguration = getSggConfiguration()
+const environment = getEnvironment()
 
 // Get ssg configuration based on environment
-const envConfiguration = getEnvConfiguration(getEnvironment())
+const envConfiguration = getEnvConfiguration(environment)
 
 // Get root of dist based on environment
 const distDir = path.join("dist", envConfiguration.dist.basePath)
@@ -30,14 +29,17 @@ async function main() {
 
   await Promise.all(promises)
 
-  // Do SPA build if there's a prebuild property for environment
+  // Check for prebuild property for environment to prepare static pages
+  // Useful for preparing production bundles with `steal-tools`
   if (envConfiguration.prebuild) {
     await spawn("node", envConfiguration.prebuild.split(" "))
   }
 
   await generateStaticPages()
 
-  // Do SPA build if there's a postbuild property for environment
+  // Check for postbuild property for environment to finalize static pages
+  // Useful for copying assets / bundles to each static page directory
+  // Also can be used to inject code into each index.html file
   if (envConfiguration.postbuild) {
     await spawn("node", envConfiguration.postbuild.split(" "))
   }
@@ -58,7 +60,9 @@ async function copyAssets() {
   const baseAssetsDistPath = envConfiguration.dist.assets ? path.join(distDir, envConfiguration.dist.assets) : distDir
   const promises = []
 
-  for (const assetPath of ssgConfiguration.assets) {
+  const assets = getEnvAssets(environment)
+
+  for (const assetPath of assets) {
     const assetsDistPathInDist = path.join(baseAssetsDistPath, assetPath)
 
     promises.push(copy(assetPath, assetsDistPathInDist))
@@ -72,13 +76,15 @@ async function copyAssets() {
  */
 async function generateStaticPages() {
   // Read paths to generate static pages
-  const routes = ssgConfiguration.routes
+  const routes = getEnvRoutes(environment)
 
   // Generate static pages
   const promises = []
 
+  const baseUrl = envConfiguration.staticBaseUrl
+
   for (const route of routes) {
-    promises.push(spawnBuildProcess(`http://localhost:8080${path.join("/", route)}`))
+    promises.push(spawnBuildProcess(`${baseUrl}${path.join("/", route)}`))
   }
 
   await Promise.all(promises)

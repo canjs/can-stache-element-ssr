@@ -8,12 +8,21 @@
     "build": "node jsdom-ssg/index.js",
     "build-prod": "node jsdom-ssg/index.js --environment prod",
     "build-debug": "node --inspect-brk jsdom-ssg/index.js",
+    "build-e2e": "node jsdom-ssg/index.js --environment e2e",
+    "build-e2e-prod": "node jsdom-ssg/index.js --environment e2e-prod",
     "serve": "node server.js --port 8080",
     "serve-prod": "node server.js --environment prod --port 8080",
     "serve-spa": "node server.js --environment dev --serverMode spa --port 8080",
     "serve-prod-spa": "node server.js --environment prod --serverMode spa --port 8080",
+    "serve-e2e": "node server.js --environment e2e --port 4200",
+    "serve-e2e-prod": "node server.js --environment e2e-prod --port 4203",
+    "serve-e2e-spa": "node server.js --environment e2e --serverMode spa --port 4201",
+    "serve-e2e-prod-spa": "node server.js --environment e2e-prod --serverMode spa --port 4202",
+    "e2e-dev": "npm run build-e2e && playwright test --config playwright-dev-ssg.config.js && playwright test --config playwright-dev-spa.config.js",
+    "e2e-prod": "npm run build-e2e-prod && playwright test --config playwright-prod-ssg.config.js && playwright test --config playwright-prod-spa.config.js && playwright test --config playwright-static-server.config.js",
+    "e2e": "npm run e2e-dev && npm run e2e-prod",
     "format": "prettier --write .",
-    "static-server": "node static-server.js --environment prod"
+    "static-server": "node static-server.js --environment e2e-prod"
   },
   "steal": {
     "babelOptions": {
@@ -63,6 +72,7 @@
     "npm": ">=6.0.0 <7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.27.1",
     "can-globals": "^1.2.2",
     "express": "^4.18.2",
     "http-server": "^14.1.1",

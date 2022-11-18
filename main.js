@@ -10,8 +10,11 @@ import "./components/root/root"
 prepareRouting(route)
 
 route.register("{page}", { page: "home" })
+route.register("{page}/", { page: "home" }) // To support trailing `/`
 route.register("tasks/{taskId}", { page: "tasks" })
+route.register("tasks/{taskId}/", { page: "tasks" }) // To support trailing `/`
 route.register("progressive-loading/{loadId}", { page: "progressive-loading" })
+route.register("progressive-loading/{loadId}/", { page: "progressive-loading" }) // To support trailing `/`
 
 route.start()
 

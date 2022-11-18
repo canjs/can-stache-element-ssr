@@ -9,10 +9,12 @@ ssg solution for CanJS 6 custom stache elements
 /mock-can-globals - includes mocks for `can-globals`'s `isNode` and `isBrowserWindow` for `can-route` to function properly
 /temp - random js that showcases ideas for implementions
 /index.html - dev SPA
+/tests - playwright application and tests
 /main.js - client side code that generates CanJS 6 components
 /production.html - dev SPA
 /ssg.json - general ssg configuration (includes routes and default settings) and defines environments
 /static-server.js - simple static server to test if ssg, assets, bundles can all be hosted in one spot
+/playwright.preset.js - base playwright config that all playwright configs extend
 ```
 
 ### ssg.json
@@ -29,7 +31,7 @@ ssg solution for CanJS 6 custom stache elements
     // Environment name (can be whatever you want)
     "prod": {
       // prebuild (optional) - prebuild script (allows you to run steal-tools)
-      "prebuild": "build.js",
+      "prebuild": "prebuild.js",
       // dist - All builds will be generated in the /dist/ directory
       "dist": {
         // mainTag (optional) - steal/main tag specific to builds
@@ -258,6 +260,102 @@ There will be times when you'll want to debug `scrape.js` which is executed thro
 $ node --inspect-brk jsdom-ssg/scrape.js http://127.0.0.1:8080/index.html
 ```
 
+### Playwright / e2e
+
+For testing we are using [playwright](https://playwright.dev/).
+
+#### General Terms
+
+There are 2 modes when serving:
+
+1. SPA - Single Page Application where all routes point to the same index.html
+2. SSG - Static Site Generation where all routes point to their own static index.html. Each page runs logic to hydrate and swaps to a SPA after hydration is done
+
+There are 2 types of environments we are testing:
+
+1. "dev" environment: Environment where no build is required to view code changes in SPA. When a build is made, only static pages are involved for hosting SSR
+
+2. "prod" environment: Both SPA and SSR require a build to view latest code changes. Production build uses `steal-tools` to bundle steal and code where everything is hosted from `dist` directory
+
+#### Testing Each Variation of Environments / Serve Mode
+
+The combination of these types of environments and serving modes are tested:
+
+Each combination has its own playwright configuration:
+
+1. SPA + DEV: `playwright-dev-spa.config.js`
+2. SSG + DEV: `playwright-dev-ssg.config.js`
+3. SPA + PROD: `playwright-prod-spa.config.js`
+4. SSG + PROD: `playwright-prod-ssg.config.js` and `playwright-static-server.config.js`
+
+To run all variations:
+
+```bash
+$ npm run e2e # Runs all 5 playwright suites using each configuration
+```
+
+To run all configurations for dev environment:
+
+```bash
+$ npm run e2e-dev # Runs the 2 playwright suites using their configuations
+```
+
+To run all configurations for prod environment:
+
+```bash
+$ npm run e2e-prod # Runs the 3 playwright suites using their configuations
+```
+
+To run a single configuration:
+
+```bash
+$ npx playwright test --config playwright-dev-spa.config.js
+```
+
+When running tests for any ssg suite or any suites involving production: SSG + DEV, SPA + PROD, SSG + PROD
+
+You'll need to run the build for that environment first:
+
+```bash
+$ node jsdom-ssg/index.js --environment e2e-prod # prod build
+$ npx playwright test --config playwright-prod-spa.config.js # SPA + PROD e2e
+```
+
+#### static-server.js
+
+The reason we have a specific server script: `static-server.js` is to verify support for a "simple static server" can handle serving a production ssg build:
+
+Serving `static-server.js`:
+
+```bash
+$ npm run static-server
+# or
+$ node static-server.js --environment e2e-prod
+```
+
+Testing `static-server.js`:
+
+```bash
+$ npm run e2e-prod # Runs multiple test suites which include static-server
+# or
+$ node jsdom-ssg/index.js --environment e2e-prod # build prod-e2e
+$ npx playwright test --config playwright-static-server.config.js # only test static-server
+```
+
+#### Sharing spec Files Between Each Variation of Environments / Serve Mode
+
+There is a lot of overlap of tests for the combination of envirionments / serve modes. To avoid duplicate spec files there is a file structure used to share spec files between environments and serve modes:
+
+```
+/tests/app // <-- all environments / serve modes
+/tests/spa // <-- only spa modes
+/tests/spa-dev // <-- only spa mode and dev environment
+/tests/spa-prod // <-- only spa mode and prod environment
+/tests/ssg // <-- only ssg modes
+/tests/ssg-dev // <-- only ssg mode and dev environment
+/tests/ssg-prod // <-- only ssg mode and prod environment
+```
+
 ### Challenges
 
 1. `can-zone-jsdom` currently uses `JSDOM@^11` and custom elements aren't supported until `JSDOM@^16`. And because `can-zone-jsdom` gets warnings for `node@^14`, the latest supported version of `JSDOM` we can use with `can-zone-jsdom` is `JSDOM@^19`.
@@ -290,6 +388,12 @@ $ node --inspect-brk jsdom-ssg/scrape.js http://127.0.0.1:8080/index.html
 
 4. `steal-tools` doesn't support Node v18, the highest version of Node we can use is Node v14. This is the minimum version to use the latest version of `JSDOM`.
 
+5. Currently we use `express.static` middleware for verifying if build can be hosted from a specific directory without any special javascript to make it possible. There is a possiblility that when serving, there's a misleading error: `SyntaxError: Unexpected token '<'`
+
+This results from `express.static` falsly assuming that a javascript file is actually an html file and it will add a trailing slash (`/`) to the request path: `dist/bundles/my-component/my-component.js/`
+
+To work around this issue, you can clear your browser cache
+
 ### Technical Decisions
 
 1. `can-zone-jsdom` isn't currently being used for two reasons:
@@ -300,12 +404,15 @@ $ node --inspect-brk jsdom-ssg/scrape.js http://127.0.0.1:8080/index.html
 2. We will have to reinitialize CanJS application and use a new `JSDOM` instance for each page. See challenges above `Challenges #2 and #3` (listed above)
 
 3. To avoid having to use zones, we will initialize CanJS application and render each page and rely on:
+
    ```javascript
    process.once("beforeExit", (code) => {
      // TODO: scape document
    })
    ```
+
    to know when application is stable and can be scraped
+
 4. When injecting steal or production bundle into index.html, the script tag must be injected at the end of the body tag:
 
    ```html
@@ -326,48 +433,105 @@ $ node --inspect-brk jsdom-ssg/scrape.js http://127.0.0.1:8080/index.html
 
    This issue is only recreatable for production bundles. Here is more [information on why this is the case when using Custom Elements](https://stackoverflow.com/a/43837330/9115419)
 
+5. When using `express.static` middleware to host static sites, the url paths require ending with a trailing slash (`/`). This isn't something that `can-route` supports out of the box. The workaround to support this is to register every route twice. Register one with a trailing slash (`/`) and one without:
+
+```javascript
+// To support express.static, support for trailing `/` must exist
+route.register("{page}", { page: "home" })
+route.register("{page}/", { page: "home" }) // To support trailing `/`
+route.register("progressive-loading/{nestedPage}", { page: "progressive-loading" })
+route.register("progressive-loading/{nestedPage}/", { page: "progressive-loading" }) // To support trailing `/`
+```
+
 ### Roadmap
 
 List of tasks in order of most important to least important
 
-1. Reattachment
-   - Improve zones to handle web components on the frontend (!)
-   - ConnectedCallback() <-- sync vs async > if it is async, then we have to make sure their connected hooks (...)
-   - Handle updating / setting document title like `done-autorender` [template.txt](https://github.com/donejs/autorender/blob/master/src/template.txt)
-     - [movetoDocument](https://github.com/donejs/autorender/blob/master/src/template.txt#L226) - this is what actually moves the CanJS app
-     - [renderInZone](https://github.com/donejs/autorender/blob/master/src/template.txt#L298)
-2. Figure out dist structure, ask everyone on how to go about query params
+1. Create a repo that will have all this ssg / server stuff
 
-   - Escaping characters, etc
+- name should be `can-ssg`
+- Should allow for quickly servering can stache applications
+- Should provide builds for spa and ssg
 
-3. NodeJs Worker threads
+2. We need to target a specific hosting for static files and update our generated static files paths:
 
-   - improvement in performance instead of spawning processes
+- Currently we are building like this "/moo/cow/index.html" where each page is a directory and inside is an index.html file
+- This might not be suitable for all hosting options so we might need to adjust:
+  /moo/cow/index.html vs /moo/cow.html
 
-4. Build a more robust application
+3. When need to rework `ssg.json` to be a js export
 
-   - Routing examples
-   - Complex network request use fetch
+- It is likely that information about routes will come from an endpoint
+- Making `ssg.json` a js file that exports some async logic will make this more plausable for us to consume endpoints for configuration
+- Possibly avoidable and should just be a process env variable
 
-5. Provide this as cache from server to client 1. Store all api requests -> responses 2. Cached xhr assets for post initial page > cached s3 assests - `XHR_CACHE` originally in [can-zone](https://github.com/canjs/can-zone/blob/master/lib/zones/xhr.js)
-   and [done-ssr](https://github.com/donejs/done-ssr/blob/master/zones/requests/xhr-cache.js)
+4. Ability to inject frontend "environment" values ssg static index.html files post build
 
-6. Provide SPA <> SRA navigation for production / development
+- After all the ssg static index.html files are generated, there should be a script that goes through all of them and injects some `<script>` tags in them.
+- This would be a way to expose frontend urls (such as cms base url, etc)
 
-   - JS+CSS Dev + SPA
-   - JS+CSS Prod + SRA
-   - [JS+CSS Dev, JS+CSS Prod]
-   - [SPA, SRA]
+5. ssg.json responsibilies need to be separated
 
-7. Progressive loading
+- env -> rename to something like build
+- a consideration of build <> deploy needs to be separate ideas
+- all of the build / deploy settings should instead be fully setup using process env variables
 
-   - Loading the application in split up chunks as needed
+6. Code changes done in `can-stache-element` shouldn't be required for `can-ssg` to work
 
-8. Application build push state
+- Some kind of workaround should be provided by using `can-ssg` directly
 
-9. Launch built versions of the files
+7. `ssgDefineElement` and `ssgEnd` shouldn't be required in the `main.js` file
 
-10. Production stuff for stealjs, etc
+8. Replace spawning processes with worker threads (Optional)
 
-11. can-simple-dom (optional)
-    - Replace JSDOM
+- Update worker threads to not close but instead communicate with master
+- how to go forward with this?
+- spawn `x` child processes > each process will use `y` thread workers (?)
+
+9. Verify setting title of document works with `JSDOM`
+
+10. Weird margin thing happening =/ for prod vs static
+
+- When you have a h1 tag (that has margin-top), it doesn't properly push the body down like it does outside of prod
+
+11. Review route wrapper function
+
+- checks existing root and adds dev/prod to it
+- TODO: add check on ssgEnd() to verify and console.warn if not
+
+12. Using express.static doesn't work with `can-route`
+
+- Because of the trailing "/", routeData always doesn't get any variables
+  node_modules/can-route/src/deparam.js
+
+```javascript
+function canRoute_deparam(url) {
+  url = toURLFragment(url)
+  console.log("canRoute_deparam", url) // progressive-loading/moo/
+  if (url.charAt(url.length - 1) === "/") {
+    url = url.slice(0, -1) // Temp fix, remove trailing "/"
+  }
+  console.log("canRoute_deparam", url) // progressive-loading/moo
+}
+```
+
+- Alternative is to provide doubles of all the routes: 1 with trailing `/` and one without
+- PR: https://github.com/canjs/can-route/pull/259
+
+13. Build a more robust application
+
+- We currently have very minimal applications to test `can-ssg`, it would be good to test again a large application.
+
+14. Launch built versions of the files
+
+- We need to be able to publish these files somewhere. Likely github for now
+
+15. Replace `JSDOM` with `can-simple-dom` (optional)
+
+- `JSDOM` seems to be working, but it's doing a lot of extra work that might not be needed for `can-ssg` to work.
+- `can-simple-dom` doesn't support Custom Elements currently and cannot support `can-stache-element` yet, but we could improve `can-simple-dom` so we can replace `JSDOM` for performance and to allow for more features.
+
+16. Run `playwright` directly through node (optional?)
+
+- There's a lot of flexibility to be able to run `playwright` directly
+- This would allow for us to be able to test components as standalone, etc

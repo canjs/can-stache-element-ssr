@@ -8,24 +8,6 @@ const app = express()
 const envConfiguration = getEnvConfiguration(environment)
 const basePath = path.join("dist", envConfiguration.dist.basePath)
 
-/**
- * This fix requires a change in `can-route`:
- * 
-  node_modules/can-route/src/deparam.js
-  ```javascript
-  function canRoute_deparam(url) {
-    url = toURLFragment(url);
-    console.log('canRoute_deparam', url)// progressive-loading/moo/
-    if (url.charAt(url.length - 1) === '/') {
-      url = url.slice(0, -1)// Temp fix, remove trailing "/"
-    }
-    console.log('canRoute_deparam', url)// progressive-loading/moo
-  }
-  ```
-
-  Don't forget to rebuild after you make change in `node_modules`
- */
-
 app.use(express.static(path.join(__dirname, basePath, envConfiguration.dist.static)))
 app.use("*", express.static(path.join(__dirname, basePath, envConfiguration.dist.static, "404")))
 

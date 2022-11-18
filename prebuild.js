@@ -6,14 +6,17 @@ const envConfiguration = getEnvConfiguration("prod")
 
 const distDir = path.join("dist", envConfiguration.dist.basePath)
 
+let config = {}
+
+if (envConfiguration.stealConfig) {
+  config = readJsonSync(envConfiguration.stealConfig)
+}
+
 main()
 
 async function main() {
-  await stealTools.build(
-    {},
-    {
-      bundleSteal: true,
-      dest: path.join(distDir, "dist"),
-    },
-  )
+  await stealTools.build(config, {
+    bundleSteal: true,
+    dest: path.join(distDir, "dist"),
+  })
 }
