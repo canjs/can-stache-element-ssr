@@ -12,7 +12,8 @@
     "serve-prod": "node server.js --environment prod --port 8080",
     "serve-spa": "node server.js --environment dev --serverMode spa --port 8080",
     "serve-prod-spa": "node server.js --environment prod --serverMode spa --port 8080",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "static-server": "node static-server.js --environment prod"
   },
   "steal": {
     "babelOptions": {
